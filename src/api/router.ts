@@ -1,22 +1,36 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import type { Env } from '../types/env';
-import { getConfessions, createConfession, incrementSolidarity, createSuggestion } from '../db';
+import { getConfessions, getConfessionById, getSuggestionsForConfession, createConfession, incrementSolidarity, createSuggestion } from '../db';
 import { getModels } from '../services/models';
 import { verifyTurnstileToken } from '../auth/turnstile';
 import { redactSecrets } from '../utils/gitleaks';
 import { HomeView } from '../views/HomeView';
+import { PermalinkView } from '../views/PermalinkView';
+import { NotFoundView } from '../views/NotFoundView';
 
 export const app = new Hono<{ Bindings: Env }>();
 
 // Cache-Control header helper for heavy edge caching
 const EDGE_CACHE_HEADER = 'public, max-age=30, s-maxage=120, stale-while-revalidate=86400';
 
+function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
+  if (c.executionCtx) {
+    try {
+      const cache = caches.default;
+      const homeCacheKey = new Request(new URL('/', c.req.url).href);
+      c.executionCtx.waitUntil(cache.delete(homeCacheKey).catch(() => {}));
+    } catch {
+      // Ignore cache purging errors
+    }
+  }
+}
+
 // 1. Home Page SSR Route
 app.get('/', async (c) => {
   const url = new URL(c.req.url);
   const notice = url.searchParams.get('notice') ?? undefined;
 
-  const confessions = await getConfessions(c.env.DB);
+  const confessions = await getConfessions(c.env.DB, 50);
   const models = await getModels(c.env.CACHE_KV);
 
   c.header('Cache-Control', EDGE_CACHE_HEADER);
@@ -31,7 +45,31 @@ app.get('/', async (c) => {
   );
 });
 
-// 2. Submit Confession Route (with Gitleaks secret redaction)
+// 1.1 Permalink SSR Route
+app.get('/confessions/:id', async (c) => {
+  const id = c.req.param('id');
+  const confession = await getConfessionById(c.env.DB, id);
+
+  if (!confession) {
+    return c.html(NotFoundView(), 404);
+  }
+
+  const suggestions = await getSuggestionsForConfession(c.env.DB, id);
+  const models = await getModels(c.env.CACHE_KV);
+
+  c.header('Cache-Control', 'public, max-age=30, s-maxage=300, stale-while-revalidate=86400');
+
+  return c.html(
+    PermalinkView({
+      confession,
+      suggestions,
+      models,
+      turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
+    })
+  );
+});
+
+// 2. Submit Confession Route (with Gitleaks secret redaction & edge cache purging)
 app.post('/confessions', async (c) => {
   const body = await c.req.parseBody();
 
@@ -58,7 +96,7 @@ app.post('/confessions', async (c) => {
     return c.text('All confession fields are required.', 400);
   }
 
-  // Redact secrets/API keys using Gitleaks rules before DB insert
+  // Redact secrets/API keys/emails using Gitleaks rules before DB insert
   const prompt_used = redactSecrets(rawPrompt).cleanText;
   const what_it_did_instead = redactSecrets(rawWhatHappened).cleanText;
   const how_it_made_them_feel = redactSecrets(rawFeeling).cleanText;
@@ -85,6 +123,8 @@ app.post('/confessions', async (c) => {
     model_name,
   });
 
+  purgeHomeEdgeCache(c);
+
   return c.redirect('/?notice=Confession+submitted+successfully');
 });
 
@@ -92,6 +132,8 @@ app.post('/confessions', async (c) => {
 app.post('/confessions/:id/solidarity', async (c) => {
   const id = c.req.param('id');
   const count = await incrementSolidarity(c.env.DB, id);
+
+  purgeHomeEdgeCache(c);
 
   const isJson = c.req.header('accept')?.includes('application/json');
   if (isJson) {
@@ -101,7 +143,7 @@ app.post('/confessions/:id/solidarity', async (c) => {
   return c.redirect('/');
 });
 
-// 4. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction
+// 4. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
 app.post('/confessions/:id/suggestions', async (c) => {
   const confession_id = c.req.param('id');
   const bodyData = await c.req.parseBody();
@@ -123,6 +165,8 @@ app.post('/confessions/:id/suggestions', async (c) => {
     author_name: author_name || null,
   });
 
+  purgeHomeEdgeCache(c);
+
   return c.redirect('/?notice=Correction+submitted+successfully');
 });
 
@@ -135,7 +179,7 @@ app.get('/api/models', async (c) => {
 
 // 6. Confessions JSON API Endpoint
 app.get('/api/confessions', async (c) => {
-  const confessions = await getConfessions(c.env.DB);
+  const confessions = await getConfessions(c.env.DB, 50);
   c.header('Cache-Control', EDGE_CACHE_HEADER);
   return c.json({ confessions });
 });

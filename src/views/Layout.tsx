@@ -3,6 +3,7 @@ import type { Child } from 'hono/jsx';
 type LayoutProps = {
   title?: string;
   turnstileSiteKey?: string;
+  head?: Child;
   children: Child;
 };
 
@@ -84,7 +85,7 @@ body {
 }
 `;
 
-export function Layout({ title = 'Prompt Confessional — A safe space for AI frustration', turnstileSiteKey, children }: LayoutProps) {
+export function Layout({ title = 'Prompt Confessional — A safe space for AI frustration', turnstileSiteKey, head, children }: LayoutProps) {
   return (
     <html lang="en" class="h-full bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased">
       <head>
@@ -94,7 +95,7 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
         <meta name="description" content="A safe space to vent about large language model frustrations and share prompt fails." />
         <style dangerouslySetInnerHTML={{ __html: THEME_CSS }} />
         <script src="https://cdn.tailwindcss.com"></script>
-
+        {head}
         {/* Immediate Non-Blocking Theme Restoration Script (Prevents FOUC) */}
         <script
           dangerouslySetInnerHTML={{
@@ -131,16 +132,50 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 });
               }
 
-              // Toggle Confess Form
-              const confessBtn = document.getElementById('toggle-form-btn');
-              const formSection = document.getElementById('confess-form-section');
-              if (confessBtn && formSection) {
-                confessBtn.addEventListener('click', () => {
-                  formSection.classList.toggle('hidden');
-                  const isHidden = formSection.classList.contains('hidden');
-                  confessBtn.textContent = isHidden ? 'Confess' : 'Close';
+              // Modal & Slide-Out Sheet Logic
+              const openBtn = document.getElementById('open-confess-btn');
+              const closeBtn = document.getElementById('close-modal-btn');
+              const backdrop = document.getElementById('confess-modal-backdrop');
+              const modalCard = document.getElementById('confess-modal-card');
+
+              function openModal() {
+                if (!backdrop || !modalCard) return;
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                requestAnimationFrame(() => {
+                  backdrop.classList.remove('opacity-0');
+                  backdrop.classList.add('opacity-100');
+                  modalCard.classList.remove('translate-y-full', 'sm:scale-95', 'sm:opacity-0');
+                  modalCard.classList.add('translate-y-0', 'sm:scale-100', 'sm:opacity-100');
                 });
               }
+
+              function closeModal() {
+                if (!backdrop || !modalCard) return;
+                backdrop.classList.remove('opacity-100');
+                backdrop.classList.add('opacity-0');
+                modalCard.classList.remove('translate-y-0', 'sm:scale-100', 'sm:opacity-100');
+                modalCard.classList.add('translate-y-full', 'sm:scale-95', 'sm:opacity-0');
+                document.body.style.overflow = '';
+                setTimeout(() => {
+                  backdrop.classList.add('hidden');
+                }, 300);
+              }
+
+              if (openBtn) openBtn.addEventListener('click', openModal);
+              if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+              if (backdrop) {
+                backdrop.addEventListener('click', (e) => {
+                  if (e.target === backdrop) closeModal();
+                });
+              }
+
+              document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && backdrop && !backdrop.classList.contains('hidden')) {
+                  closeModal();
+                }
+              });
 
               // Compact Searchable Model Combobox
               const modelInput = document.getElementById('model-search-input');
@@ -257,6 +292,26 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                     } catch (err) {
                       console.error('Solidarity network error', err);
                     }
+                  }
+                });
+              });
+
+              // Copy Permalink Handler
+              document.querySelectorAll('.copy-permalink-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                  const relativePath = btn.getAttribute('data-permalink');
+                  if (!relativePath) return;
+                  const fullUrl = window.location.origin + relativePath;
+                  try {
+                    await navigator.clipboard.writeText(fullUrl);
+                    const label = btn.querySelector('.copy-label');
+                    if (label) {
+                      const orig = label.textContent;
+                      label.textContent = 'Copied!';
+                      setTimeout(() => { label.textContent = orig; }, 2000);
+                    }
+                  } catch (err) {
+                    console.error('Failed to copy permalink', err);
                   }
                 });
               });

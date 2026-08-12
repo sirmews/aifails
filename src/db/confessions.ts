@@ -1,12 +1,14 @@
 import type { Confession, NewConfession, ConfessionSuggestion, NewSuggestion } from '../core/types';
 
-export async function getConfessions(db: D1Database): Promise<Confession[]> {
+export async function getConfessions(db: D1Database, limit = 50): Promise<Confession[]> {
   const { results } = await db
     .prepare(
       `SELECT id, prompt_used, what_it_did_instead, how_it_made_them_feel, mood, solidarity_count, model_provider, model_name, created_at 
        FROM confessions 
-       ORDER BY created_at DESC`
+       ORDER BY created_at DESC 
+       LIMIT ?`
     )
+    .bind(limit)
     .all<Confession>();
 
   return results ?? [];
