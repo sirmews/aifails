@@ -25,8 +25,14 @@ function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
   if (c.executionCtx) {
     try {
       const cache = caches.default;
-      const homeCacheKey = new Request(new URL('/', c.req.url).href);
-      c.executionCtx.waitUntil(cache.delete(homeCacheKey).catch(() => {}));
+      const origin = new URL(c.req.url).origin;
+      c.executionCtx.waitUntil(
+        Promise.all([
+          cache.delete(new Request(origin + '/')),
+          cache.delete(new Request(origin + '/feed.xml')),
+          cache.delete(new Request(origin + '/sitemap.xml')),
+        ]).catch(() => {})
+      );
     } catch {
       // Ignore cache purging errors
     }
