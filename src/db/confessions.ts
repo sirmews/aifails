@@ -1,17 +1,76 @@
 import type { Confession, NewConfession, ConfessionSuggestion, NewSuggestion } from '../core/types';
 
-export async function getConfessions(db: D1Database, limit = 50): Promise<Confession[]> {
-  const { results } = await db
-    .prepare(
-      `SELECT id, prompt_used, what_it_did_instead, how_it_made_them_feel, mood, solidarity_count, model_provider, model_name, created_at 
-       FROM confessions 
-       ORDER BY created_at DESC 
-       LIMIT ?`
-    )
-    .bind(limit)
-    .all<Confession>();
+export type ConfessionFilterOptions = {
+  query?: string;
+  mood?: string;
+  model?: string;
+  cursor?: string;
+  limit?: number;
+};
 
-  return results ?? [];
+export type ConfessionQueryResult = {
+  confessions: Confession[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export async function getConfessions(
+  db: D1Database,
+  options: ConfessionFilterOptions = {}
+): Promise<ConfessionQueryResult> {
+  const limit = Math.min(options.limit ?? 20, 50);
+  const fetchLimit = limit + 1;
+
+  const conditions: string[] = [];
+  const params: unknown[] = [];
+
+  if (options.query && options.query.trim()) {
+    const searchTerm = `%${options.query.trim()}%`;
+    conditions.push(
+      `(prompt_used LIKE ? OR what_it_did_instead LIKE ? OR how_it_made_them_feel LIKE ?)`
+    );
+    params.push(searchTerm, searchTerm, searchTerm);
+  }
+
+  if (options.mood && options.mood.trim() && options.mood !== 'all') {
+    conditions.push(`mood = ?`);
+    params.push(options.mood.trim().toLowerCase());
+  }
+
+  if (options.model && options.model.trim() && options.model !== 'all') {
+    const modelStr = options.model.trim();
+    conditions.push(`(model_name LIKE ? OR model_provider LIKE ?)`);
+    params.push(`%${modelStr}%`, `%${modelStr}%`);
+  }
+
+  if (options.cursor) {
+    conditions.push(`created_at < ?`);
+    params.push(options.cursor);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const sql = `
+    SELECT id, prompt_used, what_it_did_instead, how_it_made_them_feel, mood, solidarity_count, model_provider, model_name, created_at 
+    FROM confessions 
+    ${whereClause} 
+    ORDER BY created_at DESC 
+    LIMIT ?
+  `;
+  params.push(fetchLimit);
+
+  const { results } = await db.prepare(sql).bind(...params).all<Confession>();
+  const items = results ?? [];
+
+  const hasMore = items.length > limit;
+  const confessions = hasMore ? items.slice(0, limit) : items;
+  const nextCursor = confessions.length > 0 ? confessions[confessions.length - 1].created_at : null;
+
+  return {
+    confessions,
+    nextCursor: hasMore ? nextCursor : null,
+    hasMore,
+  };
 }
 
 export async function getConfessionById(db: D1Database, id: string): Promise<Confession | null> {

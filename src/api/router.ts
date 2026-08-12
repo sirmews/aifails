@@ -44,8 +44,18 @@ function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
 app.get('/', async (c) => {
   const url = new URL(c.req.url);
   const notice = url.searchParams.get('notice') ?? undefined;
+  const query = url.searchParams.get('q') ?? undefined;
+  const mood = url.searchParams.get('mood') ?? undefined;
+  const model = url.searchParams.get('model') ?? undefined;
+  const cursor = url.searchParams.get('cursor') ?? undefined;
 
-  const confessions = await getConfessions(c.env.DB, 50);
+  const { confessions, nextCursor, hasMore } = await getConfessions(c.env.DB, {
+    query,
+    mood,
+    model,
+    cursor,
+    limit: 20,
+  });
   const models = await getModels(c.env.CACHE_KV);
 
   c.header('Cache-Control', EDGE_CACHE_HEADER);
@@ -56,6 +66,11 @@ app.get('/', async (c) => {
       models,
       turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
       notice,
+      query,
+      mood,
+      model,
+      nextCursor,
+      hasMore,
     })
   );
 });
@@ -244,7 +259,7 @@ app.post('/confessions/:id/suggestions', async (c) => {
 
 // 6. RSS 2.0 XML Feed Endpoint
 app.get('/feed.xml', async (c) => {
-  const confessions = await getConfessions(c.env.DB, 50);
+  const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
   const baseUrl = new URL(c.req.url).origin;
   const rssXml = generateRssFeed(confessions, baseUrl);
 
@@ -257,7 +272,7 @@ app.get('/rss.xml', (c) => c.redirect('/feed.xml'));
 
 // 7. Dynamic XML Sitemap Endpoint
 app.get('/sitemap.xml', async (c) => {
-  const confessions = await getConfessions(c.env.DB, 100);
+  const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
   const baseUrl = new URL(c.req.url).origin;
   const sitemapXml = generateSitemapXml(confessions, baseUrl);
 
@@ -300,9 +315,15 @@ app.get('/api/models', async (c) => {
 
 // 11. Confessions JSON API Endpoint
 app.get('/api/confessions', async (c) => {
-  const confessions = await getConfessions(c.env.DB, 50);
+  const url = new URL(c.req.url);
+  const query = url.searchParams.get('q') ?? undefined;
+  const mood = url.searchParams.get('mood') ?? undefined;
+  const model = url.searchParams.get('model') ?? undefined;
+  const cursor = url.searchParams.get('cursor') ?? undefined;
+
+  const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit: 50 });
   c.header('Cache-Control', EDGE_CACHE_HEADER);
-  return c.json({ confessions });
+  return c.json(result);
 });
 
 // 12. Branded 404 & 500 Error Handlers
