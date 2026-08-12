@@ -1,9 +1,17 @@
 import { Hono, type Context } from 'hono';
 import type { Env } from '../types/env';
-import { getConfessions, getConfessionById, getSuggestionsForConfession, createConfession, incrementSolidarity, createSuggestion } from '../db';
+import {
+  getConfessions,
+  getConfessionById,
+  createConfession,
+  incrementSolidarity,
+  createSuggestion,
+  getSuggestionsForConfession,
+} from '../db';
 import { getModels } from '../services/models';
 import { verifyTurnstileToken } from '../auth/turnstile';
 import { redactSecrets } from '../utils/gitleaks';
+import { generateRssFeed, generateSitemapXml, generateOgImageSvg } from '../services/seo';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
@@ -41,30 +49,6 @@ app.get('/', async (c) => {
       models,
       turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
       notice,
-    })
-  );
-});
-
-// 1.1 Permalink SSR Route
-app.get('/confessions/:id', async (c) => {
-  const id = c.req.param('id');
-  const confession = await getConfessionById(c.env.DB, id);
-
-  if (!confession) {
-    return c.html(NotFoundView(), 404);
-  }
-
-  const suggestions = await getSuggestionsForConfession(c.env.DB, id);
-  const models = await getModels(c.env.CACHE_KV);
-
-  c.header('Cache-Control', 'public, max-age=30, s-maxage=300, stale-while-revalidate=86400');
-
-  return c.html(
-    PermalinkView({
-      confession,
-      suggestions,
-      models,
-      turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
     })
   );
 });
@@ -128,7 +112,32 @@ app.post('/confessions', async (c) => {
   return c.redirect('/?notice=Confession+submitted+successfully');
 });
 
-// 3. Increment Solidarity Count
+// 3. Single Confession Permalink SSR Route
+app.get('/confessions/:id', async (c) => {
+  const id = c.req.param('id');
+  const confession = await getConfessionById(c.env.DB, id);
+
+  if (!confession) {
+    c.status(404);
+    return c.html(NotFoundView());
+  }
+
+  const suggestions = await getSuggestionsForConfession(c.env.DB, id);
+  const models = await getModels(c.env.CACHE_KV);
+
+  c.header('Cache-Control', EDGE_CACHE_HEADER);
+
+  return c.html(
+    PermalinkView({
+      confession,
+      suggestions,
+      models,
+      turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
+    })
+  );
+});
+
+// 4. Increment Solidarity Count
 app.post('/confessions/:id/solidarity', async (c) => {
   const id = c.req.param('id');
   const count = await incrementSolidarity(c.env.DB, id);
@@ -143,7 +152,7 @@ app.post('/confessions/:id/solidarity', async (c) => {
   return c.redirect('/');
 });
 
-// 4. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
+// 5. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
 app.post('/confessions/:id/suggestions', async (c) => {
   const confession_id = c.req.param('id');
   const bodyData = await c.req.parseBody();
@@ -167,17 +176,66 @@ app.post('/confessions/:id/suggestions', async (c) => {
 
   purgeHomeEdgeCache(c);
 
-  return c.redirect('/?notice=Correction+submitted+successfully');
+  return c.redirect(`/confessions/${confession_id}`);
 });
 
-// 5. Models JSON API Endpoint
+// 6. RSS 2.0 XML Feed Endpoint
+app.get('/feed.xml', async (c) => {
+  const confessions = await getConfessions(c.env.DB, 50);
+  const baseUrl = new URL(c.req.url).origin;
+  const rssXml = generateRssFeed(confessions, baseUrl);
+
+  c.header('Content-Type', 'application/xml; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.body(rssXml);
+});
+
+app.get('/rss.xml', (c) => c.redirect('/feed.xml'));
+
+// 7. Dynamic XML Sitemap Endpoint
+app.get('/sitemap.xml', async (c) => {
+  const confessions = await getConfessions(c.env.DB, 100);
+  const baseUrl = new URL(c.req.url).origin;
+  const sitemapXml = generateSitemapXml(confessions, baseUrl);
+
+  c.header('Content-Type', 'application/xml; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.body(sitemapXml);
+});
+
+// 8. Robots.txt Crawler Directives
+app.get('/robots.txt', (c) => {
+  const baseUrl = new URL(c.req.url).origin;
+  const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+
+  c.header('Content-Type', 'text/plain; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=86400');
+  return c.text(robotsTxt);
+});
+
+// 9. Dynamic SVG Social Card Banner Endpoint
+app.get('/confessions/:id/og.svg', async (c) => {
+  const id = c.req.param('id');
+  const confession = await getConfessionById(c.env.DB, id);
+
+  if (!confession) {
+    return c.text('Not Found', 404);
+  }
+
+  const svg = generateOgImageSvg(confession);
+  c.header('Content-Type', 'image/svg+xml');
+  c.header('Cache-Control', 'public, max-age=86400, s-maxage=604800');
+  return c.body(svg);
+});
+
+// 10. Models JSON API Endpoint
 app.get('/api/models', async (c) => {
   const models = await getModels(c.env.CACHE_KV);
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   return c.json({ models });
 });
 
-// 6. Confessions JSON API Endpoint
+// 11. Confessions JSON API Endpoint
 app.get('/api/confessions', async (c) => {
   const confessions = await getConfessions(c.env.DB, 50);
   c.header('Cache-Control', EDGE_CACHE_HEADER);

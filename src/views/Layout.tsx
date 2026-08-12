@@ -93,9 +93,15 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
         <meta name="description" content="A safe space to vent about large language model frustrations and share prompt fails." />
+        
+        {/* SEO RSS & Sitemap Auto-Discovery Links */}
+        <link rel="alternate" type="application/rss+xml" title="Prompt Confessional RSS Feed" href="/feed.xml" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+        {head}
         <style dangerouslySetInnerHTML={{ __html: THEME_CSS }} />
         <script src="https://cdn.tailwindcss.com"></script>
-        {head}
+
         {/* Immediate Non-Blocking Theme Restoration Script (Prevents FOUC) */}
         <script
           dangerouslySetInnerHTML={{
