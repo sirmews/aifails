@@ -1,7 +1,14 @@
 import type { Confession } from '../core/types';
 
+// XML 1.0 forbids control characters below U+0020 except TAB (U+0009),
+// LF (U+000A), and CR (U+000D). Stripping them here prevents feed readers
+// and XML parsers from rejecting otherwise well-formed output.
+const INVALID_XML_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F]/g;
+
 function escapeXml(unsafe: string): string {
+  // Ampersands MUST be escaped first, otherwise we create double escapes.
   return unsafe
+    .replace(INVALID_XML_CHARS, '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -10,18 +17,24 @@ function escapeXml(unsafe: string): string {
 }
 
 export function generateRssFeed(confessions: Confession[], baseUrl: string): string {
+  const channelLink = escapeXml(baseUrl);
+  const selfLink = escapeXml(`${baseUrl}/feed.xml`);
+  const buildDate = new Date().toUTCString();
+
   const itemsXml = confessions
     .map((c) => {
-      const title = escapeXml(`Asked: "${c.prompt_used.slice(0, 60)}${c.prompt_used.length > 60 ? '...' : ''}"`);
-      const link = `${baseUrl}/confessions/${c.id}`;
+      const title = escapeXml(
+        `Asked: "${c.prompt_used.slice(0, 60)}${c.prompt_used.length > 60 ? '...' : ''}"`
+      );
+      const itemLink = escapeXml(`${baseUrl}/confessions/${c.id}`);
       const pubDate = new Date(c.created_at).toUTCString();
       const moodLabel = c.mood ? c.mood.toUpperCase() : 'CONFESSION';
 
       return `
     <item>
-      <title>[${moodLabel}] ${title}</title>
-      <link>${link}</link>
-      <guid isPermaLink="true">${link}</guid>
+      <title>[${escapeXml(moodLabel)}] ${title}</title>
+      <link>${itemLink}</link>
+      <guid isPermaLink="true">${itemLink}</guid>
       <pubDate>${pubDate}</pubDate>
       <description><![CDATA[
         <p><strong>What I asked for:</strong> ${escapeXml(c.prompt_used)}</p>
@@ -36,11 +49,11 @@ export function generateRssFeed(confessions: Confession[], baseUrl: string): str
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Prompt Confessional</title>
-    <link>${baseUrl}</link>
+    <link>${channelLink}</link>
     <description>A safe space to vent about large language model frustrations and share prompt fails.</description>
     <language>en-us</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${baseUrl}/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>${buildDate}</lastBuildDate>
+    <atom:link href="${selfLink}" rel="self" type="application/rss+xml" />
     ${itemsXml}
   </channel>
 </rss>`;
@@ -52,7 +65,7 @@ export function generateSitemapXml(confessions: Confession[], baseUrl: string): 
       const lastMod = new Date(c.created_at).toISOString();
       return `
   <url>
-    <loc>${baseUrl}/confessions/${c.id}</loc>
+    <loc>${escapeXml(`${baseUrl}/confessions/${c.id}`)}</loc>
     <lastmod>${lastMod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -63,7 +76,7 @@ export function generateSitemapXml(confessions: Confession[], baseUrl: string): 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${baseUrl}/</loc>
+    <loc>${escapeXml(`${baseUrl}/`)}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>${urlsXml}
@@ -80,7 +93,9 @@ export function generateOgImageSvg(confession: Confession): string {
   const feelingTruncated = escapeXml(
     confession.how_it_made_them_feel.length > 80 ? confession.how_it_made_them_feel.slice(0, 80) + '...' : confession.how_it_made_them_feel
   );
-  const modelName = confession.model_name ? escapeXml(`${confession.model_provider ? confession.model_provider + ' / ' : ''}${confession.model_name}`) : 'AI Model Fail';
+  const modelName = confession.model_name
+    ? escapeXml(`${confession.model_provider ? confession.model_provider + ' / ' : ''}${confession.model_name}`)
+    : 'AI Model Fail';
 
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <defs>

@@ -185,7 +185,7 @@ app.get('/feed.xml', async (c) => {
   const baseUrl = new URL(c.req.url).origin;
   const rssXml = generateRssFeed(confessions, baseUrl);
 
-  c.header('Content-Type', 'application/xml; charset=utf-8');
+  c.header('Content-Type', 'application/rss+xml; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   return c.body(rssXml);
 });
