@@ -7,15 +7,16 @@ import {
   incrementSolidarity,
   createSuggestion,
   getSuggestionsForConfession,
+  createReport,
 } from '../db';
 import { getModels } from '../services/models';
 import { verifyTurnstileToken } from '../auth/turnstile';
+import { getOrCreateSessionId } from '../auth/session';
 import { redactSecrets } from '../utils/gitleaks';
 import { generateRssFeed, generateSitemapXml, generateOgImageSvg } from '../services/seo';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
-
 export const app = new Hono<{ Bindings: Env }>();
 
 // Cache-Control header helper for heavy edge caching
@@ -59,8 +60,23 @@ app.get('/', async (c) => {
   );
 });
 
-// 2. Submit Confession Route (with Gitleaks secret redaction & edge cache purging)
+// 2. Submit Confession Route (with Rate Limiting, Session handling, Gitleaks secret redaction & edge cache purging)
 app.post('/confessions', async (c) => {
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
+
+  // Edge Rate Limiter check (5 posts / minute per IP+session)
+  if (c.env.CONFESSION_LIMITER) {
+    const rateLimitKey = `${clientIp}:${session.sessionId}`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.text('Rate limit exceeded. Please wait a minute before submitting another confession.', 429);
+    }
+  }
+
   const body = await c.req.parseBody();
 
   const rawPrompt = (body['prompt_used'] as string)?.trim() ?? '';
@@ -71,7 +87,6 @@ app.post('/confessions', async (c) => {
   const turnstileToken = (body['cf-turnstile-response'] as string)?.trim();
 
   // Verify Cloudflare Turnstile token
-  const clientIp = c.req.header('cf-connecting-ip');
   const turnstileResult = await verifyTurnstileToken(
     turnstileToken,
     c.env.TURNSTILE_SECRET_KEY,
@@ -143,19 +158,61 @@ app.get('/confessions/:id', async (c) => {
   );
 });
 
-// 4. Increment Solidarity Count
+// 4. Increment Solidarity Count (Rate limited + 1 vote per session)
 app.post('/confessions/:id/solidarity', async (c) => {
   const id = c.req.param('id');
-  const count = await incrementSolidarity(c.env.DB, id);
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
+
+  // 1. Edge Rate Limiter check (30 clicks / minute per IP+session)
+  if (c.env.SOLIDARITY_LIMITER) {
+    const rateLimitKey = `${clientIp}:${session.sessionId}`;
+    const { success } = await c.env.SOLIDARITY_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.text('Rate limit exceeded. Please slow down.', 429);
+    }
+  }
+
+  // 2. D1 Atomic 1-vote-per-session check
+  const result = await incrementSolidarity(c.env.DB, id, session.sessionId);
 
   purgeHomeEdgeCache(c);
 
   const isJson = c.req.header('accept')?.includes('application/json');
   if (isJson) {
-    return c.json({ success: true, count });
+    return c.json({
+      success: true,
+      count: result.count,
+      added: result.added,
+      alreadyVoted: result.alreadyVoted ?? false,
+    });
   }
 
-  return c.redirect('/');
+  return c.redirect(`/confessions/${id}`);
+});
+
+// 5. Report Confession Route
+app.post('/confessions/:id/report', async (c) => {
+  const id = c.req.param('id');
+  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
+
+  const body = await c.req.parseBody();
+  const reason = (body['reason'] as string)?.trim() || 'Inappropriate content';
+
+  await createReport(c.env.DB, { confessionId: id, reason, sessionId: session.sessionId });
+
+  const isJson = c.req.header('accept')?.includes('application/json');
+  if (isJson) {
+    return c.json({ success: true, message: 'Report submitted successfully' });
+  }
+
+  return c.redirect('/?notice=Report+submitted+for+review');
 });
 
 // 5. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
@@ -246,4 +303,16 @@ app.get('/api/confessions', async (c) => {
   const confessions = await getConfessions(c.env.DB, 50);
   c.header('Cache-Control', EDGE_CACHE_HEADER);
   return c.json({ confessions });
+});
+
+// 12. Branded 404 & 500 Error Handlers
+app.notFound((c) => {
+  c.status(404);
+  return c.html(NotFoundView());
+});
+
+app.onError((err, c) => {
+  console.error('Unhandled server error:', err);
+  c.status(500);
+  return c.text('500 Internal Server Error', 500);
 });

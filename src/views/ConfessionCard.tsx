@@ -121,8 +121,21 @@ export function ConfessionCard({ confession, suggestions = [] }: ConfessionCardP
           </svg>
           <span class="copy-label">Copy link</span>
         </button>
-      </div>
 
+        <form action={`/confessions/${confession.id}/report`} method="post" class="inline ml-auto">
+          <button
+            type="submit"
+            title="Report this post"
+            class="flex items-center gap-1.5 rounded-lg bg-[var(--bg-subtle)] px-2.5 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-red-500 transition-all cursor-pointer"
+            onclick="return confirm('Report this post for moderation review?');"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+            </svg>
+            Report
+          </button>
+        </form>
+      </div>
       <SuggestionForm confessionId={confession.id} />
     </article>
   );

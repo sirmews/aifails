@@ -61,7 +61,31 @@ export async function createConfession(db: D1Database, input: NewConfession): Pr
   };
 }
 
-export async function incrementSolidarity(db: D1Database, id: string): Promise<number> {
+export async function incrementSolidarity(
+  db: D1Database,
+  id: string,
+  sessionId?: string
+): Promise<{ count: number; added: boolean; alreadyVoted?: boolean }> {
+  if (sessionId) {
+    // 1. Try atomic insert to enforce 1 vote per session
+    const insertResult = await db
+      .prepare(
+        `INSERT OR IGNORE INTO confession_solidarity (confession_id, session_id, created_at) VALUES (?, ?, ?)`
+      )
+      .bind(id, sessionId, new Date().toISOString())
+      .run();
+
+    // If no rows were inserted, user already voted for this confession
+    if (!insertResult.meta.changes) {
+      const current = await db
+        .prepare(`SELECT solidarity_count FROM confessions WHERE id = ?`)
+        .bind(id)
+        .first<{ solidarity_count: number }>();
+      return { count: current?.solidarity_count ?? 0, added: false, alreadyVoted: true };
+    }
+  }
+
+  // 2. Increment solidarity count
   await db
     .prepare(`UPDATE confessions SET solidarity_count = solidarity_count + 1 WHERE id = ?`)
     .bind(id)
@@ -72,7 +96,23 @@ export async function incrementSolidarity(db: D1Database, id: string): Promise<n
     .bind(id)
     .first<{ solidarity_count: number }>();
 
-  return updated?.solidarity_count ?? 0;
+  return { count: updated?.solidarity_count ?? 0, added: true };
+}
+
+export async function createReport(
+  db: D1Database,
+  input: { confessionId: string; reason: string; sessionId: string }
+): Promise<{ id: string; success: boolean }> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO confession_reports (id, confession_id, reason, session_id, created_at)
+       VALUES (?, ?, ?, ?, ?)`
+    )
+    .bind(id, input.confessionId, input.reason, input.sessionId, new Date().toISOString())
+    .run();
+
+  return { id, success: true };
 }
 
 export async function createSuggestion(

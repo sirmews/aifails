@@ -50,7 +50,6 @@ export async function verifySessionToken(
   return isValid ? sessionId : null;
 }
 
-
 export function parseCookies(cookieHeader: string | null | undefined): Record<string, string> {
   if (!cookieHeader) return {};
   return Object.fromEntries(
@@ -59,4 +58,29 @@ export function parseCookies(cookieHeader: string | null | undefined): Record<st
       return [k, v.join('=')];
     })
   );
+}
+
+export async function getOrCreateSessionId(
+  cookieHeader: string | null | undefined,
+  secret: string = DEFAULT_SECRET
+): Promise<{ sessionId: string; isNew: boolean; setCookieHeader?: string }> {
+  const cookies = parseCookies(cookieHeader);
+  const existingToken = cookies[SESSION_COOKIE_NAME];
+
+  if (existingToken) {
+    const validSessionId = await verifySessionToken(existingToken, secret);
+    if (validSessionId) {
+      return { sessionId: validSessionId, isNew: false };
+    }
+  }
+
+  const newSessionId = crypto.randomUUID();
+  const newToken = await createSessionToken(newSessionId, secret);
+  const setCookieHeader = `${SESSION_COOKIE_NAME}=${newToken}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax`;
+
+  return {
+    sessionId: newSessionId,
+    isNew: true,
+    setCookieHeader,
+  };
 }
