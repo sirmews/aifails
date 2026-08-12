@@ -1,3 +1,74 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root, [data-theme="day"] {
+  --bg-primary: #fafaf9;
+  --bg-card: #ffffff;
+  --bg-subtle: #f5f5f4;
+  --border-color: #e7e5e4;
+  --border-subtle: #d6d3d1;
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-muted: #a8a29e;
+  --accent-primary: #1c1917;
+  --accent-hover: #44403c;
+  --accent-text: #ffffff;
+  --badge-bg: #f5f5f4;
+  --badge-text: #57534e;
+  --quote-bg: #f5f5f4;
+  --quote-border: #d6d3d1;
+  --quote-text: #44403c;
+  --amber-bg: #fffbeb;
+  --amber-border: #fde68a;
+  --amber-text: #78350f;
+  --amber-accent: #d97706;
+}
+
+[data-theme="night"] {
+  --bg-primary: #09090b;
+  --bg-card: #18181b;
+  --bg-subtle: #27272a;
+  --border-color: #3f3f46;
+  --border-subtle: #52525b;
+  --text-primary: #ffffff;
+  --text-secondary: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --accent-primary: #ffffff;
+  --accent-hover: #e4e4e7;
+  --accent-text: #09090b;
+  --badge-bg: #27272a;
+  --badge-text: #f4f4f5;
+  --quote-bg: #18181b;
+  --quote-border: #ffffff;
+  --quote-text: #f4f4f5;
+  --amber-bg: #2e1000;
+  --amber-border: #92400e;
+  --amber-text: #fffbeb;
+  --amber-accent: #fbbf24;
+}
+
+[data-theme="twilight"] {
+  --bg-primary: #181124;
+  --bg-card: #241836;
+  --bg-subtle: #32234b;
+  --border-color: #3e2b5b;
+  --border-subtle: #543973;
+  --text-primary: #fdf4ff;
+  --text-secondary: #e8d5f5;
+  --text-muted: #ad99c4;
+  --accent-primary: #f43f5e;
+  --accent-hover: #e11d48;
+  --accent-text: #ffffff;
+  --badge-bg: #32234b;
+  --badge-text: #e8d5f5;
+  --quote-bg: #241836;
+  --quote-border: #f43f5e;
+  --quote-text: #e8d5f5;
+  --amber-bg: #3b1c32;
+  --amber-border: #6b2d56;
+  --amber-text: #fce7f3;
+  --amber-accent: #ec4899;
+}
+
+/* Base Body Application */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
