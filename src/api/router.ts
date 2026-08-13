@@ -13,6 +13,7 @@ import { getModels } from '../services/models';
 import { verifyTurnstileToken } from '../auth/turnstile';
 import { getOrCreateSessionId } from '../auth/session';
 import { redactSecrets } from '../utils/gitleaks';
+import { sanitizeContent } from '../utils/moderation';
 import { generateRssFeed, generateSitemapXml, generateOgImageSvg } from '../services/seo';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
@@ -116,11 +117,10 @@ app.post('/confessions', async (c) => {
     return c.text('All confession fields are required.', 400);
   }
 
-  // Redact secrets/API keys/emails using Gitleaks rules before DB insert
-  const prompt_used = redactSecrets(rawPrompt).cleanText;
-  const what_it_did_instead = redactSecrets(rawWhatHappened).cleanText;
-  const how_it_made_them_feel = redactSecrets(rawFeeling).cleanText;
-
+  // Redact secrets/API keys/emails using Gitleaks rules & sanitize hate speech/slurs before DB insert
+  const prompt_used = sanitizeContent(redactSecrets(rawPrompt).cleanText).cleanText;
+  const what_it_did_instead = sanitizeContent(redactSecrets(rawWhatHappened).cleanText).cleanText;
+  const how_it_made_them_feel = sanitizeContent(redactSecrets(rawFeeling).cleanText).cleanText;
   let model_provider: string | null = null;
   let model_name: string | null = null;
 
@@ -243,7 +243,7 @@ app.post('/confessions/:id/suggestions', async (c) => {
     return c.text('Suggestion body is required.', 400);
   }
 
-  const bodyText = redactSecrets(rawBodyText).cleanText;
+  const bodyText = sanitizeContent(redactSecrets(rawBodyText).cleanText).cleanText;
 
   await createSuggestion(c.env.DB, {
     confession_id,
