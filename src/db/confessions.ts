@@ -21,9 +21,8 @@ export async function getConfessions(
   const limit = Math.min(options.limit ?? 20, 50);
   const fetchLimit = limit + 1;
 
-  const conditions: string[] = [];
+  const conditions: string[] = ['is_hidden = 0'];
   const params: unknown[] = [];
-
   if (options.query && options.query.trim()) {
     const searchTerm = `%${options.query.trim()}%`;
     conditions.push(
@@ -78,14 +77,13 @@ export async function getConfessionById(db: D1Database, id: string): Promise<Con
     .prepare(
       `SELECT id, prompt_used, what_it_did_instead, how_it_made_them_feel, mood, solidarity_count, model_provider, model_name, created_at 
        FROM confessions 
-       WHERE id = ?`
+       WHERE id = ? AND is_hidden = 0`
     )
     .bind(id)
     .first<Confession>();
 
   return result ?? null;
 }
-
 export async function createConfession(db: D1Database, input: NewConfession): Promise<Confession> {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
@@ -219,6 +217,61 @@ export async function getSuggestionsForConfession(
     )
     .bind(confessionId)
     .all<ConfessionSuggestion>();
+
+  return results ?? [];
+}
+
+export async function hideConfession(db: D1Database, id: string): Promise<boolean> {
+  const res = await db.prepare(`UPDATE confessions SET is_hidden = 1 WHERE id = ?`).bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function unhideConfession(db: D1Database, id: string): Promise<boolean> {
+  const res = await db.prepare(`UPDATE confessions SET is_hidden = 0 WHERE id = ?`).bind(id).run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function dismissReports(db: D1Database, confessionId: string): Promise<boolean> {
+  const res = await db
+    .prepare(`UPDATE confession_reports SET status = 'dismissed' WHERE confession_id = ?`)
+    .bind(confessionId)
+    .run();
+  return (res.meta.changes ?? 0) > 0;
+}
+
+export async function getPendingReports(db: D1Database): Promise<
+  Array<{
+    confession_id: string;
+    prompt_used: string;
+    what_it_did_instead: string;
+    report_count: number;
+    reasons: string;
+    latest_report_at: string;
+  }>
+> {
+  const { results } = await db
+    .prepare(
+      `SELECT 
+         c.id AS confession_id,
+         c.prompt_used,
+         c.what_it_did_instead,
+         COUNT(r.id) AS report_count,
+         GROUP_CONCAT(r.reason, ' | ') AS reasons,
+         MAX(r.created_at) AS latest_report_at
+       FROM confession_reports r
+       JOIN confessions c ON c.id = r.confession_id
+       WHERE r.status = 'pending' AND c.is_hidden = 0
+       GROUP BY c.id
+       ORDER BY latest_report_at DESC`
+    )
+    .all<{
+      confession_id: string;
+      prompt_used: string;
+      what_it_did_instead: string;
+      report_count: number;
+      reasons: string;
+      latest_report_at: string;
+    }>();
 
   return results ?? [];
 }

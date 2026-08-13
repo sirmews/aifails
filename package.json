@@ -8,7 +8,9 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "db:migrate": "wrangler d1 migrations apply DB --local",
-    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "moderate": "bun scripts/moderate.ts",
+    "moderate:remote": "bun scripts/moderate.ts list --remote"
   },
   "dependencies": {
     "hono": "^4.13.1"
