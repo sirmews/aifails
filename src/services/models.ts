@@ -57,6 +57,14 @@ export async function getModels(kv?: KVNamespace): Promise<ModelOption[]> {
   } catch (err) {
     clearTimeout(timeoutId);
     console.error('Failed to fetch models from OpenRouter:', err);
-    return [];
+    return FALLBACK_MODELS;
   }
 }
+
+const FALLBACK_MODELS: ModelOption[] = [
+  { id: 'anthropic/claude-3.5-sonnet', name: 'Anthropic: Claude 3.5 Sonnet', provider: 'anthropic' },
+  { id: 'openai/gpt-4o', name: 'OpenAI: GPT-4o', provider: 'openai' },
+  { id: 'deepseek/deepseek-r1', name: 'DeepSeek: R1', provider: 'deepseek' },
+  { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Meta: Llama 3.3 70B Instruct', provider: 'meta-llama' },
+  { id: 'google/gemini-pro-1.5', name: 'Google: Gemini Pro 1.5', provider: 'google' },
+];
