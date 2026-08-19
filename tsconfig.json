@@ -7,10 +7,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "types": ["@cloudflare/workers-types"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "strict": true,
     "skipLibCheck": true
   },
