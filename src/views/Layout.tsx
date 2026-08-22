@@ -40,6 +40,12 @@ const THEME_CSS = `
 
 body {
   background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(245, 158, 11, 0.03), transparent 70%);
+  background-size: 20px 20px, 100% 100%;
+  background-position: 0 0, 0 0;
+  background-attachment: fixed;
   color: var(--text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
