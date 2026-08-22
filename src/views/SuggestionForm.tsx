@@ -23,7 +23,7 @@ export function SuggestionForm({ confessionId }: SuggestionFormProps) {
           />
         </svg>
         <h2 class="text-sm font-bold tracking-tight text-[var(--text-primary)]">
-          Ackchyually... (Suggest a better prompt or model)
+          Ackchyually... (Because you know better)
         </h2>
       </div>
 
