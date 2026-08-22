@@ -62,7 +62,7 @@ export function PermalinkView({
           </a>
         </div>
 
-        <ConfessionCard confession={confession} suggestions={suggestions} />
+        <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
       </main>
 
       <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">

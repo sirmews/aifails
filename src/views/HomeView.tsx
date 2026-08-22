@@ -39,7 +39,7 @@ export function HomeView({
 
       {notice && (
         <div class="mx-auto max-w-3xl px-4 pb-4">
-          <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          <div class="rounded-lg border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
             {notice}
           </div>
         </div>
@@ -63,14 +63,14 @@ export function HomeView({
                 name="q"
                 value={query}
                 placeholder="Search prompts, responses, or feelings..."
-                class="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-amber-500"
+                class="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)]"
               />
             </div>
 
             {/* Mood Dropdown Filter */}
             <select
               name="mood"
-              class="rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+              class="rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)] cursor-pointer"
             >
               <option value="all" selected={!mood || mood === 'all'}>All Moods</option>
               <option value="furious" selected={mood === 'furious'}>🤬 Furious</option>
@@ -83,7 +83,7 @@ export function HomeView({
             {/* Submit & Reset */}
             <button
               type="submit"
-              class="rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-amber-600 active:scale-95 cursor-pointer"
+              class="rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-all hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
             >
               Filter
             </button>
@@ -103,8 +103,8 @@ export function HomeView({
         {(query || (mood && mood !== 'all')) && (
           <div class="flex items-center gap-2 text-xs text-[var(--text-muted)] pb-2">
             <span>Filtering by:</span>
-            {query && <span class="rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-2 py-0.5 font-medium">"{query}"</span>}
-            {mood && mood !== 'all' && <span class="rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-2 py-0.5 font-medium">Mood: {mood}</span>}
+            {query && <span class="rounded-md border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">"{query}"</span>}
+            {mood && mood !== 'all' && <span class="rounded-md border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">Mood: {mood}</span>}
           </div>
         )}
 
@@ -113,7 +113,7 @@ export function HomeView({
           <div class="rounded-2xl border border-dashed border-[var(--border-color)] p-12 text-center text-[var(--text-muted)]">
             <p class="text-base font-medium">No confessions found matching your search.</p>
             {(query || (mood && mood !== 'all')) && (
-              <a href="/" class="mt-2 inline-block text-sm font-semibold text-amber-600 hover:underline">
+              <a href="/" class="mt-2 inline-block text-sm font-semibold text-[var(--amber-accent)] hover:underline">
                 Clear filters to view all confessions
               </a>
             )}

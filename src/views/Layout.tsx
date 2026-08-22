@@ -9,73 +9,64 @@ type LayoutProps = {
 
 // Embedded CSS Variables for Instant Zero-FOUC Edge SSR
 const THEME_CSS = `
-:root, [data-theme="day"] {
-  --bg-primary: #fafaf9;
+:root {
+  --bg-primary: #f7f5f0;
   --bg-card: #ffffff;
-  --bg-subtle: #f5f5f4;
-  --border-color: #e7e5e4;
-  --border-subtle: #d6d3d1;
-  --text-primary: #1c1917;
-  --text-secondary: #57534e;
-  --text-muted: #a8a29e;
-  --accent-primary: #1c1917;
-  --accent-hover: #44403c;
-  --accent-text: #ffffff;
-  --badge-bg: #f5f5f4;
-  --badge-text: #57534e;
-  --quote-bg: #f5f5f4;
-  --quote-border: #d6d3d1;
-  --quote-text: #44403c;
-  --amber-bg: #fffbeb;
-  --amber-border: #fde68a;
-  --amber-text: #78350f;
-  --amber-accent: #d97706;
+  --bg-subtle: #eeeae1;
+  --border-color: #dfd9ce;
+  --border-subtle: #cfc7b9;
+  --text-primary: #221f1b;
+  --text-secondary: #48423a;
+  --text-muted: #686054;
+  --accent-primary: #2c2722;
+  --accent-hover: #443e37;
+  --accent-text: #faf8f5;
+  --badge-bg: #eae5dc;
+  --badge-text: #3a352c;
+  --quote-bg: #f3efe6;
+  --quote-border: #cdc4b4;
+  --quote-text: #352f28;
+  --amber-bg: #fef7ea;
+  --amber-border: #f8dfb6;
+  --amber-text: #7c4714;
+  --amber-accent: #b86b1f;
+  --danger-bg: #fdf3f2;
+  --danger-border: #e8a59b;
+  --danger-text: #962c20;
+  --success-bg: #f1f8f3;
+  --success-border: #bfe0c7;
+  --success-text: #20572f;
 }
 
-[data-theme="night"] {
-  --bg-primary: #09090b;
-  --bg-card: #18181b;
-  --bg-subtle: #27272a;
-  --border-color: #3f3f46;
-  --border-subtle: #52525b;
-  --text-primary: #ffffff;
-  --text-secondary: #e4e4e7;
-  --text-muted: #a1a1aa;
-  --accent-primary: #ffffff;
-  --accent-hover: #e4e4e7;
-  --accent-text: #09090b;
-  --badge-bg: #27272a;
-  --badge-text: #f4f4f5;
-  --quote-bg: #18181b;
-  --quote-border: #ffffff;
-  --quote-text: #f4f4f5;
-  --amber-bg: #2e1000;
-  --amber-border: #92400e;
-  --amber-text: #fffbeb;
-  --amber-accent: #fbbf24;
-}
-
-[data-theme="twilight"] {
-  --bg-primary: #181124;
-  --bg-card: #241836;
-  --bg-subtle: #32234b;
-  --border-color: #3e2b5b;
-  --border-subtle: #543973;
-  --text-primary: #fdf4ff;
-  --text-secondary: #e8d5f5;
-  --text-muted: #ad99c4;
-  --accent-primary: #f43f5e;
-  --accent-hover: #e11d48;
-  --accent-text: #ffffff;
-  --badge-bg: #32234b;
-  --badge-text: #e8d5f5;
-  --quote-bg: #241836;
-  --quote-border: #f43f5e;
-  --quote-text: #e8d5f5;
-  --amber-bg: #3b1c32;
-  --amber-border: #6b2d56;
-  --amber-text: #fce7f3;
-  --amber-accent: #ec4899;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #17181c;
+    --bg-card: #202227;
+    --bg-subtle: #292c33;
+    --border-color: #333742;
+    --border-subtle: #414754;
+    --text-primary: #f0eee9;
+    --text-secondary: #c5cad4;
+    --text-muted: #9ba1ad;
+    --accent-primary: #ded8ce;
+    --accent-hover: #f2ede4;
+    --accent-text: #17181c;
+    --badge-bg: #2b2e37;
+    --badge-text: #e0e3eb;
+    --quote-bg: #1c1e23;
+    --quote-border: #4a505e;
+    --quote-text: #e2dfd9;
+    --amber-bg: #291e13;
+    --amber-border: #593f20;
+    --amber-text: #fde4ba;
+    --amber-accent: #e09838;
+    --danger-bg: #2a1616;
+    --danger-border: #632e2c;
+    --danger-text: #fca7a2;
+    --success-bg: #15271b;
+    --success-border: #2c5437;
+    --success-text: #a7e5ba;
+  }
 }
 
 body {
@@ -102,17 +93,6 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
         <style dangerouslySetInnerHTML={{ __html: THEME_CSS }} />
         <script src="https://cdn.tailwindcss.com"></script>
 
-        {/* Immediate Non-Blocking Theme Restoration Script (Prevents FOUC) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            (function() {
-              const saved = localStorage.getItem('theme_mode') || 'day';
-              document.documentElement.setAttribute('data-theme', saved);
-            })();
-          `,
-          }}
-        />
 
         {turnstileSiteKey && (
           <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -126,18 +106,6 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
           dangerouslySetInnerHTML={{
             __html: `
             document.addEventListener('DOMContentLoaded', () => {
-              // Theme Switcher Sync
-              const themeSelect = document.getElementById('theme-select');
-              const currentTheme = localStorage.getItem('theme_mode') || 'day';
-              if (themeSelect) {
-                themeSelect.value = currentTheme;
-                themeSelect.addEventListener('change', (e) => {
-                  const val = e.target.value;
-                  document.documentElement.setAttribute('data-theme', val);
-                  localStorage.setItem('theme_mode', val);
-                });
-              }
-
               // Modal & Slide-Out Sheet Logic
               const openBtn = document.getElementById('open-confess-btn');
               const closeBtn = document.getElementById('close-modal-btn');
@@ -265,27 +233,41 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 });
               });
 
-              // Toggle Suggestion Forms
+              // Toggle Suggestion Forms & Active Button State
               document.querySelectorAll('.toggle-suggestion-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                   const id = btn.getAttribute('data-confession-id');
                   const form = document.getElementById('suggestion-form-' + id);
                   if (form) {
-                    form.classList.toggle('hidden');
+                    const isNowHidden = form.classList.toggle('hidden');
+                    const cardToggleBtn = document.querySelector('.toggle-suggestion-btn[data-confession-id="' + id + '"]');
+                    if (cardToggleBtn && cardToggleBtn !== btn) {
+                      if (!isNowHidden) {
+                        cardToggleBtn.classList.add('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
+                      } else {
+                        cardToggleBtn.classList.remove('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
+                      }
+                    } else if (btn) {
+                      if (!isNowHidden) {
+                        btn.classList.add('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
+                      } else {
+                        btn.classList.remove('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
+                      }
+                    }
                   }
                 });
               });
 
-              // Intercept Solidarity Clicks for Instant AJAX Update
+              // Intercept Solidarity Clicks for Instant AJAX Update & Active Button State
               document.querySelectorAll('.solidarity-form').forEach(form => {
                 form.addEventListener('submit', async (e) => {
                   e.preventDefault();
-                  const btn = form.querySelector('button');
+                  const btn = form.querySelector('.solidarity-btn');
                   const countSpan = form.querySelector('.solidarity-count');
                   if (btn && !btn.disabled) {
                     btn.disabled = true;
-                    btn.classList.remove('hover:bg-rose-50', 'hover:text-rose-600');
-                    btn.classList.add('bg-rose-50', 'text-rose-600', 'cursor-default');
+                    btn.classList.remove('hover:border-[var(--danger-border)]', 'hover:bg-[var(--danger-bg)]', 'hover:text-[var(--danger-text)]');
+                    btn.classList.add('border-[var(--danger-border)]', 'bg-[var(--danger-bg)]', 'text-[var(--danger-text)]', 'font-semibold', 'cursor-default');
                     
                     if (countSpan) {
                       const current = parseInt(countSpan.textContent || '0', 10);

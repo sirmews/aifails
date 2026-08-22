@@ -220,3 +220,27 @@ export async function getSuggestionsForConfession(
 
   return results ?? [];
 }
+
+export async function getSuggestionsMapForConfessions(
+  db: D1Database,
+  confessionIds: string[]
+): Promise<Record<string, ConfessionSuggestion[]>> {
+  if (!confessionIds.length) return {};
+  const placeholders = confessionIds.map(() => '?').join(',');
+  const { results } = await db
+    .prepare(
+      `SELECT id, confession_id, suggestion_type, body, author_name, created_at 
+       FROM confession_suggestions 
+       WHERE confession_id IN (${placeholders}) 
+       ORDER BY created_at ASC`
+    )
+    .bind(...confessionIds)
+    .all<ConfessionSuggestion>();
+
+  const map: Record<string, ConfessionSuggestion[]> = {};
+  for (const s of results ?? []) {
+    if (!map[s.confession_id]) map[s.confession_id] = [];
+    map[s.confession_id].push(s);
+  }
+  return map;
+}

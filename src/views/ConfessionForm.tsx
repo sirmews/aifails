@@ -155,7 +155,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
           {/* Cloudflare Turnstile Anti-Bot Verification */}
           {turnstileSiteKey && (
             <div class="my-3 flex justify-center">
-              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto"></div>
             </div>
           )}
 

@@ -1,21 +1,38 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "ugh-llms",
+  "account_id": "b1eff84e032ba5f31c971508e291ff16",
   "main": "src/index.ts",
   "compatibility_date": "2026-02-01",
   "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true
+    }
+  },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "ugh_llms_db",
-      "database_id": "local-ugh-llms-db",
+      "database_id": "44462d16-1cd1-421f-8cda-fd6314f8efc1",
       "migrations_dir": "./migrations"
     }
   ],
   "kv_namespaces": [
     {
       "binding": "CACHE_KV",
-      "id": "local-cache-kv"
+      "id": "a384593cfe12477e99ac05747c395e33"
     }
   ],
   "ratelimits": [

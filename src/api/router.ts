@@ -7,6 +7,7 @@ import {
   incrementSolidarity,
   createSuggestion,
   getSuggestionsForConfession,
+  getSuggestionsMapForConfessions,
   createReport,
 } from '../db';
 import { getModels } from '../services/models';
@@ -57,13 +58,20 @@ app.get('/', async (c) => {
     cursor,
     limit: 20,
   });
-  const models = await getModels(c.env.CACHE_KV);
+  const [models, suggestionsMap] = await Promise.all([
+    getModels(c.env.CACHE_KV),
+    getSuggestionsMapForConfessions(
+      c.env.DB,
+      confessions.map((conf) => conf.id)
+    ),
+  ]);
 
   c.header('Cache-Control', EDGE_CACHE_HEADER);
 
   return c.html(
     HomeView({
       confessions,
+      suggestionsMap,
       models,
       turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
       notice,
@@ -237,7 +245,6 @@ app.post('/confessions/:id/suggestions', async (c) => {
 
   const suggestion_type = (bodyData['suggestion_type'] as 'prompt' | 'model') || 'prompt';
   const rawBodyText = (bodyData['body'] as string)?.trim() ?? '';
-  const author_name = redactSecrets((bodyData['author_name'] as string)?.trim() ?? '').cleanText;
 
   if (!rawBodyText) {
     return c.text('Suggestion body is required.', 400);
@@ -249,7 +256,6 @@ app.post('/confessions/:id/suggestions', async (c) => {
     confession_id,
     suggestion_type,
     body: bodyText,
-    author_name: author_name || null,
   });
 
   purgeHomeEdgeCache(c);

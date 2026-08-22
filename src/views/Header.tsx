@@ -12,22 +12,11 @@ export function Header() {
             <h1 class="text-base sm:text-lg font-bold leading-none tracking-tight text-[var(--text-primary)]">
               Prompt Confessional
             </h1>
-            <p class="hidden sm:block text-xs text-[var(--text-muted)]">a safe space for AI frustration</p>
+            <p class="hidden sm:block text-xs font-medium text-[var(--text-secondary)]">a safe space for AI frustration</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3">
-          {/* Theme Selector */}
-          <select
-            id="theme-select"
-            aria-label="Select Theme Mode"
-            class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-1.5 text-xs font-semibold text-[var(--text-primary)] cursor-pointer focus:outline-none"
-          >
-            <option value="day">☀️ Day</option>
-            <option value="night">🌙 Night</option>
-            <option value="twilight">🌆 Twilight</option>
-          </select>
-
           {/* Open Confess Modal Button */}
           <button
             id="open-confess-btn"
