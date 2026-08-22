@@ -7,7 +7,7 @@ export function Hero({ confessionCount, totalSolidarity }: HeroProps) {
   return (
     <section class="mx-auto max-w-3xl px-4 pt-12 pb-8">
       <div class="text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
+        <h2 class="text-3xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-4xl">
           You are not alone.
         </h2>
         <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[var(--text-secondary)]">

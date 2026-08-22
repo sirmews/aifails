@@ -10,62 +10,62 @@ type LayoutProps = {
 // Embedded CSS Variables for Instant Zero-FOUC Edge SSR
 const THEME_CSS = `
 :root {
-  --bg-primary: #f7f5f0;
+  --bg-primary: #f0f1f4;
   --bg-card: #ffffff;
-  --bg-subtle: #eeeae1;
-  --border-color: #dfd9ce;
-  --border-subtle: #cfc7b9;
-  --text-primary: #221f1b;
-  --text-secondary: #48423a;
-  --text-muted: #686054;
-  --accent-primary: #2c2722;
-  --accent-hover: #443e37;
-  --accent-text: #faf8f5;
-  --badge-bg: #eae5dc;
-  --badge-text: #3a352c;
-  --quote-bg: #f3efe6;
-  --quote-border: #cdc4b4;
-  --quote-text: #352f28;
-  --amber-bg: #fef7ea;
-  --amber-border: #f8dfb6;
-  --amber-text: #7c4714;
-  --amber-accent: #b86b1f;
-  --danger-bg: #fdf3f2;
-  --danger-border: #e8a59b;
-  --danger-text: #962c20;
-  --success-bg: #f1f8f3;
-  --success-border: #bfe0c7;
-  --success-text: #20572f;
+  --bg-subtle: #f8f9fb;
+  --border-color: #dcdfe5;
+  --border-subtle: #c5c9d3;
+  --text-primary: #0f1117;
+  --text-secondary: #333742;
+  --text-muted: #5c6270;
+  --accent-primary: #0f1117;
+  --accent-hover: #262a36;
+  --accent-text: #ffffff;
+  --badge-bg: #e5e8ee;
+  --badge-text: #1a1c23;
+  --quote-bg: #f5f6f8;
+  --quote-border: #b8bdcb;
+  --quote-text: #22252e;
+  --amber-bg: #fffbeb;
+  --amber-border: #f59e0b;
+  --amber-text: #854d0e;
+  --amber-accent: #d97706;
+  --danger-bg: #fef2f2;
+  --danger-border: #ef4444;
+  --danger-text: #b91c1c;
+  --success-bg: #f0fdf4;
+  --success-border: #22c55e;
+  --success-text: #15803d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #17181c;
-    --bg-card: #202227;
-    --bg-subtle: #292c33;
-    --border-color: #333742;
-    --border-subtle: #414754;
-    --text-primary: #f0eee9;
-    --text-secondary: #c5cad4;
-    --text-muted: #9ba1ad;
-    --accent-primary: #ded8ce;
-    --accent-hover: #f2ede4;
-    --accent-text: #17181c;
-    --badge-bg: #2b2e37;
-    --badge-text: #e0e3eb;
-    --quote-bg: #1c1e23;
-    --quote-border: #4a505e;
-    --quote-text: #e2dfd9;
-    --amber-bg: #291e13;
-    --amber-border: #593f20;
-    --amber-text: #fde4ba;
-    --amber-accent: #e09838;
-    --danger-bg: #2a1616;
-    --danger-border: #632e2c;
-    --danger-text: #fca7a2;
-    --success-bg: #15271b;
-    --success-border: #2c5437;
-    --success-text: #a7e5ba;
+    --bg-primary: #0a0b0d;
+    --bg-card: #14161b;
+    --bg-subtle: #1e2027;
+    --border-color: #2b2e38;
+    --border-subtle: #3a3f4d;
+    --text-primary: #f8f9fb;
+    --text-secondary: #d1d5df;
+    --text-muted: #9399a8;
+    --accent-primary: #f8f9fb;
+    --accent-hover: #e2e5eb;
+    --accent-text: #0a0b0d;
+    --badge-bg: #22252e;
+    --badge-text: #f0f2f7;
+    --quote-bg: #181a20;
+    --quote-border: #4d5466;
+    --quote-text: #e8ebf2;
+    --amber-bg: #231804;
+    --amber-border: #92400e;
+    --amber-text: #fef08a;
+    --amber-accent: #f59e0b;
+    --danger-bg: #240a0a;
+    --danger-border: #991b1b;
+    --danger-text: #fca5a5;
+    --success-bg: #0b2313;
+    --success-border: #15803d;
+    --success-text: #86efac;
   }
 }
 

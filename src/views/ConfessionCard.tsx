@@ -41,24 +41,24 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
       </div>
 
       {/* 1. Prompt */}
-      <div class="mb-3 border-l-2 border-[var(--border-subtle)] pl-3">
-        <p class="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+      <div class="mb-3.5 border-l-[3px] border-[var(--border-subtle)] pl-3.5">
+        <p class="mb-0.5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
           What I asked for
         </p>
         <p class="text-sm leading-relaxed text-[var(--text-primary)]">{confession.prompt_used}</p>
       </div>
 
       {/* 2. What it did instead */}
-      <div class="mb-3 border-l-2 border-[var(--danger-border)] pl-3">
-        <p class="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+      <div class="mb-3.5 border-l-[3px] border-[var(--danger-border)] pl-3.5">
+        <p class="mb-0.5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
           What it did instead
         </p>
         <p class="text-sm leading-relaxed text-[var(--text-primary)]">{confession.what_it_did_instead}</p>
       </div>
 
       {/* 3. The human reaction */}
-      <div class="mb-4 border-l-2 border-[var(--amber-border)] pl-3">
-        <p class="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+      <div class="mb-4 border-l-[3px] border-[var(--amber-border)] pl-3.5">
+        <p class="mb-0.5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
           How it made me feel
         </p>
         <p class="text-sm leading-relaxed text-[var(--text-secondary)]">{confession.how_it_made_them_feel}</p>
