@@ -10,63 +10,32 @@ type LayoutProps = {
 // Embedded CSS Variables for Instant Zero-FOUC Edge SSR
 const THEME_CSS = `
 :root {
-  --bg-primary: #f0f1f4;
-  --bg-card: #ffffff;
-  --bg-subtle: #f8f9fb;
-  --border-color: #dcdfe5;
-  --border-subtle: #c5c9d3;
-  --text-primary: #0f1117;
-  --text-secondary: #333742;
-  --text-muted: #5c6270;
-  --accent-primary: #0f1117;
-  --accent-hover: #262a36;
-  --accent-text: #ffffff;
-  --badge-bg: #e5e8ee;
-  --badge-text: #1a1c23;
-  --quote-bg: #f5f6f8;
-  --quote-border: #b8bdcb;
-  --quote-text: #22252e;
-  --amber-bg: #fffbeb;
-  --amber-border: #f59e0b;
-  --amber-text: #854d0e;
-  --amber-accent: #d97706;
-  --danger-bg: #fef2f2;
-  --danger-border: #ef4444;
-  --danger-text: #b91c1c;
-  --success-bg: #f0fdf4;
-  --success-border: #22c55e;
-  --success-text: #15803d;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #0a0b0d;
-    --bg-card: #14161b;
-    --bg-subtle: #1e2027;
-    --border-color: #2b2e38;
-    --border-subtle: #3a3f4d;
-    --text-primary: #f8f9fb;
-    --text-secondary: #d1d5df;
-    --text-muted: #9399a8;
-    --accent-primary: #f8f9fb;
-    --accent-hover: #e2e5eb;
-    --accent-text: #0a0b0d;
-    --badge-bg: #22252e;
-    --badge-text: #f0f2f7;
-    --quote-bg: #181a20;
-    --quote-border: #4d5466;
-    --quote-text: #e8ebf2;
-    --amber-bg: #231804;
-    --amber-border: #92400e;
-    --amber-text: #fef08a;
-    --amber-accent: #f59e0b;
-    --danger-bg: #240a0a;
-    --danger-border: #991b1b;
-    --danger-text: #fca5a5;
-    --success-bg: #0b2313;
-    --success-border: #15803d;
-    --success-text: #86efac;
-  }
+  --bg-primary: #e8e5dc;
+  --bg-card: #f8f6f0;
+  --bg-subtle: #eeeadf;
+  --border-color: #cac2b0;
+  --border-subtle: #b5ac98;
+  --text-primary: #191613;
+  --text-secondary: #3e372e;
+  --text-muted: #665c4e;
+  --accent-primary: #211c17;
+  --accent-hover: #383028;
+  --accent-text: #f8f6f0;
+  --badge-bg: #dad3c2;
+  --badge-text: #191613;
+  --quote-bg: #eeeadf;
+  --quote-border: #9e927c;
+  --quote-text: #2a241e;
+  --amber-bg: #faeed7;
+  --amber-border: #d97706;
+  --amber-text: #78350f;
+  --amber-accent: #b45309;
+  --danger-bg: #fae3e1;
+  --danger-border: #dc2626;
+  --danger-text: #7f1d1d;
+  --success-bg: #def0e3;
+  --success-border: #16a34a;
+  --success-text: #14532d;
 }
 
 body {
