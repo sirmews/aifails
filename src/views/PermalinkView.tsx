@@ -67,10 +67,7 @@ export function PermalinkView({
         {/* 1. Main Confession Card */}
         <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
 
-        {/* 2. Standalone "Ackchyually..." Form Card (Visible by default) */}
-        <SuggestionForm confessionId={confession.id} />
-
-        {/* 3. List of Existing Ackchyuallys Displayed Below the Form Card */}
+        {/* 2. List of Existing Ackchyuallys */}
         <section class="space-y-3 pt-2">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
@@ -100,6 +97,9 @@ export function PermalinkView({
             </div>
           )}
         </section>
+
+        {/* 3. Standalone "Ackchyually..." Form Card (Below the comments) */}
+        <SuggestionForm confessionId={confession.id} />
       </main>
 
       <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">
