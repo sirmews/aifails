@@ -9,6 +9,7 @@ import {
   getSuggestionsForConfession,
   getSuggestionsMapForConfessions,
   createReport,
+  createSuggestionReport,
 } from '../db';
 import { getModels } from '../services/models';
 import { verifyTurnstileToken } from '../auth/turnstile';
@@ -159,6 +160,8 @@ app.post('/confessions', async (c) => {
 // 3. Single Confession Permalink SSR Route
 app.get('/confessions/:id', async (c) => {
   const id = c.req.param('id');
+  const url = new URL(c.req.url);
+  const notice = url.searchParams.get('notice') ?? undefined;
   const confession = await getConfessionById(c.env.DB, id);
 
   if (!confession) {
@@ -177,6 +180,7 @@ app.get('/confessions/:id', async (c) => {
       suggestions,
       models,
       turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
+      notice,
     })
   );
 });
@@ -261,6 +265,33 @@ app.post('/confessions/:id/suggestions', async (c) => {
   purgeHomeEdgeCache(c);
 
   return c.redirect(`/confessions/${confession_id}`);
+});
+
+// 6. Report Suggestion ("Ackchyually...") Route
+app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c) => {
+  const confessionId = c.req.param('confessionId');
+  const suggestionId = c.req.param('suggestionId');
+  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
+
+  const body = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+  const reason = (typeof body['reason'] === 'string' && body['reason'].trim()) || 'Inappropriate content';
+
+  await createSuggestionReport(c.env.DB, {
+    suggestionId,
+    confessionId,
+    reason,
+    sessionId: session.sessionId,
+  });
+
+  const isJson = c.req.header('accept')?.includes('application/json');
+  if (isJson) {
+    return c.json({ success: true, message: 'Suggestion report submitted successfully' });
+  }
+
+  return c.redirect(`/confessions/${confessionId}?notice=${encodeURIComponent('Report submitted for review.')}`);
 });
 
 // 6. RSS 2.0 XML Feed Endpoint

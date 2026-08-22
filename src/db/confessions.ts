@@ -212,7 +212,7 @@ export async function getSuggestionsForConfession(
     .prepare(
       `SELECT id, confession_id, suggestion_type, body, author_name, created_at 
        FROM confession_suggestions 
-       WHERE confession_id = ? 
+       WHERE confession_id = ? AND is_hidden = 0 
        ORDER BY created_at ASC`
     )
     .bind(confessionId)
@@ -231,7 +231,7 @@ export async function getSuggestionsMapForConfessions(
     .prepare(
       `SELECT id, confession_id, suggestion_type, body, author_name, created_at 
        FROM confession_suggestions 
-       WHERE confession_id IN (${placeholders}) 
+       WHERE confession_id IN (${placeholders}) AND is_hidden = 0 
        ORDER BY created_at ASC`
     )
     .bind(...confessionIds)
@@ -243,4 +243,27 @@ export async function getSuggestionsMapForConfessions(
     map[s.confession_id].push(s);
   }
   return map;
+}
+
+export async function createSuggestionReport(
+  db: D1Database,
+  input: { suggestionId: string; confessionId: string; reason: string; sessionId: string }
+): Promise<{ id: string; success: boolean }> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO suggestion_reports (id, suggestion_id, confession_id, reason, session_id, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    )
+    .bind(
+      id,
+      input.suggestionId,
+      input.confessionId,
+      input.reason,
+      input.sessionId,
+      new Date().toISOString()
+    )
+    .run();
+
+  return { id, success: true };
 }

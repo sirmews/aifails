@@ -11,6 +11,7 @@ type PermalinkViewProps = {
   suggestions?: ConfessionSuggestion[];
   models?: ModelOption[];
   turnstileSiteKey?: string;
+  notice?: string;
 };
 
 export function PermalinkView({
@@ -18,6 +19,7 @@ export function PermalinkView({
   suggestions = [],
   models = [],
   turnstileSiteKey,
+  notice,
 }: PermalinkViewProps) {
   const ogTitle = `Prompt Confession: Asked for '${confession.prompt_used.slice(0, 60)}...'`;
   const ogDescription = `What it did instead: '${confession.what_it_did_instead.slice(0, 120)}...'`;
@@ -55,6 +57,12 @@ export function PermalinkView({
       <ConfessionForm models={models} turnstileSiteKey={turnstileSiteKey} />
 
       <main class="mx-auto max-w-3xl space-y-6 px-4 py-6 w-full pb-16">
+        {notice && (
+          <div class="rounded-lg border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
+            {notice}
+          </div>
+        )}
+
         <div>
           <a
             href="/"
@@ -83,10 +91,25 @@ export function PermalinkView({
               {suggestions.map((s, idx) => (
                 <div key={s.id} class={`${idx === 0 ? 'pb-3.5' : idx === suggestions.length - 1 ? 'pt-3.5' : 'py-3.5'} space-y-1.5`}>
                   <div class="flex items-center justify-between text-xs">
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border-color)] px-2 py-0.5 font-semibold text-[var(--badge-text)]">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border-color)] px-2.5 py-0.5 font-semibold text-[var(--badge-text)]">
                       <span>{s.suggestion_type === 'prompt' ? '💡 Prompt fix' : '🤖 Model fix'}</span>
                     </span>
-                    <span class="text-[var(--text-muted)]">{timeAgo(s.created_at)}</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[var(--text-muted)]">{timeAgo(s.created_at)}</span>
+                      <form action={`/confessions/${confession.id}/suggestions/${s.id}/report`} method="post" class="inline m-0 p-0">
+                        <button
+                          type="submit"
+                          title="Report this suggestion"
+                          class="inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--danger-text)] hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] transition-colors cursor-pointer"
+                          onclick="return confirm('Report this suggestion for moderation review?');"
+                        >
+                          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                          </svg>
+                          <span class="hidden sm:inline">Report</span>
+                        </button>
+                      </form>
+                    </div>
                   </div>
                   <p class="text-sm leading-relaxed text-[var(--text-primary)]">{s.body}</p>
                 </div>
