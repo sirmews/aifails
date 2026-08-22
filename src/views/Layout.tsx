@@ -1,4 +1,5 @@
 import type { Child } from 'hono/jsx';
+import { COMPILED_TAILWIND_CSS } from '../styles/tailwind.generated';
 
 type LayoutProps = {
   title?: string;
@@ -65,8 +66,7 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
         {head}
-        <style dangerouslySetInnerHTML={{ __html: THEME_CSS }} />
-        <script src="https://cdn.tailwindcss.com"></script>
+        <style dangerouslySetInnerHTML={{ __html: `${COMPILED_TAILWIND_CSS}\n${THEME_CSS}` }} />
 
 
         {turnstileSiteKey && (

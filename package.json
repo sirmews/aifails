@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit",
+    "build:css": "bun scripts/build-css.ts",
+    "prebuild": "bun run build:css",
+    "dev": "bun run build:css && wrangler dev",
+    "deploy": "bun run build:css && wrangler deploy",
+    "typecheck": "bun run build:css && tsc --noEmit",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "moderate": "bun scripts/moderate.ts",
@@ -17,6 +19,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5.5.3",
     "wrangler": "^4.121.0"
   }

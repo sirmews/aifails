@@ -24,6 +24,8 @@ jobs:
 
       - name: Install Dependencies
         run: bun install --frozen-lockfile
+      - name: Build Static Tailwind CSS
+        run: bun run build:css
 
       - name: Run TypeScript Typecheck
         run: bun run typecheck
@@ -45,6 +47,8 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
+      - name: Build Static Tailwind CSS
+        run: bun run build:css
       - name: Apply Remote D1 Database Migrations
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
