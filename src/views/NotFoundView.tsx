@@ -8,7 +8,7 @@ export function NotFoundView() {
       <Header />
 
       <main class="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16 text-center w-full">
-        <div class="mb-4 rounded-full bg-[var(--bg-subtle)] p-4 text-[var(--text-muted)]">
+        <div class="mb-4 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] p-4 text-[var(--text-muted)]">
           <svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path
               stroke-linecap="round"
@@ -23,7 +23,7 @@ export function NotFoundView() {
         </p>
         <a
           href="/"
-          class="rounded-lg bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)]"
+          class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)] active:scale-95"
         >
           ← Back to homepage
         </a>

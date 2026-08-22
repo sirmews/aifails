@@ -59,7 +59,7 @@ export function PermalinkView({
 
       <main class="mx-auto max-w-3xl space-y-6 px-4 py-6 w-full pb-16">
         {notice && (
-          <div class="rounded-lg border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
+          <div class="rounded-md border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
             {notice}
           </div>
         )}
@@ -77,7 +77,7 @@ export function PermalinkView({
         <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
 
         {/* 2. Unified "Ackchyually..." Suggestions Card */}
-        <section class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-sm space-y-3">
+        <section class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-xs space-y-3">
           <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-color)]">
             <svg class="h-4 w-4 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -92,7 +92,7 @@ export function PermalinkView({
               {suggestions.map((s, idx) => (
                 <div key={s.id} class={`${idx === 0 ? 'pb-3.5' : idx === suggestions.length - 1 ? 'pt-3.5' : 'py-3.5'} space-y-1.5`}>
                   <div class="flex items-center justify-between text-xs">
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border-color)] px-2.5 py-0.5 font-semibold text-[var(--badge-text)]">
+                    <span class="inline-flex items-center gap-1.5 rounded border border-[var(--border-color)] bg-[var(--badge-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--badge-text)]">
                       <span>{s.suggestion_type === 'prompt' ? '💡 Prompt fix' : '🤖 Model fix'}</span>
                     </span>
                     <div class="flex items-center gap-2">

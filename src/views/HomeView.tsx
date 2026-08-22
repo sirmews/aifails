@@ -40,7 +40,7 @@ export function HomeView({
 
       {notice && (
         <div class="mx-auto max-w-3xl px-4 pb-4">
-          <div class="rounded-lg border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
+          <div class="rounded-md border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 text-sm text-[var(--success-text)]">
             {notice}
           </div>
         </div>
@@ -50,7 +50,7 @@ export function HomeView({
 
       <main class="mx-auto max-w-3xl space-y-4 px-4 pb-16 w-full">
         {/* Search & Filter Toolbar directly over card list */}
-        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm mb-6">
+        <div class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-xs mb-6">
           <form action="/" method="get" class="flex flex-wrap items-center gap-3">
             {/* Search Input */}
             <div class="relative flex-1 min-w-[200px]">
@@ -64,14 +64,14 @@ export function HomeView({
                 name="q"
                 value={query}
                 placeholder="Search prompts, responses, or feelings..."
-                class="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)]"
+                class="w-full rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)]"
               />
             </div>
 
             {/* Mood Dropdown Filter */}
             <select
               name="mood"
-              class="rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)] cursor-pointer"
+              class="rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)] cursor-pointer"
             >
               <option value="all" selected={!mood || mood === 'all'}>All Moods</option>
               <option value="furious" selected={mood === 'furious'}>🤬 Furious</option>
@@ -84,7 +84,7 @@ export function HomeView({
             {/* Submit & Reset */}
             <button
               type="submit"
-              class="rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-all hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
+              class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-all hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
             >
               Filter
             </button>
@@ -92,7 +92,7 @@ export function HomeView({
             {(query || (mood && mood !== 'all') || (model && model !== 'all')) && (
               <a
                 href="/"
-                class="rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all"
+                class="rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all"
               >
                 Clear
               </a>
@@ -104,14 +104,14 @@ export function HomeView({
         {(query || (mood && mood !== 'all')) && (
           <div class="flex items-center gap-2 text-xs text-[var(--text-muted)] pb-2">
             <span>Filtering by:</span>
-            {query && <span class="rounded-md border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">"{query}"</span>}
-            {mood && mood !== 'all' && <span class="rounded-md border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">Mood: {mood}</span>}
+            {query && <span class="rounded border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">"{query}"</span>}
+            {mood && mood !== 'all' && <span class="rounded border border-[var(--amber-border)] bg-[var(--amber-bg)] text-[var(--amber-text)] px-2 py-0.5 font-medium">Mood: {mood}</span>}
           </div>
         )}
 
         {/* Confession Cards */}
         {confessions.length === 0 ? (
-          <div class="rounded-2xl border border-dashed border-[var(--border-color)] p-12 text-center text-[var(--text-muted)]">
+          <div class="rounded-lg border border-dashed border-[var(--border-color)] p-12 text-center text-[var(--text-muted)]">
             <p class="text-base font-medium">No confessions found matching your search.</p>
             {(query || (mood && mood !== 'all')) && (
               <a href="/" class="mt-2 inline-block text-sm font-semibold text-[var(--amber-accent)] hover:underline">
@@ -130,7 +130,7 @@ export function HomeView({
           <div class="pt-6 text-center">
             <a
               href={`/?q=${encodeURIComponent(query ?? '')}&mood=${encodeURIComponent(mood ?? '')}&cursor=${encodeURIComponent(nextCursor)}`}
-              class="inline-flex items-center gap-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-card)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] shadow-sm hover:bg-[var(--bg-subtle)] active:scale-95 transition-all"
+              class="inline-flex items-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-card)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] shadow-xs hover:bg-[var(--bg-subtle)] active:scale-95 transition-all"
             >
               Load Older Confessions ↓
             </a>

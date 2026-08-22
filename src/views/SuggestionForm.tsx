@@ -6,7 +6,7 @@ export function SuggestionForm({ confessionId }: SuggestionFormProps) {
   return (
     <section
       id="ackchyually-form"
-      class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-sm space-y-4"
+      class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-xs space-y-4"
     >
       <div class="flex items-center gap-2">
         <svg
@@ -29,11 +29,11 @@ export function SuggestionForm({ confessionId }: SuggestionFormProps) {
 
       <form action={`/confessions/${confessionId}/suggestions`} method="post" class="space-y-3">
         <div class="grid grid-cols-2 gap-2">
-          <label class="flex items-center justify-center gap-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2.5 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
+          <label class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
             <input type="radio" name="suggestion_type" value="prompt" checked class="accent-[var(--amber-accent)]" />
             <span>Fix the Prompt</span>
           </label>
-          <label class="flex items-center justify-center gap-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2.5 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
+          <label class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
             <input type="radio" name="suggestion_type" value="model" class="accent-[var(--amber-accent)]" />
             <span>Recommend Model</span>
           </label>
@@ -44,13 +44,13 @@ export function SuggestionForm({ confessionId }: SuggestionFormProps) {
           required
           placeholder="What should they have asked or which model should they have used instead?"
           rows={3}
-          class="w-full resize-none rounded-xl border border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--amber-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--amber-accent)]"
+          class="w-full resize-none rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--amber-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--amber-accent)]"
         ></textarea>
 
         <div class="flex justify-end">
           <button
             type="submit"
-            class="inline-flex h-8 items-center justify-center rounded-lg bg-[var(--accent-primary)] px-4 text-xs font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
+            class="inline-flex h-8 items-center justify-center rounded-md bg-[var(--accent-primary)] px-4 text-xs font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
           >
             Post "Ackchyually..."
           </button>
