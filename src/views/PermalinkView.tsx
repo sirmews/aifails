@@ -3,6 +3,8 @@ import { Layout } from './Layout';
 import { Header } from './Header';
 import { ConfessionCard } from './ConfessionCard';
 import { ConfessionForm } from './ConfessionForm';
+import { SuggestionForm } from './SuggestionForm';
+import { timeAgo } from './utils';
 
 type PermalinkViewProps = {
   confession: Confession;
@@ -52,7 +54,7 @@ export function PermalinkView({
 
       <ConfessionForm models={models} turnstileSiteKey={turnstileSiteKey} />
 
-      <main class="mx-auto max-w-3xl space-y-4 px-4 py-6 w-full">
+      <main class="mx-auto max-w-3xl space-y-6 px-4 py-6 w-full pb-16">
         <div>
           <a
             href="/"
@@ -62,7 +64,42 @@ export function PermalinkView({
           </a>
         </div>
 
+        {/* 1. Main Confession Card */}
         <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
+
+        {/* 2. Standalone "Ackchyually..." Form Card (Visible by default) */}
+        <SuggestionForm confessionId={confession.id} />
+
+        {/* 3. List of Existing Ackchyuallys Displayed Below the Form Card */}
+        <section class="space-y-3 pt-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+              {suggestions.length > 0
+                ? `Ackchyually... (${suggestions.length})`
+                : 'No "Ackchyually..." suggestions yet'}
+            </h3>
+          </div>
+
+          {suggestions.length > 0 ? (
+            <div class="space-y-3">
+              {suggestions.map((s) => (
+                <div key={s.id} class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xs space-y-2">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border-color)] px-2.5 py-0.5 font-semibold text-[var(--badge-text)]">
+                      <span>{s.suggestion_type === 'prompt' ? '💡 Prompt fix' : '🤖 Model fix'}</span>
+                    </span>
+                    <span class="text-[var(--text-muted)]">{timeAgo(s.created_at)}</span>
+                  </div>
+                  <p class="text-sm leading-relaxed text-[var(--text-primary)]">{s.body}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="rounded-2xl border border-dashed border-[var(--border-color)] p-6 text-center text-xs text-[var(--text-muted)]">
+              Be the first to tell them what they should have asked or which model to use instead.
+            </div>
+          )}
+        </section>
       </main>
 
       <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">

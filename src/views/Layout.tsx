@@ -233,30 +233,6 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 });
               });
 
-              // Toggle Suggestion Forms & Active Button State
-              document.querySelectorAll('.toggle-suggestion-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                  const id = btn.getAttribute('data-confession-id');
-                  const form = document.getElementById('suggestion-form-' + id);
-                  if (form) {
-                    const isNowHidden = form.classList.toggle('hidden');
-                    const cardToggleBtn = document.querySelector('.toggle-suggestion-btn[data-confession-id="' + id + '"]');
-                    if (cardToggleBtn && cardToggleBtn !== btn) {
-                      if (!isNowHidden) {
-                        cardToggleBtn.classList.add('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
-                      } else {
-                        cardToggleBtn.classList.remove('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
-                      }
-                    } else if (btn) {
-                      if (!isNowHidden) {
-                        btn.classList.add('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
-                      } else {
-                        btn.classList.remove('border-[var(--amber-border)]', 'bg-[var(--amber-bg)]', 'text-[var(--amber-text)]', 'font-semibold');
-                      }
-                    }
-                  }
-                });
-              });
 
               // Intercept Solidarity Clicks for Instant AJAX Update & Active Button State
               document.querySelectorAll('.solidarity-form').forEach(form => {

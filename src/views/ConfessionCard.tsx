@@ -1,6 +1,5 @@
 import type { Confession, ConfessionSuggestion } from '../core/types';
 import { timeAgo, moodEmoji, moodLabel } from './utils';
-import { SuggestionForm } from './SuggestionForm';
 
 type ConfessionCardProps = {
   confession: Confession;
@@ -57,31 +56,13 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
         <p class="text-sm leading-relaxed text-[var(--text-primary)]">{confession.what_it_did_instead}</p>
       </div>
 
-      {/* 3. The human reaction (clean, non-italic, no shadow/bubble) */}
+      {/* 3. The human reaction */}
       <div class="mb-4 border-l-2 border-[var(--amber-border)] pl-3">
         <p class="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
           How it made me feel
         </p>
         <p class="text-sm leading-relaxed text-[var(--text-secondary)]">{confession.how_it_made_them_feel}</p>
       </div>
-
-      {/* Existing Suggestions List (Only on singular permalink view) */}
-      {isPermalink && suggestions.length > 0 && (
-        <div class="mb-4 space-y-2 rounded-xl border border-[var(--amber-border)] bg-[var(--amber-bg)] p-3">
-          <p class="text-xs font-bold uppercase tracking-wider text-[var(--amber-text)]">
-            Ackchyually... ({suggestions.length})
-          </p>
-          {suggestions.map((s) => (
-            <div key={s.id} class="rounded-lg border border-[var(--amber-border)]/50 bg-[var(--bg-card)] p-2.5 text-xs text-[var(--text-primary)]">
-              <div class="mb-1 flex items-center justify-between font-semibold text-[var(--amber-text)]">
-                <span class="capitalize">{s.suggestion_type} fix</span>
-                <span class="text-[var(--text-muted)] font-normal">{timeAgo(s.created_at)}</span>
-              </div>
-              <p class="leading-normal">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Action Buttons Bar */}
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[var(--border-color)]">
@@ -101,39 +82,22 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
             </button>
           </form>
 
-          {isPermalink ? (
-            <button
-              type="button"
-              class="toggle-suggestion-btn inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--amber-border)] hover:bg-[var(--amber-bg)] hover:text-[var(--amber-text)] active:scale-95 cursor-pointer"
-              data-confession-id={confession.id}
-            >
-              <svg class="h-3.5 w-3.5 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              <span>Ackchyually...</span>
-              {suggestions.length > 0 && (
-                <span class="ml-0.5 rounded-full bg-[var(--amber-bg)] border border-[var(--amber-border)] px-1.5 py-0.2 text-[10px] font-bold text-[var(--amber-text)]">
-                  {suggestions.length}
-                </span>
-              )}
-            </button>
-          ) : (
-            <a
-              href={`/confessions/${confession.id}`}
-              class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--amber-border)] hover:bg-[var(--amber-bg)] hover:text-[var(--amber-text)] active:scale-95"
-              title="View confession and Ackchyually corrections"
-            >
-              <svg class="h-3.5 w-3.5 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              <span>Ackchyually...</span>
-              {suggestions.length > 0 && (
-                <span class="ml-0.5 rounded-full bg-[var(--amber-bg)] border border-[var(--amber-border)] px-1.5 py-0.2 text-[10px] font-bold text-[var(--amber-text)]">
-                  {suggestions.length}
-                </span>
-              )}
-            </a>
-          )}
+          {/* Ackchyually... Button */}
+          <a
+            href={isPermalink ? '#ackchyually-form' : `/confessions/${confession.id}#ackchyually-form`}
+            class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--amber-border)] hover:bg-[var(--amber-bg)] hover:text-[var(--amber-text)] active:scale-95 cursor-pointer"
+            title="View or submit Ackchyually suggestions"
+          >
+            <svg class="h-3.5 w-3.5 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <span>Ackchyually...</span>
+            {suggestions.length > 0 && (
+              <span class="ml-0.5 rounded-full bg-[var(--amber-bg)] border border-[var(--amber-border)] px-1.5 py-0.2 text-[10px] font-bold text-[var(--amber-text)]">
+                {suggestions.length}
+              </span>
+            )}
+          </a>
         </div>
 
         {/* Right Actions: Utilities */}
@@ -167,7 +131,6 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
           </form>
         </div>
       </div>
-      {isPermalink && <SuggestionForm confessionId={confession.id} />}
     </article>
   );
 }
