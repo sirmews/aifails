@@ -137,14 +137,14 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
                 id="model-dropdown"
                 class="hidden absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-md border border-[var(--border-color)] bg-[var(--bg-card)] p-1 shadow-lg text-xs"
               >
-                {models.map((m) => (
+                {models.slice(0, 10).map((m) => (
                   <div
                     class="model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors"
-                    data-value={`${m.provider} / ${m.name}`}
-                    data-search={`${m.provider} ${m.name} ${m.id}`.toLowerCase()}
+                    data-value={m.provider ? `${m.provider} / ${m.name}` : m.name}
+                    data-search={`${m.provider || ''} ${m.name} ${m.id || ''}`.toLowerCase()}
                   >
                     <span class="font-semibold text-[var(--text-primary)]">{m.provider}</span>
-                    <span class="text-[var(--text-muted)]"> / </span>
+                    {m.provider && <span class="text-[var(--text-muted)]"> / </span>}
                     <span class="text-[var(--text-secondary)]">{m.name}</span>
                   </div>
                 ))}

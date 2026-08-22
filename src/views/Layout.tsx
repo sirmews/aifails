@@ -126,49 +126,83 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 }
               });
 
-              // Compact Searchable Model Combobox
+              // Compact Searchable Model Combobox with On-Demand Lazy Loading
               const modelInput = document.getElementById('model-search-input');
               const modelDropdown = document.getElementById('model-dropdown');
               if (modelInput && modelDropdown) {
-                const options = Array.from(modelDropdown.querySelectorAll('.model-option'));
-                const MAX_VISIBLE = 15;
+                let allModels = null;
+                let isFetching = false;
 
-                function filterModels() {
-                  const query = modelInput.value.trim().toLowerCase();
-                  let count = 0;
-
-                  options.forEach(opt => {
-                    const searchData = opt.getAttribute('data-search') || '';
-                    if (!query || searchData.includes(query)) {
-                      if (count < MAX_VISIBLE) {
-                        opt.style.display = 'block';
-                        count++;
-                      } else {
-                        opt.style.display = 'none';
-                      }
-                    } else {
-                      opt.style.display = 'none';
-                    }
-                  });
-
-                  if (count > 0) {
-                    modelDropdown.classList.remove('hidden');
-                  } else {
-                    modelDropdown.classList.add('hidden');
-                  }
-                }
-
-                modelInput.addEventListener('focus', filterModels);
-                modelInput.addEventListener('input', filterModels);
-
-                options.forEach(opt => {
-                  opt.addEventListener('click', () => {
-                    modelInput.value = opt.getAttribute('data-value') || '';
-                    modelDropdown.classList.add('hidden');
-                  });
+                // Extract initial SSR models
+                const initialModels = Array.from(modelDropdown.querySelectorAll('.model-option')).map(function(opt) {
+                  const val = opt.getAttribute('data-value') || '';
+                  const providerSpan = opt.querySelector('.font-semibold');
+                  const provider = providerSpan ? providerSpan.textContent || '' : '';
+                  const nameSpan = opt.querySelectorAll('span')[2];
+                  const name = nameSpan ? nameSpan.textContent || '' : val;
+                  return { provider: provider, name: name, id: val };
                 });
 
-                document.addEventListener('click', (e) => {
+                function loadFullModelCatalog() {
+                  if (allModels || isFetching) return;
+                  isFetching = true;
+                  fetch('/api/models')
+                    .then(function(res) { return res.ok ? res.json() : null; })
+                    .then(function(data) {
+                      if (Array.isArray(data) && data.length > 0) {
+                        allModels = data;
+                        renderAndFilter();
+                      }
+                    })
+                    .catch(function() {})
+                    .finally(function() { isFetching = false; });
+                }
+
+                function renderAndFilter() {
+                  const query = modelInput.value.trim().toLowerCase();
+                  const source = allModels || initialModels;
+
+                  const filtered = source.filter(function(m) {
+                    const searchStr = ((m.provider || '') + ' ' + (m.name || '') + ' ' + (m.id || '')).toLowerCase();
+                    return !query || searchStr.indexOf(query) !== -1;
+                  }).slice(0, 15);
+
+                  if (filtered.length === 0) {
+                    modelDropdown.innerHTML = '<div class="px-3 py-2 text-xs text-[var(--text-muted)] italic">No matching models found</div>';
+                    modelDropdown.classList.remove('hidden');
+                    return;
+                  }
+
+                  modelDropdown.innerHTML = filtered.map(function(m) {
+                    const val = m.provider ? m.provider + ' / ' + m.name : m.name;
+                    const providerHtml = m.provider ? '<span class="font-semibold text-[var(--text-primary)]">' + m.provider + '</span><span class="text-[var(--text-muted)]"> / </span>' : '';
+                    return '<div class="model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors" data-value="' + val + '">' +
+                      providerHtml +
+                      '<span class="text-[var(--text-secondary)]">' + m.name + '</span>' +
+                    '</div>';
+                  }).join('');
+
+                  modelDropdown.querySelectorAll('.model-option').forEach(function(opt) {
+                    opt.addEventListener('click', function() {
+                      modelInput.value = opt.getAttribute('data-value') || '';
+                      modelDropdown.classList.add('hidden');
+                    });
+                  });
+
+                  modelDropdown.classList.remove('hidden');
+                }
+
+                modelInput.addEventListener('focus', function() {
+                  loadFullModelCatalog();
+                  renderAndFilter();
+                });
+
+                modelInput.addEventListener('input', function() {
+                  loadFullModelCatalog();
+                  renderAndFilter();
+                });
+
+                document.addEventListener('click', function(e) {
                   if (!modelInput.contains(e.target) && !modelDropdown.contains(e.target)) {
                     modelDropdown.classList.add('hidden');
                   }
