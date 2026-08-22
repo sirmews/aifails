@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Hero } from './Hero';
 import { ConfessionForm } from './ConfessionForm';
 import { ConfessionCard } from './ConfessionCard';
+import { Footer } from './Footer';
 
 type HomeViewProps = {
   confessions: Confession[];
@@ -137,11 +138,7 @@ export function HomeView({
         )}
       </main>
 
-      <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">
-        <p class="text-sm text-[var(--text-muted)]">
-          Prompt Confessional — because talking to machines shouldn't feel this lonely.
-        </p>
-      </footer>
+      <Footer />
     </Layout>
   );
 }

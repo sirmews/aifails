@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { ConfessionCard } from './ConfessionCard';
 import { ConfessionForm } from './ConfessionForm';
 import { SuggestionForm } from './SuggestionForm';
+import { Footer } from './Footer';
 import { timeAgo } from './utils';
 
 type PermalinkViewProps = {
@@ -126,11 +127,7 @@ export function PermalinkView({
         <SuggestionForm confessionId={confession.id} />
       </main>
 
-      <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">
-        <p class="text-sm text-[var(--text-muted)]">
-          Prompt Confessional — because talking to machines shouldn't feel this lonely.
-        </p>
-      </footer>
+      <Footer />
     </Layout>
   );
 }

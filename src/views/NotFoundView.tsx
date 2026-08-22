@@ -1,5 +1,6 @@
 import { Layout } from './Layout';
 import { Header } from './Header';
+import { Footer } from './Footer';
 
 export function NotFoundView() {
   return (
@@ -28,11 +29,7 @@ export function NotFoundView() {
         </a>
       </main>
 
-      <footer class="mt-auto border-t border-[var(--border-color)] py-8 text-center">
-        <p class="text-sm text-[var(--text-muted)]">
-          Prompt Confessional — because talking to machines shouldn't feel this lonely.
-        </p>
-      </footer>
+      <Footer />
     </Layout>
   );
 }
