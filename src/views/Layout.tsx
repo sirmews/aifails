@@ -126,14 +126,14 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 }
               });
 
-              // Compact Searchable Model Combobox with On-Demand Lazy Loading
+              // Searchable Model Combobox with Background Pre-fetching & Full Scrollable Catalog
               const modelInput = document.getElementById('model-search-input');
               const modelDropdown = document.getElementById('model-dropdown');
               if (modelInput && modelDropdown) {
                 let allModels = null;
                 let isFetching = false;
 
-                // Extract initial SSR models
+                // Extract initial SSR models as immediate offline fallback
                 const initialModels = Array.from(modelDropdown.querySelectorAll('.model-option')).map(function(opt) {
                   const val = opt.getAttribute('data-value') || '';
                   const providerSpan = opt.querySelector('.font-semibold');
@@ -151,12 +151,17 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                     .then(function(data) {
                       if (Array.isArray(data) && data.length > 0) {
                         allModels = data;
-                        renderAndFilter();
+                        if (!modelDropdown.classList.contains('hidden')) {
+                          renderAndFilter();
+                        }
                       }
                     })
                     .catch(function() {})
                     .finally(function() { isFetching = false; });
                 }
+
+                // Prefetch model catalog in background immediately
+                loadFullModelCatalog();
 
                 function renderAndFilter() {
                   const query = modelInput.value.trim().toLowerCase();
@@ -165,22 +170,28 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                   const filtered = source.filter(function(m) {
                     const searchStr = ((m.provider || '') + ' ' + (m.name || '') + ' ' + (m.id || '')).toLowerCase();
                     return !query || searchStr.indexOf(query) !== -1;
-                  }).slice(0, 15);
+                  });
 
                   if (filtered.length === 0) {
-                    modelDropdown.innerHTML = '<div class="px-3 py-2 text-xs text-[var(--text-muted)] italic">No matching models found</div>';
+                    modelDropdown.innerHTML = '<div class="px-3 py-2.5 text-xs text-[var(--text-muted)] italic text-center">No matching models found</div>';
                     modelDropdown.classList.remove('hidden');
                     return;
                   }
 
-                  modelDropdown.innerHTML = filtered.map(function(m) {
+                  const itemsHtml = filtered.map(function(m) {
                     const val = m.provider ? m.provider + ' / ' + m.name : m.name;
                     const providerHtml = m.provider ? '<span class="font-semibold text-[var(--text-primary)]">' + m.provider + '</span><span class="text-[var(--text-muted)]"> / </span>' : '';
-                    return '<div class="model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors" data-value="' + val + '">' +
-                      providerHtml +
-                      '<span class="text-[var(--text-secondary)]">' + m.name + '</span>' +
+                    return '<div class="model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors flex items-center justify-between" data-value="' + val + '">' +
+                      '<div>' + providerHtml + '<span class="text-[var(--text-secondary)]">' + m.name + '</span></div>' +
                     '</div>';
                   }).join('');
+
+                  const headerHtml = '<div class="sticky top-0 bg-[var(--bg-card)]/95 backdrop-blur-xs px-3 py-1 border-b border-[var(--border-color)] text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider flex justify-between">' +
+                    '<span>' + (query ? 'Matching Models' : 'All Available Models') + '</span>' +
+                    '<span>' + filtered.length + '</span>' +
+                  '</div>';
+
+                  modelDropdown.innerHTML = headerHtml + itemsHtml;
 
                   modelDropdown.querySelectorAll('.model-option').forEach(function(opt) {
                     opt.addEventListener('click', function() {
