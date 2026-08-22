@@ -62,7 +62,8 @@ export function parseCookies(cookieHeader: string | null | undefined): Record<st
 
 export async function getOrCreateSessionId(
   cookieHeader: string | null | undefined,
-  secret: string = DEFAULT_SECRET
+  secret: string = DEFAULT_SECRET,
+  isSecure: boolean = false
 ): Promise<{ sessionId: string; isNew: boolean; setCookieHeader?: string }> {
   const cookies = parseCookies(cookieHeader);
   const existingToken = cookies[SESSION_COOKIE_NAME];
@@ -76,7 +77,8 @@ export async function getOrCreateSessionId(
 
   const newSessionId = crypto.randomUUID();
   const newToken = await createSessionToken(newSessionId, secret);
-  const setCookieHeader = `${SESSION_COOKIE_NAME}=${newToken}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax`;
+  const secureFlag = isSecure ? '; Secure' : '';
+  const setCookieHeader = `${SESSION_COOKIE_NAME}=${newToken}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax${secureFlag}`;
 
   return {
     sessionId: newSessionId,

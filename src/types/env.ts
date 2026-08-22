@@ -9,5 +9,6 @@ export interface Env {
   SOLIDARITY_LIMITER?: RateLimit;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
+  SESSION_SECRET?: string;
   ENVIRONMENT?: string;
 }

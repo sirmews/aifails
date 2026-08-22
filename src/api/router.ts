@@ -22,9 +22,25 @@ import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
 export const app = new Hono<{ Bindings: Env }>();
 
+// Global Security Headers Middleware
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  c.header(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+  );
+});
+
+function getSessionHelper(c: Context<{ Bindings: Env }>) {
+  const isSecure = c.req.url.startsWith('https://') || c.env.ENVIRONMENT === 'production';
+  return getOrCreateSessionId(c.req.header('Cookie'), c.env.SESSION_SECRET, isSecure);
+}
+
 // Cache-Control header helper for heavy edge caching
 const EDGE_CACHE_HEADER = 'public, max-age=30, s-maxage=120, stale-while-revalidate=86400';
-
 function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
   if (c.executionCtx) {
     try {
@@ -88,7 +104,7 @@ app.get('/', async (c) => {
 // 2. Submit Confession Route (with Rate Limiting, Session handling, Gitleaks secret redaction & edge cache purging)
 app.post('/confessions', async (c) => {
   const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
-  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
@@ -102,20 +118,21 @@ app.post('/confessions', async (c) => {
     }
   }
 
-  const body = await c.req.parseBody();
+  const body = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
 
-  const rawPrompt = (body['prompt_used'] as string)?.trim() ?? '';
-  const rawWhatHappened = (body['what_it_did_instead'] as string)?.trim() ?? '';
-  const rawFeeling = (body['how_it_made_them_feel'] as string)?.trim() ?? '';
-  const mood = (body['mood'] as string) || 'furious';
-  const modelQuery = (body['model_query'] as string)?.trim();
-  const turnstileToken = (body['cf-turnstile-response'] as string)?.trim();
+  const rawPrompt = typeof body['prompt_used'] === 'string' ? body['prompt_used'].trim() : '';
+  const rawWhatHappened = typeof body['what_it_did_instead'] === 'string' ? body['what_it_did_instead'].trim() : '';
+  const rawFeeling = typeof body['how_it_made_them_feel'] === 'string' ? body['how_it_made_them_feel'].trim() : '';
+  const mood = (typeof body['mood'] === 'string' && body['mood']) || 'furious';
+  const modelQuery = typeof body['model_query'] === 'string' ? body['model_query'].trim() : '';
+  const turnstileToken = typeof body['cf-turnstile-response'] === 'string' ? body['cf-turnstile-response'].trim() : '';
 
-  // Verify Cloudflare Turnstile token
+  // Verify Cloudflare Turnstile token (fail-closed in production)
   const turnstileResult = await verifyTurnstileToken(
     turnstileToken,
     c.env.TURNSTILE_SECRET_KEY,
-    clientIp
+    clientIp,
+    c.env.ENVIRONMENT
   );
 
   if (!turnstileResult.success) {
@@ -124,6 +141,10 @@ app.post('/confessions', async (c) => {
 
   if (!rawPrompt || !rawWhatHappened || !rawFeeling) {
     return c.text('All confession fields are required.', 400);
+  }
+
+  if (rawPrompt.length > 4000 || rawWhatHappened.length > 4000 || rawFeeling.length > 2000) {
+    return c.text('Input exceeds maximum allowed length.', 400);
   }
 
   // Redact secrets/API keys/emails using Gitleaks rules & sanitize hate speech/slurs before DB insert
@@ -189,7 +210,7 @@ app.get('/confessions/:id', async (c) => {
 app.post('/confessions/:id/solidarity', async (c) => {
   const id = c.req.param('id');
   const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
-  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
@@ -202,7 +223,6 @@ app.post('/confessions/:id/solidarity', async (c) => {
       return c.text('Rate limit exceeded. Please slow down.', 429);
     }
   }
-
   // 2. D1 Atomic 1-vote-per-session check
   const result = await incrementSolidarity(c.env.DB, id, session.sessionId);
 
@@ -224,13 +244,26 @@ app.post('/confessions/:id/solidarity', async (c) => {
 // 5. Report Confession Route
 app.post('/confessions/:id/report', async (c) => {
   const id = c.req.param('id');
-  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
 
-  const body = await c.req.parseBody();
-  const reason = (body['reason'] as string)?.trim() || 'Inappropriate content';
+  if (c.env.CONFESSION_LIMITER) {
+    const rateLimitKey = `${clientIp}:${session.sessionId}:rep`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.text('Rate limit exceeded. Please wait a minute before submitting another report.', 429);
+    }
+  }
+
+  const body = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+  const reason = (typeof body['reason'] === 'string' && body['reason'].trim()) || 'Inappropriate content';
+
+  if (reason.length > 500) {
+    return c.text('Report reason exceeds maximum allowed length of 500 characters.', 400);
+  }
 
   await createReport(c.env.DB, { confessionId: id, reason, sessionId: session.sessionId });
 
@@ -245,13 +278,31 @@ app.post('/confessions/:id/report', async (c) => {
 // 5. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
 app.post('/confessions/:id/suggestions', async (c) => {
   const confession_id = c.req.param('id');
-  const bodyData = await c.req.parseBody();
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const session = await getSessionHelper(c);
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
 
-  const suggestion_type = (bodyData['suggestion_type'] as 'prompt' | 'model') || 'prompt';
-  const rawBodyText = (bodyData['body'] as string)?.trim() ?? '';
+  if (c.env.CONFESSION_LIMITER) {
+    const rateLimitKey = `${clientIp}:${session.sessionId}:sug`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.text('Rate limit exceeded. Please wait a minute before submitting another suggestion.', 429);
+    }
+  }
+
+  const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+
+  const suggestion_type = (typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model') ? 'model' : 'prompt';
+  const rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
 
   if (!rawBodyText) {
     return c.text('Suggestion body is required.', 400);
+  }
+
+  if (rawBodyText.length > 2000) {
+    return c.text('Suggestion exceeds maximum allowed length of 2000 characters.', 400);
   }
 
   const bodyText = sanitizeContent(redactSecrets(rawBodyText).cleanText).cleanText;
@@ -271,13 +322,26 @@ app.post('/confessions/:id/suggestions', async (c) => {
 app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c) => {
   const confessionId = c.req.param('confessionId');
   const suggestionId = c.req.param('suggestionId');
-  const session = await getOrCreateSessionId(c.req.header('Cookie'));
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
 
+  if (c.env.CONFESSION_LIMITER) {
+    const rateLimitKey = `${clientIp}:${session.sessionId}:rep`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.text('Rate limit exceeded. Please wait a minute before submitting another report.', 429);
+    }
+  }
+
   const body = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
   const reason = (typeof body['reason'] === 'string' && body['reason'].trim()) || 'Inappropriate content';
+
+  if (reason.length > 500) {
+    return c.text('Report reason exceeds maximum allowed length of 500 characters.', 400);
+  }
 
   await createSuggestionReport(c.env.DB, {
     suggestionId,
@@ -285,7 +349,6 @@ app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c
     reason,
     sessionId: session.sessionId,
   });
-
   const isJson = c.req.header('accept')?.includes('application/json');
   if (isJson) {
     return c.json({ success: true, message: 'Suggestion report submitted successfully' });

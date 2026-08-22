@@ -19,6 +19,10 @@ import { $ } from 'bun';
 const args = process.argv.slice(2);
 const command = args[0] || 'list';
 const targetId = args[1] && !args[1].startsWith('--') ? args[1] : undefined;
+if (targetId && !/^[a-zA-Z0-9_-]+$/.test(targetId)) {
+  console.error('❌ Error: Invalid ID format. IDs must be alphanumeric.');
+  process.exit(1);
+}
 const isRemote = args.includes('--remote');
 const targetFlag = isRemote ? '--remote' : '--local';
 

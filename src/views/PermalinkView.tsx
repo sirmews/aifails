@@ -46,7 +46,7 @@ export function PermalinkView({
       <meta name="twitter:description" content={ogDescription} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
       />
     </>
   );

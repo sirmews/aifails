@@ -1,11 +1,20 @@
 export async function verifyTurnstileToken(
   token: string | null | undefined,
   secretKey: string | undefined,
-  remoteIp?: string
+  remoteIp?: string,
+  environment?: string
 ): Promise<{ success: boolean; errorCodes?: string[] }> {
-  // If no secret key is configured, bypass Turnstile verification in dev
-  if (!secretKey || secretKey === 'dummy-secret-key') {
+  const isProduction = environment === 'production';
+
+  // If in dev / non-production, bypass if no secret key is configured or dummy secret is used
+  if (!isProduction && (!secretKey || secretKey === 'dummy-secret-key')) {
     return { success: true };
+  }
+
+  // In production, fail closed if secret key is missing
+  if (isProduction && !secretKey) {
+    console.error('Turnstile secret key missing in production environment');
+    return { success: false, errorCodes: ['missing-secret-key'] };
   }
 
   if (!token) {
@@ -14,7 +23,7 @@ export async function verifyTurnstileToken(
 
   try {
     const formData = new URLSearchParams();
-    formData.append('secret', secretKey);
+    formData.append('secret', secretKey || '');
     formData.append('response', token);
     if (remoteIp) {
       formData.append('remoteip', remoteIp);
