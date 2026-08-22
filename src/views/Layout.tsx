@@ -10,32 +10,32 @@ type LayoutProps = {
 // Embedded CSS Variables for Instant Zero-FOUC Edge SSR
 const THEME_CSS = `
 :root {
-  --bg-primary: #e8e5dc;
-  --bg-card: #f8f6f0;
-  --bg-subtle: #eeeadf;
-  --border-color: #cac2b0;
-  --border-subtle: #b5ac98;
-  --text-primary: #191613;
-  --text-secondary: #3e372e;
-  --text-muted: #665c4e;
-  --accent-primary: #211c17;
-  --accent-hover: #383028;
-  --accent-text: #f8f6f0;
-  --badge-bg: #dad3c2;
-  --badge-text: #191613;
-  --quote-bg: #eeeadf;
-  --quote-border: #9e927c;
-  --quote-text: #2a241e;
-  --amber-bg: #faeed7;
-  --amber-border: #d97706;
-  --amber-text: #78350f;
-  --amber-accent: #b45309;
-  --danger-bg: #fae3e1;
+  --bg-primary: #191b22;
+  --bg-card: #222530;
+  --bg-subtle: #2d3140;
+  --border-color: #3b4054;
+  --border-subtle: #4b526b;
+  --text-primary: #f3f4f8;
+  --text-secondary: #c5c9d8;
+  --text-muted: #8d94a8;
+  --accent-primary: #f3f4f8;
+  --accent-hover: #ffffff;
+  --accent-text: #191b22;
+  --badge-bg: #2d3140;
+  --badge-text: #f3f4f8;
+  --quote-bg: #1e212b;
+  --quote-border: #4f5670;
+  --quote-text: #e2e5ef;
+  --amber-bg: #2b1e0a;
+  --amber-border: #b45309;
+  --amber-text: #fde68a;
+  --amber-accent: #f59e0b;
+  --danger-bg: #2d0e0e;
   --danger-border: #dc2626;
-  --danger-text: #7f1d1d;
-  --success-bg: #def0e3;
+  --danger-text: #fca5a5;
+  --success-bg: #0d2818;
   --success-border: #16a34a;
-  --success-text: #14532d;
+  --success-text: #86efac;
 }
 
 body {
