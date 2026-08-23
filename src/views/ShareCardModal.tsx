@@ -18,25 +18,25 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
   return (
     <div
       id="share-card-modal"
-      class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-[#0e1a26]/80 overflow-y-auto"
+      class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-[#0e1a26]/85 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="share-modal-title"
     >
       <div
-        class="relative w-full max-w-2xl rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4 sm:p-6 shadow-[6px_6px_0px_#0e1a26] space-y-4 my-auto"
+        class="relative w-full max-w-3xl rounded-lg border-3 border-[var(--border-color)] bg-[var(--bg-card)] p-4 sm:p-6 shadow-[8px_8px_0px_#0e1a26] space-y-4 my-auto"
         onclick="event.stopPropagation()"
       >
         {/* Modal Header */}
         <div class="flex items-center justify-between border-b-2 border-[var(--border-color)] pb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">📸</span>
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">📸</span>
             <div>
-              <h3 id="share-modal-title" class="text-base font-black text-[var(--text-primary)] leading-tight">
+              <h3 id="share-modal-title" class="text-base sm:text-lg font-black text-[var(--text-primary)] leading-tight">
                 Share Fail Card
               </h3>
               <p class="text-xs font-semibold text-[var(--text-secondary)]">
-                2x High-resolution PNG for Slack, Discord, and Twitter
+                2x High-resolution PNG for Slack, Discord, Reddit, and Twitter
               </p>
             </div>
           </div>
@@ -50,24 +50,24 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
           </button>
         </div>
 
-        {/* Live Canvas Preview */}
-        <div class="relative overflow-hidden rounded-md border-2 border-[var(--border-color)] bg-[#1e334a] shadow-[3px_3px_0px_#0e1a26]">
+        {/* Live Canvas Preview (Rendered at 1600x900 for 2x High-DPI Sharpness) */}
+        <div class="relative overflow-hidden rounded-lg border-2 border-[var(--border-color)] bg-[#152435] shadow-[4px_4px_0px_#0e1a26]">
           <canvas
             id="share-card-canvas"
-            width="1200"
-            height="630"
+            width="1600"
+            height="900"
             class="w-full h-auto block select-none"
           ></canvas>
         </div>
 
         {/* Action Controls */}
-        <div class="flex flex-wrap items-center justify-between gap-2.5 pt-1">
-          <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <div class="flex flex-wrap items-center gap-2">
             {/* Copy Card Image to Clipboard */}
             <button
               id="copy-card-img-btn"
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent-primary)] px-4 py-2 text-xs sm:text-sm font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
+              class="inline-flex items-center gap-2 rounded-md bg-[var(--accent-primary)] px-4 py-2 text-xs sm:text-sm font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
             >
               <span>📋</span>
               <span id="copy-card-img-text">Copy Image to Clipboard</span>
@@ -77,8 +77,8 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
             <button
               id="download-card-img-btn"
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-xs sm:text-sm font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
-              title="Download PNG file"
+              class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2 text-xs sm:text-sm font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
+              title="Download 2x PNG file"
             >
               <span>💾</span>
               <span>Download PNG</span>
@@ -97,7 +97,7 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
         </div>
       </div>
 
-      {/* Embedded Data for Canvas Renderer */}
+      {/* High-Fidelity Canvas Card Renderer */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -128,164 +128,237 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    var W = 1200;
-    var H = 630;
+    var W = 1600;
+    var H = 900;
 
     // 1. Solid Marge Cobalt Canvas Background
-    ctx.fillStyle = '#1e334a';
+    ctx.fillStyle = '#152435';
     ctx.fillRect(0, 0, W, H);
 
-    // 2. Card Container with 3D Drop Shadow
-    var pad = 36;
-    var cardW = W - pad * 2;
-    var cardH = H - pad * 2;
-    var cardX = pad;
-    var cardY = pad;
+    // 2. Card Container
+    var padX = 48;
+    var padY = 40;
+    var cardW = W - padX * 2;
+    var cardH = H - padY * 2;
+    var cardX = padX;
+    var cardY = padY;
 
-    // Shadow
+    // 3D Drop Shadow
     ctx.fillStyle = '#0e1a26';
-    roundRect(ctx, cardX + 8, cardY + 8, cardW, cardH, 16);
+    roundRect(ctx, cardX + 10, cardY + 10, cardW, cardH, 20);
     ctx.fill();
 
-    // Card Body
+    // Card Surface
     ctx.fillStyle = '#2a4766';
-    roundRect(ctx, cardX, cardY, cardW, cardH, 16);
+    roundRect(ctx, cardX, cardY, cardW, cardH, 20);
     ctx.fill();
+
+    // Card Outer Border
     ctx.strokeStyle = '#0e1a26';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.stroke();
 
-    // 3. Header Bar inside Card
-    var topY = cardY + 40;
+    // 3. Top Header inside Card
+    var headerY = cardY + 48;
 
-    // Yellow Keycap
+    // Keycap Logo Shadow
     ctx.fillStyle = '#0e1a26';
-    roundRect(ctx, cardX + 38 + 4, topY - 14 + 4, 110, 36, 6);
+    roundRect(ctx, cardX + 44 + 4, headerY - 18 + 4, 130, 44, 8);
     ctx.fill();
 
+    // Keycap Logo Button (Bart Yellow)
     ctx.fillStyle = '#fed41d';
-    roundRect(ctx, cardX + 38, topY - 14, 110, 36, 6);
+    roundRect(ctx, cardX + 44, headerY - 18, 130, 44, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#0e1a26';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = '#000000';
+    ctx.font = '900 20px ui-monospace, Menlo, Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('(╯°□°)╯', cardX + 44 + 65, headerY + 4);
+
+    // Brand Title & Subtitle
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('Prompt Confessional', cardX + 192, headerY + 6);
+
+    ctx.fillStyle = '#97bede';
+    ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('a safe space for AI frustration', cardX + 192, headerY + 28);
+
+    // Model Pill Badge (Top Right)
+    ctx.font = '900 16px ui-monospace, Menlo, monospace';
+    var modelBadge = cardData.model;
+    var badgeW = ctx.measureText(modelBadge).width + 36;
+    var badgeX = cardX + cardW - 44 - badgeW;
+
+    // Badge Shadow
+    ctx.fillStyle = '#0e1a26';
+    roundRect(ctx, badgeX + 4, headerY - 16 + 4, badgeW, 40, 8);
+    ctx.fill();
+
+    // Badge Body (Bart Yellow)
+    ctx.fillStyle = '#fed41d';
+    roundRect(ctx, badgeX, headerY - 16, badgeW, 40, 8);
     ctx.fill();
     ctx.strokeStyle = '#0e1a26';
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
     ctx.fillStyle = '#000000';
-    ctx.font = '900 18px ui-monospace, Menlo, monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('(╯°□°)╯', cardX + 38 + 55, topY + 10);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(modelBadge, badgeX + badgeW / 2, headerY + 4);
 
-    // Title
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('Prompt Confessional', cardX + 162, topY + 4);
-
-    ctx.fillStyle = '#97bede';
-    ctx.font = '700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('a safe space for AI frustration', cardX + 162, topY + 22);
-
-    // Model Pill (Top Right)
-    ctx.textAlign = 'right';
-    var modelBadge = cardData.model;
-    ctx.font = '900 14px ui-monospace, Menlo, monospace';
-    var badgeW = ctx.measureText(modelBadge).width + 24;
-    var badgeX = cardX + cardW - 38 - badgeW;
-
-    ctx.fillStyle = '#0e1a26';
-    roundRect(ctx, badgeX + 3, topY - 12 + 3, badgeW, 32, 6);
-    ctx.fill();
-
-    ctx.fillStyle = '#fed41d';
-    roundRect(ctx, badgeX, topY - 12, badgeW, 32, 6);
-    ctx.fill();
+    // Header Divider
     ctx.strokeStyle = '#0e1a26';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.fillStyle = '#000000';
-    ctx.textAlign = 'center';
-    ctx.fillText(modelBadge, badgeX + badgeW / 2, topY + 9);
-
-    // Divider
-    ctx.strokeStyle = '#0e1a26';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(cardX + 38, topY + 40);
-    ctx.lineTo(cardX + cardW - 38, topY + 40);
+    ctx.moveTo(cardX + 44, headerY + 48);
+    ctx.lineTo(cardX + cardW - 44, headerY + 48);
     ctx.stroke();
 
-    // 4. Content Area
-    var curY = topY + 68;
+    // 4. Content Area Layout
+    var curY = headerY + 74;
+    var innerW = cardW - 88;
+    var contentX = cardX + 44;
 
-    // Section 1: "WHAT I ASKED FOR"
+    // SECTION 1: "WHAT I ASKED FOR"
+    var promptSectionH = 145;
+    ctx.fillStyle = '#1b2f44';
+    roundRect(ctx, contentX, curY, innerW, promptSectionH, 10);
+    ctx.fill();
+    ctx.strokeStyle = '#0e1a26';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Left Blue Accent Bar
+    ctx.fillStyle = '#60a5fa';
+    ctx.fillRect(contentX, curY, 6, promptSectionH);
+
+    // Section Header Tag
     ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = '#97bede';
-    ctx.font = '900 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('WHAT I ASKED FOR', cardX + 54, curY);
+    ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('WHAT I ASKED FOR', contentX + 24, curY + 28);
 
-    // Left line indicator
-    ctx.fillStyle = '#97bede';
-    ctx.fillRect(cardX + 38, curY - 10, 4, 38);
-
+    // Prompt Text
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    var promptLines = wrapText(ctx, cardData.prompt, cardW - 110, 2);
+    ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var promptLines = wrapText(ctx, cardData.prompt, innerW - 50, 3);
     for (var i = 0; i < promptLines.length; i++) {
-      ctx.fillText(promptLines[i], cardX + 54, curY + 20 + i * 22);
+      ctx.fillText(promptLines[i], contentX + 24, curY + 60 + i * 28);
     }
-    curY += 20 + promptLines.length * 22 + 20;
 
-    // Section 2: "WHAT IT DID INSTEAD" (Danger border)
+    curY += promptSectionH + 18;
+
+    // SECTION 2: "WHAT IT DID INSTEAD" (Terminal Danger Box)
+    var failSectionH = 260;
+    ctx.fillStyle = '#13202e';
+    roundRect(ctx, contentX, curY, innerW, failSectionH, 10);
+    ctx.fill();
+    ctx.strokeStyle = '#0e1a26';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Left Danger Red Bar
     ctx.fillStyle = '#f87171';
-    ctx.font = '900 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('WHAT IT DID INSTEAD', cardX + 54, curY);
+    ctx.fillRect(contentX, curY, 6, failSectionH);
 
-    ctx.fillStyle = '#dc2626';
-    ctx.fillRect(cardX + 38, curY - 10, 4, 76);
+    // Section Header Tag
+    ctx.fillStyle = '#f87171';
+    ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('WHAT IT DID INSTEAD', contentX + 24, curY + 28);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    // Terminal Dots
+    drawTerminalDots(ctx, contentX + innerW - 60, curY + 22);
+
+    // Terminal Fail Content
+    ctx.fillStyle = '#f1f5f9';
     var cleanFail = cardData.fail.replace(/\`\`\`[a-z]*\\n/g, '').replace(/\\n\`\`\`/g, '');
-    var failLines = wrapText(ctx, cleanFail, cardW - 110, 3);
-    for (var j = 0; j < failLines.length; j++) {
-      ctx.fillText(failLines[j], cardX + 54, curY + 20 + j * 21);
+    var isCodeBlock = cardData.fail.includes('\`\`\`');
+
+    if (isCodeBlock) {
+      ctx.font = '600 17px ui-monospace, Menlo, Consolas, monospace';
+    } else {
+      ctx.font = '600 19px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     }
-    curY += 20 + failLines.length * 21 + 20;
 
-    // Section 3: "HOW IT MADE ME FEEL"
-    ctx.fillStyle = '#fed41d';
-    ctx.font = '900 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('HOW IT MADE ME FEEL ' + cardData.mood, cardX + 54, curY);
+    var failLines = wrapText(ctx, cleanFail, innerW - 50, 6);
+    for (var j = 0; j < failLines.length; j++) {
+      ctx.fillText(failLines[j], contentX + 24, curY + 62 + j * 27);
+    }
 
-    ctx.fillStyle = '#fed41d';
-    ctx.fillRect(cardX + 38, curY - 10, 4, 38);
+    curY += failSectionH + 18;
 
+    // SECTION 3: "HOW IT MADE ME FEEL" (Bart Yellow Banner)
+    var feelSectionH = 110;
+    ctx.fillStyle = '#1e334a';
+    roundRect(ctx, contentX, curY, innerW, feelSectionH, 10);
+    ctx.fill();
+    ctx.strokeStyle = '#0e1a26';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Left Amber Bar
     ctx.fillStyle = '#fed41d';
-    ctx.font = '700 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    var feelingLines = wrapText(ctx, cardData.feeling, cardW - 110, 2);
-    for (var k = 0; k < feelingLines.length; k++) {
-      ctx.fillText(feelingLines[k], cardX + 54, curY + 20 + k * 21);
+    ctx.fillRect(contentX, curY, 6, feelSectionH);
+
+    // Header Label
+    ctx.fillStyle = '#fed41d';
+    ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText('HOW IT MADE ME FEEL  ' + cardData.mood, contentX + 24, curY + 28);
+
+    // Feeling Text
+    ctx.fillStyle = '#fed41d';
+    ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var feelLines = wrapText(ctx, cardData.feeling, innerW - 50, 2);
+    for (var k = 0; k < feelLines.length; k++) {
+      ctx.fillText(feelLines[k], contentX + 24, curY + 60 + k * 28);
     }
 
     // 5. Footer Watermark Bar
-    var footY = cardY + cardH - 26;
+    var footY = cardY + cardH - 28;
     ctx.strokeStyle = '#0e1a26';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(cardX + 38, footY - 20);
-    ctx.lineTo(cardX + cardW - 38, footY - 20);
+    ctx.moveTo(cardX + 44, footY - 24);
+    ctx.lineTo(cardX + cardW - 44, footY - 24);
     ctx.stroke();
 
     ctx.fillStyle = '#97bede';
-    ctx.font = '700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('Anonymous AI Prompt Fails • Solidarity & Ackchyually Fixes', cardX + 38, footY);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Anonymous AI Prompt Fails • Solidarity & Ackchyually Fixes', cardX + 44, footY);
 
     ctx.fillStyle = '#fed41d';
-    ctx.font = '900 14px ui-monospace, Menlo, monospace';
+    ctx.font = '900 18px ui-monospace, Menlo, monospace';
     ctx.textAlign = 'right';
-    ctx.fillText('https://aifails.wtf', cardX + cardW - 38, footY);
+    ctx.fillText('https://aifails.wtf', cardX + cardW - 44, footY);
+  }
+
+  function drawTerminalDots(ctx, x, y) {
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(x + 16, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#10b981';
+    ctx.beginPath();
+    ctx.arc(x + 32, y, 5, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   function roundRect(ctx, x, y, w, h, r) {
