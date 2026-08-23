@@ -24,10 +24,21 @@ export function PermalinkView({
   notice,
   baseUrl = 'https://aifails.wtf',
 }: PermalinkViewProps) {
-  const ogTitle = `Prompt Confession: Asked for '${confession.prompt_used.slice(0, 60)}...'`;
-  const ogDescription = `What it did instead: '${confession.what_it_did_instead.slice(0, 120)}...'`;
+  const modelName = confession.model_name
+    ? `${confession.model_provider ? confession.model_provider + ' / ' : ''}${confession.model_name}`
+    : 'AI';
+  const promptSnippet = confession.prompt_used.length > 55
+    ? `${confession.prompt_used.slice(0, 55)}...`
+    : confession.prompt_used;
+  const failSnippet = confession.what_it_did_instead.length > 110
+    ? `${confession.what_it_did_instead.slice(0, 110)}...`
+    : confession.what_it_did_instead;
+
+  const ogTitle = `"${promptSnippet}" (${modelName}) — aifails.wtf`;
+  const ogDescription = `What it did instead: "${failSnippet}" • Feeling: ${confession.how_it_made_them_feel}`;
   const url = `${baseUrl}/confessions/${confession.id}`;
   const ogImage = `${baseUrl}/confessions/${confession.id}/og.svg`;
+
   const jsonLdData = {
     '@context': 'https://schema.org',
     '@type': 'SocialMediaPosting',
@@ -36,20 +47,20 @@ export function PermalinkView({
     datePublished: confession.created_at,
     url,
     image: ogImage,
+    author: {
+      '@type': 'Person',
+      name: 'Anonymous',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Prompt Confessional',
+      url: baseUrl,
+    },
   };
 
   const headElements = (
     <>
       <link rel="canonical" href={url} />
-      <meta property="og:title" content={ogTitle} />
-      <meta property="og:description" content={ogDescription} />
-      <meta property="og:url" content={url} />
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:type" content="article" />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={ogTitle} />
-      <meta name="twitter:description" content={ogDescription} />
-      <meta name="twitter:image" content={ogImage} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
@@ -58,7 +69,17 @@ export function PermalinkView({
   );
 
   return (
-    <Layout title={ogTitle} turnstileSiteKey={turnstileSiteKey} head={headElements}>
+    <Layout
+      title={ogTitle}
+      description={ogDescription}
+      ogTitle={ogTitle}
+      ogDescription={ogDescription}
+      ogImage={ogImage}
+      ogUrl={url}
+      ogType="article"
+      turnstileSiteKey={turnstileSiteKey}
+      head={headElements}
+    >
       <Header />
 
       <ConfessionForm models={models} turnstileSiteKey={turnstileSiteKey} />

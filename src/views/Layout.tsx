@@ -3,6 +3,12 @@ import { COMPILED_TAILWIND_CSS } from '../styles/tailwind.generated';
 
 type LayoutProps = {
   title?: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  ogType?: 'website' | 'article';
   turnstileSiteKey?: string;
   head?: Child;
   children: Child;
@@ -55,15 +61,46 @@ body {
 }
 `;
 
-export function Layout({ title = 'Prompt Confessional — A safe space for AI frustration', turnstileSiteKey, head, children }: LayoutProps) {
+export function Layout({
+  title = 'Prompt Confessional — A safe space for AI frustration (aifails.wtf)',
+  description = 'When large language models fail, hallucinate, or refuse to listen — share what you asked for, what it did instead, and how it made you feel.',
+  ogTitle,
+  ogDescription,
+  ogImage = 'https://aifails.wtf/og.svg',
+  ogUrl = 'https://aifails.wtf/',
+  ogType = 'website',
+  turnstileSiteKey,
+  head,
+  children,
+}: LayoutProps) {
+  const resolvedOgTitle = ogTitle || title;
+  const resolvedOgDescription = ogDescription || description;
+
   return (
     <html lang="en" class="h-full bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
-        <meta name="description" content="A safe space to vent about large language model frustrations and share prompt fails." />
-        
+        <meta name="description" content={description} />
+        <meta name="theme-color" content="#191b22" />
+
+        {/* Canonical & Open Graph */}
+        <meta property="og:site_name" content="Prompt Confessional • aifails.wtf" />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:title" content={resolvedOgTitle} />
+        <meta property="og:description" content={resolvedOgDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={ogUrl} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={resolvedOgTitle} />
+        <meta name="twitter:description" content={resolvedOgDescription} />
+        <meta name="twitter:image" content={ogImage} />
+
         {/* SVG Favicon with Table Flip Icon */}
         <link
           rel="icon"
