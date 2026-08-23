@@ -376,6 +376,7 @@ export function Layout({
                         btn.classList.remove('text-emerald-400', 'border-emerald-500');
                       }, 2000);
                     }
+                  } catch (err) {
                     console.error('Failed to copy permalink', err);
                   }
                 });
