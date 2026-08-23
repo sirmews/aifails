@@ -123,7 +123,7 @@ app.get('/', async (c) => {
 
 // 2. Submit Confession Route (with Rate Limiting, Session handling, Gitleaks secret redaction & edge cache purging)
 app.post('/confessions', async (c) => {
-  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const clientIp = getClientIp(c);
   const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
@@ -233,7 +233,7 @@ app.get('/confessions/:id', async (c) => {
 // 4. Increment Solidarity Count (Rate limited + 1 vote per session)
 app.post('/confessions/:id/solidarity', async (c) => {
   const id = c.req.param('id');
-  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const clientIp = getClientIp(c);
   const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
@@ -268,7 +268,7 @@ app.post('/confessions/:id/solidarity', async (c) => {
 // 5. Report Confession Route
 app.post('/confessions/:id/report', async (c) => {
   const id = c.req.param('id');
-  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const clientIp = getClientIp(c);
   const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
@@ -302,7 +302,7 @@ app.post('/confessions/:id/report', async (c) => {
 // 5. Submit Suggestion ("Ackchyually...") with Gitleaks secret redaction & cache purging
 app.post('/confessions/:id/suggestions', async (c) => {
   const confession_id = c.req.param('id');
-  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const clientIp = getClientIp(c);
   const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
@@ -346,7 +346,7 @@ app.post('/confessions/:id/suggestions', async (c) => {
 app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c) => {
   const confessionId = c.req.param('confessionId');
   const suggestionId = c.req.param('suggestionId');
-  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  const clientIp = getClientIp(c);
   const session = await getSessionHelper(c);
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
