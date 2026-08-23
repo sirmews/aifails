@@ -50,7 +50,7 @@ export function HomeView({
 
       <main class="mx-auto max-w-3xl space-y-4 px-4 pb-16 w-full">
         {/* Search & Filter Toolbar directly over card list */}
-        <div class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4.5 shadow-[3.5px_3.5px_0px_#0e1a26] mb-6">
+        <div class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4 sm:p-5 shadow-[3px_3px_0px_#0e1a26] mb-6">
           <form action="/" method="get" class="flex flex-wrap items-center gap-3">
             {/* Search Input */}
             <div class="relative flex-1 min-w-[200px]">

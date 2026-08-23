@@ -7,7 +7,7 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
   return (
     <section
       id="ackchyually-form"
-      class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5.5 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-4"
+      class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3px_3px_0px_#0e1a26] space-y-4"
     >
       <div class="flex items-center gap-2">
         <svg
@@ -66,7 +66,7 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
         <div class="flex justify-end">
           <button
             type="submit"
-            class="inline-flex h-8.5 items-center justify-center rounded-md bg-[var(--accent-primary)] px-4 text-xs font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
+            class="inline-flex h-8 items-center justify-center rounded-md bg-[var(--accent-primary)] px-4 text-xs font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
           >
             Post "Ackchyually..."
           </button>

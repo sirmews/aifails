@@ -131,7 +131,7 @@ export function PermalinkView({
         <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
 
         {/* 2. Unified "Ackchyually..." Suggestions Card */}
-        <section class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5.5 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
+        <section class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3px_3px_0px_#0e1a26] space-y-3">
           <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-color)]">
             <svg class="h-4 w-4 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
