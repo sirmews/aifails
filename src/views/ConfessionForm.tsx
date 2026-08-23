@@ -132,7 +132,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
               {/* Scrollable, Max-Height Filtered Dropdown */}
               <div
                 id="model-dropdown"
-                class="hidden absolute left-0 right-0 top-full z-50 mt-1.5 max-h-64 overflow-y-auto rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-1 shadow-[4px_4px_0px_#0e1a26] text-xs"
+                class="hidden absolute left-0 right-0 top-full z-50 mt-1.5 max-h-64 overflow-y-auto rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-0 shadow-[4px_4px_0px_#0e1a26] text-xs"
               >
                 {models.slice(0, 10).map((m) => (
                   <div

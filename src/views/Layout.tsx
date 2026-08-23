@@ -224,7 +224,7 @@ export function Layout({
                   }
 
                   const header = document.createElement('div');
-                  header.className = 'sticky top-0 z-10 bg-[var(--bg-card)] px-3 py-2 border-b-2 border-[var(--border-color)] text-[11px] font-black text-[var(--text-secondary)] uppercase tracking-wider flex justify-between items-center';
+                  header.className = 'sticky top-0 z-10 bg-[var(--bg-card)] px-3 py-2 border-b-2 border-[var(--border-color)] text-[11px] font-black text-[var(--text-secondary)] uppercase tracking-wider flex justify-between items-center select-none';
                   const headerLabel = document.createElement('span');
                   headerLabel.textContent = query ? 'Matching Models' : 'All Available Models';
                   const headerCount = document.createElement('span');
@@ -232,6 +232,10 @@ export function Layout({
                   header.appendChild(headerLabel);
                   header.appendChild(headerCount);
                   modelDropdown.appendChild(header);
+
+                  const listContainer = document.createElement('div');
+                  listContainer.className = 'p-1';
+                  modelDropdown.appendChild(listContainer);
 
                   filtered.forEach(function(m) {
                     const val = m.provider ? m.provider + ' / ' + m.name : m.name;
@@ -263,7 +267,7 @@ export function Layout({
                       modelInput.value = option.dataset.value || '';
                       modelDropdown.classList.add('hidden');
                     });
-                    modelDropdown.appendChild(option);
+                    listContainer.appendChild(option);
                   });
 
                   modelDropdown.classList.remove('hidden');
