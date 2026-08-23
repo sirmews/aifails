@@ -60,7 +60,7 @@ export function Layout({
   description = 'When large language models fail, hallucinate, or refuse to listen — share what you asked for, what it did instead, and how it made you feel.',
   ogTitle,
   ogDescription,
-  ogImage = 'https://aifails.wtf/og.svg',
+  ogImage = 'https://aifails.wtf/og.png',
   ogUrl = 'https://aifails.wtf/',
   ogType = 'website',
   turnstileSiteKey,
@@ -79,15 +79,18 @@ export function Layout({
         <meta name="description" content={description} />
         <meta name="theme-color" content="#1e334a" />
 
-        {/* Canonical & Open Graph */}
+        {/* Canonical & Open Graph (WhatsApp, Facebook, Discord, iMessage compliant) */}
         <meta property="og:site_name" content="Prompt Confessional • aifails.wtf" />
         <meta property="og:type" content={ogType} />
         <meta property="og:title" content={resolvedOgTitle} />
         <meta property="og:description" content={resolvedOgDescription} />
+        <meta property="og:url" content={ogUrl} />
         <meta property="og:image" content={ogImage} />
+        <meta property="og:image:secure_url" content={ogImage} />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:url" content={ogUrl} />
+        <meta property="og:image:alt" content={resolvedOgTitle} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />

@@ -38,7 +38,7 @@ export function PermalinkView({
   const ogTitle = `"${promptSnippet}" (${modelName}) — aifails.wtf`;
   const ogDescription = `What it did instead: "${failSnippet}" • Feeling: ${confession.how_it_made_them_feel}`;
   const url = `${baseUrl}/confessions/${confession.id}`;
-  const ogImage = `${baseUrl}/confessions/${confession.id}/og.svg`;
+  const ogImage = `${baseUrl}/confessions/${confession.id}/og.png`;
 
   const jsonLdData = {
     '@context': 'https://schema.org',

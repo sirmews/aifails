@@ -17,6 +17,7 @@ import { getOrCreateSessionId } from '../auth/session';
 import { redactSecrets } from '../utils/gitleaks';
 import { sanitizeContent } from '../utils/moderation';
 import { generateRssFeed, generateSitemapXml, generateOgImageSvg, generateSiteOgImageSvg } from '../services/seo';
+import { svgToPng } from '../services/og-png';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
@@ -479,7 +480,30 @@ app.get('/robots.txt', async (c) => {
   c.header('Cache-Control', 'public, max-age=86400');
   return c.text(robotsTxt);
 });
-// 9. Site-wide Homepage Dynamic SVG Social Card
+// 9. Site-wide Homepage Dynamic Social PNG & SVG Cards
+app.get('/og.png', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/og.png`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
+  const { confessions } = await getConfessions(c.env.DB, { limit: 100 });
+  const totalSolidarity = confessions.reduce((sum, item) => sum + item.solidarity_count, 0);
+
+  const svg = generateSiteOgImageSvg({
+    confessionCount: confessions.length,
+    solidarityCount: totalSolidarity,
+  });
+
+  const pngBytes = await svgToPng(svg);
+  return new Response(pngBytes, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+    },
+  });
+});
+app.get('/api/og.png', (c) => c.redirect('/og.png'));
+
 app.get('/og.svg', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/og.svg`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
@@ -500,8 +524,28 @@ app.get('/og.svg', async (c) => {
 
 app.get('/api/og.svg', (c) => c.redirect('/og.svg'));
 
+// 9b. Dynamic Confession Social PNG & SVG Card Endpoints
+app.get('/confessions/:id/og.png', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions/og.png`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
 
-// 9. Dynamic SVG Social Card Banner Endpoint
+  const id = c.req.param('id');
+  const confession = await getConfessionById(c.env.DB, id);
+
+  if (!confession) {
+    return c.text('Not Found', 404);
+  }
+
+  const svg = generateOgImageSvg(confession);
+  const pngBytes = await svgToPng(svg);
+  return new Response(pngBytes, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+    },
+  });
+});
 app.get('/confessions/:id/og.svg', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions/og.svg`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
