@@ -15,18 +15,7 @@ export function Header() {
           </div>
         </a>
 
-        <div class="flex items-center gap-2 sm:gap-2.5">
-          {/* Solid 3D Random Fail Button */}
-          <a
-            href="/random"
-            class="relative inline-flex items-center gap-1.5 rounded-md bg-[var(--bg-card)] px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-black text-[var(--text-primary)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--bg-subtle)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer shrink-0"
-            title="Jump to a random prompt fail"
-          >
-            <span class="text-xs">🔀</span>
-            <span class="hidden sm:inline">Random Fail</span>
-            <span class="sm:hidden">Random</span>
-          </a>
-
+        <div class="flex items-center gap-2 sm:gap-3">
           {/* Solid Bart Yellow Confess Button */}
           <button
             id="open-confess-btn"
