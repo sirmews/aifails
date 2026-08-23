@@ -30,13 +30,17 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
 
       <form action={`/confessions/${confessionId}/suggestions`} method="post" class="space-y-3">
         <div class="grid grid-cols-2 gap-2">
-          <label class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
-            <input type="radio" name="suggestion_type" value="prompt" checked class="accent-[var(--amber-accent)]" />
-            <span>Fix the Prompt</span>
+          <label class="cursor-pointer">
+            <input type="radio" name="suggestion_type" value="prompt" checked class="peer sr-only" />
+            <span class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] peer-checked:translate-y-0.5 peer-checked:shadow-none peer-checked:border-[var(--amber-border)] peer-checked:bg-[var(--amber-bg)] peer-checked:text-[var(--amber-text)]">
+              <span>Fix the Prompt</span>
+            </span>
           </label>
-          <label class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-primary)] cursor-pointer hover:border-[var(--amber-border)] transition-colors">
-            <input type="radio" name="suggestion_type" value="model" class="accent-[var(--amber-accent)]" />
-            <span>Recommend Model</span>
+          <label class="cursor-pointer">
+            <input type="radio" name="suggestion_type" value="model" class="peer sr-only" />
+            <span class="flex items-center justify-center gap-2 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] p-2 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] peer-checked:translate-y-0.5 peer-checked:shadow-none peer-checked:border-[var(--amber-border)] peer-checked:bg-[var(--amber-bg)] peer-checked:text-[var(--amber-text)]">
+              <span>Recommend Model</span>
+            </span>
           </label>
         </div>
 
@@ -62,7 +66,7 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
         <div class="flex justify-end">
           <button
             type="submit"
-            class="inline-flex h-8 items-center justify-center rounded-md bg-[var(--accent-primary)] px-4 text-xs font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
+            class="inline-flex h-8 items-center justify-center rounded-md bg-[var(--accent-primary)] px-4 text-xs font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_1.5px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_2.5px_0_0_#9ba1ad,0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
           >
             Post "Ackchyually..."
           </button>

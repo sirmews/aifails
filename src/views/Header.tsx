@@ -20,7 +20,7 @@ export function Header() {
           <button
             id="open-confess-btn"
             type="button"
-            class="rounded-md bg-[var(--accent-primary)] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--accent-text)] transition-colors hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer shrink-0"
+            class="relative rounded-md bg-[var(--accent-primary)] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_1.5px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_2.5px_0_0_#9ba1ad,0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
           >
             Confess
           </button>

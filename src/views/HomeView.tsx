@@ -84,7 +84,7 @@ export function HomeView({
             {/* Submit & Reset */}
             <button
               type="submit"
-              class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] transition-all hover:bg-[var(--accent-hover)] active:scale-95 cursor-pointer"
+              class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_1.5px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_2.5px_0_0_#9ba1ad,0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
             >
               Filter
             </button>
@@ -92,7 +92,7 @@ export function HomeView({
             {(query || (mood && mood !== 'all') || (model && model !== 'all')) && (
               <a
                 href="/"
-                class="rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all"
+                class="rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-medium text-[var(--text-muted)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
               >
                 Clear
               </a>

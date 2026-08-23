@@ -294,9 +294,8 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                   const countSpan = form.querySelector('.solidarity-count');
                   if (btn && !btn.disabled) {
                     btn.disabled = true;
-                    btn.classList.remove('hover:border-[var(--danger-border)]', 'hover:bg-[var(--danger-bg)]', 'hover:text-[var(--danger-text)]');
-                    btn.classList.add('border-[var(--danger-border)]', 'bg-[var(--danger-bg)]', 'text-[var(--danger-text)]', 'font-semibold', 'cursor-default');
-                    
+                    btn.classList.remove('hover:-translate-y-0.5', 'hover:border-[var(--danger-border)]', 'hover:bg-[var(--danger-bg)]', 'hover:text-[var(--danger-text)]');
+                    btn.classList.add('border-[var(--danger-border)]', 'border-b-2', 'bg-[var(--danger-bg)]', 'text-[var(--danger-text)]', 'font-semibold', 'cursor-default', 'translate-y-0.5', 'shadow-none');
                     if (countSpan) {
                       const current = parseInt(countSpan.textContent || '0', 10);
                       countSpan.textContent = (current + 1).toString();

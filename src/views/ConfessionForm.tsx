@@ -39,10 +39,10 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
           <button
             type="button"
             id="close-modal-btn"
-            class="rounded-md p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+            class="rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] p-1.5 text-[var(--text-muted)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none cursor-pointer"
             aria-label="Close confession modal"
           >
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -103,7 +103,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
                     checked={idx === 0}
                     class="peer sr-only"
                   />
-                  <span class="inline-block rounded border border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-all peer-checked:border-[var(--accent-primary)] peer-checked:bg-[var(--accent-primary)] peer-checked:text-[var(--accent-text)] hover:border-[var(--border-subtle)]">
+                  <span class="inline-block rounded border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] peer-checked:translate-y-0.5 peer-checked:shadow-none peer-checked:border-[var(--accent-primary)] peer-checked:bg-[var(--accent-primary)] peer-checked:text-[var(--accent-text)]">
                     <span class="mr-1">{m.emoji}</span>
                     {m.label}
                   </span>
@@ -111,7 +111,6 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
               ))}
             </div>
           </div>
-
           {/* Compact Searchable Model Combobox */}
           <div>
             <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)]">
@@ -164,7 +163,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
 
           <button
             type="submit"
-            class="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent-primary)] px-4 py-3 text-sm font-semibold text-[var(--accent-text)] transition-all hover:bg-[var(--accent-hover)] active:scale-[0.98] cursor-pointer"
+            class="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent-primary)] px-4 py-3 text-sm font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_2px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_3.5px_0_0_#9ba1ad,0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

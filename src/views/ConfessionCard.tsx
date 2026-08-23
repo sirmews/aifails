@@ -72,7 +72,7 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
           <form action={`/confessions/${confession.id}/solidarity`} method="post" class="solidarity-form inline m-0 p-0">
             <button
               type="submit"
-              class="solidarity-btn inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] hover:text-[var(--danger-text)] active:scale-95 cursor-pointer"
+              class="solidarity-btn inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1.5px_0_0_rgba(0,0,0,0.35)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--danger-border)] hover:border-b-2 hover:bg-[var(--danger-bg)] hover:text-[var(--danger-text)] hover:shadow-[0_2.5px_0_0_#dc2626] active:translate-y-0.5 active:shadow-none cursor-pointer"
             >
               <svg class="h-3.5 w-3.5 text-[var(--danger-text)]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -85,7 +85,7 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
           {/* Ackchyually... Button */}
           <a
             href={isPermalink ? '#ackchyually-form' : `/confessions/${confession.id}#ackchyually-form`}
-            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--amber-border)] hover:bg-[var(--amber-bg)] hover:text-[var(--amber-text)] active:scale-95 cursor-pointer"
+            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-3 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1.5px_0_0_rgba(0,0,0,0.35)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--amber-border)] hover:border-b-2 hover:bg-[var(--amber-bg)] hover:text-[var(--amber-text)] hover:shadow-[0_2.5px_0_0_#b45309] active:translate-y-0.5 active:shadow-none cursor-pointer"
             title="View or submit Ackchyually suggestions"
           >
             <svg class="h-3.5 w-3.5 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -105,7 +105,7 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
           {/* Share / Copy Link Button */}
           <button
             type="button"
-            class="copy-permalink-btn inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)] active:scale-95 cursor-pointer"
+            class="copy-permalink-btn inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-2.5 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1.5px_0_0_rgba(0,0,0,0.35)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)] hover:shadow-[0_2.5px_0_0_#4b526b] active:translate-y-0.5 active:shadow-none cursor-pointer"
             data-permalink={`/confessions/${confession.id}`}
             title="Copy link to clipboard"
           >
@@ -125,7 +125,7 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
             <button
               type="submit"
               title="Report this post"
-              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] hover:text-[var(--danger-text)] active:scale-95 cursor-pointer"
+              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-2.5 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1.5px_0_0_rgba(0,0,0,0.35)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--danger-border)] hover:border-b-2 hover:bg-[var(--danger-bg)] hover:text-[var(--danger-text)] hover:shadow-[0_2.5px_0_0_#dc2626] active:translate-y-0.5 active:shadow-none cursor-pointer"
             >
               <svg class="h-3.5 w-3.5 text-[var(--text-muted)] group-hover:text-[var(--danger-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
