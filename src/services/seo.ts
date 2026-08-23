@@ -230,7 +230,7 @@ ${failLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 28}">${l}</
       <rect x="0" y="0" width="5" height="75" rx="2" fill="#fed41d" />
       <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="900" fill="#fed41d" letter-spacing="1">HOW IT MADE THEM FEEL</text>
       <text x="20" y="48" font-family="system-ui, sans-serif" font-size="19" font-weight="600" fill="#d6e7f7">
-${feelingLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 25}">&ldquo;${l}&rdquo;</tspan>`).join('\n')}
+${feelingLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 25}">&quot;${l}&quot;</tspan>`).join('\n')}
       </text>
     </g>
   </g>
