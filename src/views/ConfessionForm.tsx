@@ -32,7 +32,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
             </div>
             <div>
               <h2 class="text-base font-black text-[var(--text-primary)]">Submit a Confession</h2>
-              <p class="text-xs font-semibold text-[var(--text-muted)]">Vent about your prompt fail</p>
+              <p class="text-xs font-semibold text-[var(--text-muted)]">Vent about your prompt fail • Markdown &amp; ```code``` supported</p>
             </div>
           </div>
 
@@ -79,8 +79,8 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
             <textarea
               name="prompt_used"
               required
-              placeholder="Write a function in TypeScript that formats a date..."
-              rows={3}
+              placeholder="What did you ask for? E.g. Write a TypeScript helper:&#10;&#10;```ts&#10;function formatDate(d: Date): string&#10;```&#10;(Markdown &amp; ```code blocks``` supported!)"
+              rows={4}
               class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>
           </div>
@@ -114,8 +114,8 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
             <textarea
               name="what_it_did_instead"
               required
-              placeholder="It hallucinated a 200-line class and imported deprecated libraries..."
-              rows={3}
+              placeholder="What did it do instead? E.g. It hallucinated a 200-line class:&#10;&#10;```ts&#10;class RomanCalendarLexer extends DateUtils ...&#10;```&#10;Paste code directly or use backticks!"
+              rows={4}
               class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>
           </div>
@@ -127,7 +127,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
             <textarea
               name="how_it_made_them_feel"
               required
-              placeholder="I asked for ONE line of code. I got an essay."
+              placeholder="I asked for a 2-line utility. I got an entire framework with 12 dependencies."
               rows={2}
               class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>

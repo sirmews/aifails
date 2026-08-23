@@ -404,13 +404,14 @@ export function Layout({
                   let cursorOffset = 0;
                   const b3 = String.fromCharCode(96, 96, 96);
                   const b1 = String.fromCharCode(96);
+                  const nl = String.fromCharCode(10);
 
                   if (format === 'code-block') {
                     if (selected) {
-                      replacement = b3 + '\n' + selected + '\n' + b3;
+                      replacement = b3 + nl + selected + nl + b3;
                       cursorOffset = replacement.length;
                     } else {
-                      replacement = b3 + '\n// paste code here\n' + b3;
+                      replacement = b3 + nl + '// paste code here' + nl + b3;
                       cursorOffset = 4;
                     }
                   } else if (format === 'inline-code') {

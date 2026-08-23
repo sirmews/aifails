@@ -72,9 +72,9 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
           <textarea
             name="body"
             required
-            placeholder="Here is the clean 2-line function they should have asked for..."
-            rows={3}
-            class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
+            placeholder="What should they have asked or prompted instead? E.g.&#10;&#10;```ts&#10;export const formatDate = (d: Date) => d.toLocaleDateString();&#10;```&#10;Use ``` for code blocks or `code` for inline."
+            rows={4}
+            class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-3.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
           ></textarea>
         </div>
         {/* Cloudflare Turnstile Anti-Bot Verification */}
