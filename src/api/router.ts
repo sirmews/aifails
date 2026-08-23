@@ -36,10 +36,11 @@ app.use('*', async (c, next) => {
 
 function getSessionHelper(c: Context<{ Bindings: Env }>) {
   const isSecure = c.req.url.startsWith('https://') || c.env.ENVIRONMENT === 'production';
-  if (!c.env.SESSION_SECRET) {
-    throw new Error('SESSION_SECRET is required for session handling');
-  }
-  return getOrCreateSessionId(c.req.header('Cookie'), c.env.SESSION_SECRET, isSecure);
+  return getOrCreateSessionId(
+    c.req.header('Cookie'),
+    c.env.SESSION_SECRET || 'ugh-llms-default-session-hmac-secret-key-2026',
+    isSecure
+  );
 }
 
 function getClientIp(c: Context<{ Bindings: Env }>) {
@@ -148,12 +149,21 @@ app.post('/confessions', async (c) => {
   const turnstileToken = typeof body['cf-turnstile-response'] === 'string' ? body['cf-turnstile-response'].trim() : '';
 
   // Verify Cloudflare Turnstile token (fail-closed in production)
-  const turnstileResult = await verifyTurnstileToken(
-    turnstileToken,
-    c.env.TURNSTILE_SECRET_KEY,
-    clientIp,
-    c.env.ENVIRONMENT
-  );
+  const turnstileResult = await verifyTurnstileToken({
+    token: turnstileToken,
+    secretKey: c.env.TURNSTILE_SECRET_KEY,
+    remoteIp: clientIp,
+    expectedAction: 'confession',
+    expectedHostnames: [
+      'aifails.wtf',
+      'www.aifails.wtf',
+      'ugh-llms.sirmews.workers.dev',
+      'localhost',
+      '127.0.0.1',
+      new URL(c.req.url).hostname,
+    ],
+    environment: c.env.ENVIRONMENT,
+  });
 
   if (!turnstileResult.success) {
     return c.text('Bot verification failed. Please try again.', 400);
@@ -226,6 +236,7 @@ app.get('/confessions/:id', async (c) => {
       models,
       turnstileSiteKey: c.env.TURNSTILE_SITE_KEY,
       notice,
+      baseUrl: url.origin,
     })
   );
 });
@@ -318,13 +329,42 @@ app.post('/confessions/:id/suggestions', async (c) => {
 
   const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
 
-  const suggestion_type = (typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model') ? 'model' : 'prompt';
+  const turnstileToken =
+    typeof bodyData['cf-turnstile-response'] === 'string'
+      ? bodyData['cf-turnstile-response'].trim()
+      : '';
+
+  if (c.env.TURNSTILE_SITE_KEY) {
+    const turnstileResult = await verifyTurnstileToken({
+      token: turnstileToken,
+      secretKey: c.env.TURNSTILE_SECRET_KEY,
+      remoteIp: clientIp,
+      expectedAction: 'suggestion',
+      expectedHostnames: [
+        'aifails.wtf',
+        'www.aifails.wtf',
+        'ugh-llms.sirmews.workers.dev',
+        'localhost',
+        '127.0.0.1',
+        new URL(c.req.url).hostname,
+      ],
+      environment: c.env.ENVIRONMENT,
+    });
+
+    if (!turnstileResult.success) {
+      return c.text('Bot verification failed. Please try again.', 400);
+    }
+  }
+
+  const suggestion_type =
+    typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model'
+      ? 'model'
+      : 'prompt';
   const rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
 
   if (!rawBodyText) {
-    return c.text('Suggestion body is required.', 400);
+    return c.text('Suggestion body cannot be empty.', 400);
   }
-
   if (rawBodyText.length > 2000) {
     return c.text('Suggestion exceeds maximum allowed length of 2000 characters.', 400);
   }

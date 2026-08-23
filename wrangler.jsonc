@@ -5,6 +5,17 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-02-01",
   "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "aifails.wtf",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.aifails.wtf",
+      "custom_domain": true
+    }
+  ],
+  "workers_dev": true,
   "upload_source_maps": true,
   "observability": {
     "enabled": true,
@@ -62,7 +73,7 @@
     }
   ],
   "vars": {
-    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
-    "ENVIRONMENT": "development"
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAEZJ2e4Jgj2PjMhr",
+    "ENVIRONMENT": "production"
   }
 }

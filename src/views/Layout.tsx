@@ -61,6 +61,11 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
         <title>{title}</title>
         <meta name="description" content="A safe space to vent about large language model frustrations and share prompt fails." />
         
+        {/* SVG Favicon with Table Flip Icon */}
+        <link
+          rel="icon"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23222530'/><text y='58' x='50' text-anchor='middle' font-family='monospace' font-size='22' font-weight='bold' fill='%23f59e0b'>(╯°□°)╯</text></svg>"
+        />
         {/* SEO RSS & Sitemap Auto-Discovery Links */}
         <link rel="alternate" type="application/rss+xml" title="Prompt Confessional RSS Feed" href="/feed.xml" />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />

@@ -13,6 +13,7 @@ type PermalinkViewProps = {
   models?: ModelOption[];
   turnstileSiteKey?: string;
   notice?: string;
+  baseUrl?: string;
 };
 
 export function PermalinkView({
@@ -21,11 +22,12 @@ export function PermalinkView({
   models = [],
   turnstileSiteKey,
   notice,
+  baseUrl = 'https://aifails.wtf',
 }: PermalinkViewProps) {
   const ogTitle = `Prompt Confession: Asked for '${confession.prompt_used.slice(0, 60)}...'`;
   const ogDescription = `What it did instead: '${confession.what_it_did_instead.slice(0, 120)}...'`;
-  const url = `https://promptconfessional.com/confessions/${confession.id}`;
-
+  const url = `${baseUrl}/confessions/${confession.id}`;
+  const ogImage = `${baseUrl}/confessions/${confession.id}/og.svg`;
   const jsonLdData = {
     '@context': 'https://schema.org',
     '@type': 'SocialMediaPosting',
@@ -33,17 +35,21 @@ export function PermalinkView({
     articleBody: `Prompt: ${confession.prompt_used}\nWhat it did instead: ${confession.what_it_did_instead}\nHow it made them feel: ${confession.how_it_made_them_feel}`,
     datePublished: confession.created_at,
     url,
+    image: ogImage,
   };
 
   const headElements = (
     <>
+      <link rel="canonical" href={url} />
       <meta property="og:title" content={ogTitle} />
       <meta property="og:description" content={ogDescription} />
       <meta property="og:url" content={url} />
+      <meta property="og:image" content={ogImage} />
       <meta property="og:type" content="article" />
-      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={ogTitle} />
       <meta name="twitter:description" content={ogDescription} />
+      <meta name="twitter:image" content={ogImage} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
@@ -128,7 +134,7 @@ export function PermalinkView({
         </section>
 
         {/* 3. Standalone "Ackchyually..." Form Card (Below the comments) */}
-        <SuggestionForm confessionId={confession.id} />
+        <SuggestionForm confessionId={confession.id} turnstileSiteKey={turnstileSiteKey} />
       </main>
 
       <Footer />

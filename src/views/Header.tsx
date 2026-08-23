@@ -2,19 +2,18 @@ export function Header() {
   return (
     <header class="sticky top-0 z-40 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/90 backdrop-blur-md">
       <div class="mx-auto flex max-w-3xl items-center justify-between px-3 sm:px-4 py-3">
-        <div class="flex items-center gap-2">
-          <div class="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)]">
-            <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-            </svg>
+        <a href="/" class="group flex items-center gap-2.5 sm:gap-3 transition-opacity">
+          {/* 3D Tactile Keycap Logo Tile */}
+          <div class="relative flex h-8 sm:h-9 shrink-0 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)] px-2.5 font-mono text-xs sm:text-sm font-extrabold tracking-tight border-b-2 border-r border-[#9ba1ad] shadow-[0_2px_0_0_#9ba1ad] transition-all duration-150 ease-out group-hover:-translate-y-0.5 group-hover:shadow-[0_4px_0_0_#9ba1ad,0_4px_8px_rgba(0,0,0,0.3)] group-active:translate-y-0.5 group-active:shadow-[0_1px_0_0_#9ba1ad] select-none cursor-pointer">
+            (╯°□°)╯
           </div>
           <div>
             <h1 class="text-base sm:text-lg font-bold leading-none tracking-tight text-[var(--text-primary)]">
               Prompt Confessional
             </h1>
-            <p class="hidden sm:block text-xs font-medium text-[var(--text-secondary)]">a safe space for AI frustration</p>
+            <p class="hidden sm:block text-xs font-medium text-[var(--text-secondary)] mt-0.5">a safe space for AI frustration</p>
           </div>
-        </div>
+        </a>
 
         <div class="flex items-center gap-2 sm:gap-3">
           {/* Open Confess Modal Button */}

@@ -26,11 +26,9 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
       >
         {/* Modal Header */}
         <div class="mb-4 flex items-center justify-between border-b border-[var(--border-color)] pb-3">
-          <div class="flex items-center gap-2">
-            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)]">
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-              </svg>
+          <div class="flex items-center gap-2.5">
+            <div class="flex h-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)] px-2.5 font-mono text-xs font-extrabold tracking-tight border-b-2 border-r border-[#9ba1ad] shadow-[0_2px_0_0_#9ba1ad] select-none">
+              (╯°□°)╯
             </div>
             <div>
               <h2 class="text-base font-bold text-[var(--text-primary)]">Submit a Confession</h2>
@@ -155,7 +153,12 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
           {/* Cloudflare Turnstile Anti-Bot Verification */}
           {turnstileSiteKey && (
             <div class="my-3 flex justify-center">
-              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto"></div>
+              <div
+                class="cf-turnstile"
+                data-sitekey={turnstileSiteKey}
+                data-action="confession"
+                data-theme="auto"
+              ></div>
             </div>
           )}
 

@@ -1,8 +1,9 @@
 type SuggestionFormProps = {
   confessionId: string;
+  turnstileSiteKey?: string;
 };
 
-export function SuggestionForm({ confessionId }: SuggestionFormProps) {
+export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFormProps) {
   return (
     <section
       id="ackchyually-form"
@@ -47,6 +48,17 @@ export function SuggestionForm({ confessionId }: SuggestionFormProps) {
           class="w-full resize-none rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--amber-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--amber-accent)]"
         ></textarea>
 
+        {/* Cloudflare Turnstile Anti-Bot Verification */}
+        {turnstileSiteKey && (
+          <div class="my-2 flex justify-end">
+            <div
+              class="cf-turnstile"
+              data-sitekey={turnstileSiteKey}
+              data-action="suggestion"
+              data-theme="auto"
+            ></div>
+          </div>
+        )}
         <div class="flex justify-end">
           <button
             type="submit"
