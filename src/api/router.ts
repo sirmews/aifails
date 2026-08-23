@@ -30,7 +30,7 @@ import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
 export const app = new Hono<{ Bindings: Env }>();
 
-// Global Security Headers Middleware
+// Global Security & Agent Discovery Headers Middleware
 app.use('*', async (c, next) => {
   await next();
   c.header('X-Content-Type-Options', 'nosniff');
@@ -39,6 +39,11 @@ app.use('*', async (c, next) => {
   c.header(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+  );
+  // RFC 8288 & RFC 9727 Section 3 Link Headers for Agent Discovery
+  c.header(
+    'Link',
+    '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
   );
 });
 
@@ -139,9 +144,12 @@ app.get('/', async (c) => {
       hasMore,
     });
   }
-
   c.header('Vary', 'Accept');
   c.header('Cache-Control', EDGE_CACHE_HEADER);
+  c.header(
+    'Link',
+    '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
+  );
 
   return c.html(
     HomeView({
@@ -561,15 +569,58 @@ app.get('/feed.xml', async (c) => {
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   return c.body(rssXml);
 });
-
 app.get('/rss.xml', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/rss.xml`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
-
   return c.redirect('/feed.xml');
 });
 
+// 8a. RFC 9727 API Catalog Endpoint (application/linkset+json)
+app.get('/.well-known/api-catalog', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/.well-known/api-catalog`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
+  const baseUrl = new URL(c.req.url).origin;
+  const catalog = {
+    linkset: [
+      {
+        anchor: baseUrl,
+        'api-catalog': [
+          {
+            href: `${baseUrl}/.well-known/api-catalog`,
+            type: 'application/linkset+json',
+          },
+        ],
+        'service-desc': [
+          {
+            href: `${baseUrl}/llms.txt`,
+            type: 'text/plain',
+          },
+        ],
+        'service-doc': [
+          {
+            href: `${baseUrl}/llms-full.txt`,
+            type: 'text/plain',
+          },
+        ],
+        describedby: [
+          {
+            href: `${baseUrl}/feed.md`,
+            type: 'text/markdown',
+          },
+        ],
+      },
+    ],
+  };
+
+  return c.newResponse(JSON.stringify(catalog, null, 2), 200, {
+    'Content-Type': 'application/linkset+json; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
 // 7. Dynamic XML Sitemap Endpoint
 app.get('/sitemap.xml', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/sitemap.xml`)) {
