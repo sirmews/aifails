@@ -126,13 +126,13 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
                 name="model_query"
                 autocomplete="off"
                 placeholder="Search model (e.g. Claude, GPT-4o, Llama)..."
-                class="w-full rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+                class="w-full rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
               />
               
               {/* Scrollable, Max-Height Filtered Dropdown */}
               <div
                 id="model-dropdown"
-                class="hidden absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-md border border-[var(--border-color)] bg-[var(--bg-card)] p-1 shadow-xl text-xs"
+                class="hidden absolute left-0 right-0 top-full z-50 mt-1.5 max-h-64 overflow-y-auto rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-1 shadow-[4px_4px_0px_#0e1a26] text-xs"
               >
                 {models.slice(0, 10).map((m) => (
                   <div

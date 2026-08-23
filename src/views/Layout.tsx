@@ -224,8 +224,7 @@ export function Layout({
                   }
 
                   const header = document.createElement('div');
-                  header.className = 'sticky top-0 bg-[var(--bg-card)]/95 backdrop-blur-xs px-3 py-1 border-b border-[var(--border-color)] text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider flex justify-between';
-                  const headerLabel = document.createElement('span');
+                  header.className = 'sticky top-0 z-10 bg-[var(--bg-card)] px-3 py-2 border-b-2 border-[var(--border-color)] text-[11px] font-black text-[var(--text-secondary)] uppercase tracking-wider flex justify-between items-center';
                   headerLabel.textContent = query ? 'Matching Models' : 'All Available Models';
                   const headerCount = document.createElement('span');
                   headerCount.textContent = String(filtered.length);
