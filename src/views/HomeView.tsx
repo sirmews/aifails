@@ -17,6 +17,7 @@ type HomeViewProps = {
   model?: string;
   nextCursor?: string | null;
   hasMore?: boolean;
+  baseUrl?: string;
 };
 export function HomeView({
   confessions,
@@ -29,11 +30,38 @@ export function HomeView({
   model = 'all',
   nextCursor,
   hasMore = false,
+  baseUrl = 'https://aifails.wtf',
 }: HomeViewProps) {
   const totalSolidarity = confessions.reduce((sum, c) => sum + c.solidarity_count, 0);
   const hasActiveFilter = Boolean(query || (mood && mood !== 'all') || (model && model !== 'all'));
+
+  const jsonLdData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Prompt Confessional — a safe space for AI frustration',
+    description: 'Anonymous, community-driven database of LLM failures, prompt hallucinations, and developer solidarity.',
+    url: baseUrl,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: confessions.length,
+      itemListElement: confessions.map((c, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: c.prompt_used.length > 80 ? `${c.prompt_used.slice(0, 80)}...` : c.prompt_used,
+        url: `${baseUrl}/confessions/${c.id}`,
+      })),
+    },
+  };
+
+  const headElements = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
+    />
+  );
+
   return (
-    <Layout turnstileSiteKey={turnstileSiteKey}>
+    <Layout turnstileSiteKey={turnstileSiteKey} head={headElements}>
       <Header />
 
       <Hero confessionCount={confessions.length} totalSolidarity={totalSolidarity} />

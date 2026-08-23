@@ -43,21 +43,71 @@ export function PermalinkView({
 
   const jsonLdData = {
     '@context': 'https://schema.org',
-    '@type': 'SocialMediaPosting',
-    headline: ogTitle,
-    articleBody: `Prompt: ${confession.prompt_used}\nWhat it did instead: ${confession.what_it_did_instead}\nHow it made them feel: ${confession.how_it_made_them_feel}`,
-    datePublished: confession.created_at,
-    url,
-    image: ogImage,
-    author: {
-      '@type': 'Person',
-      name: 'Anonymous',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Prompt Confessional',
-      url: baseUrl,
-    },
+    '@graph': [
+      {
+        '@type': 'QAPage',
+        '@id': `${url}#qa`,
+        mainEntity: {
+          '@type': 'Question',
+          name: promptSnippet,
+          text: confession.prompt_used,
+          answerCount: suggestions.length + 1,
+          upvoteCount: confession.solidarity_count,
+          dateCreated: confession.created_at,
+          author: {
+            '@type': 'Person',
+            name: 'Anonymous Developer',
+          },
+          suggestedAnswer: [
+            {
+              '@type': 'Answer',
+              text: `AI Output / Failure (${modelName}):\n${confession.what_it_did_instead}`,
+              dateCreated: confession.created_at,
+              upvoteCount: confession.solidarity_count,
+              author: {
+                '@type': 'SoftwareApplication',
+                name: modelName,
+              },
+            },
+          ],
+          ...(suggestions.length > 0
+            ? {
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `Community "Ackchyually..." Prompt Fix:\n${suggestions[0].body}`,
+                  dateCreated: suggestions[0].created_at,
+                  author: {
+                    '@type': 'Person',
+                    name: 'Anonymous Prompt Engineer',
+                  },
+                },
+              }
+            : {}),
+        },
+      },
+      {
+        '@type': 'TechArticle',
+        '@id': `${url}#article`,
+        headline: ogTitle,
+        description: ogDescription,
+        datePublished: confession.created_at,
+        url,
+        image: ogImage,
+        about: {
+          '@type': 'SoftwareApplication',
+          name: modelName,
+        },
+        author: {
+          '@type': 'Person',
+          name: 'Anonymous Developer',
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Prompt Confessional',
+          url: baseUrl,
+        },
+      },
+    ],
   };
 
   const headElements = (

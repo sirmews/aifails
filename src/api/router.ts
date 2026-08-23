@@ -18,6 +18,12 @@ import { getOrCreateSessionId } from '../auth/session';
 import { redactSecrets } from '../utils/gitleaks';
 import { sanitizeContent } from '../utils/moderation';
 import { generateRssFeed, generateSitemapXml, generateOgImageSvg, generateSiteOgImageSvg } from '../services/seo';
+import {
+  generateLlmsTxt,
+  generateLlmsFullTxt,
+  formatConfessionMarkdown,
+  formatConfessionJson,
+} from '../services/agent';
 import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
@@ -128,6 +134,7 @@ app.get('/', async (c) => {
       model,
       nextCursor,
       hasMore,
+      baseUrl: url.origin,
     })
   );
 });
@@ -237,25 +244,90 @@ app.get('/random', async (c) => {
 
   return c.redirect('/');
 });
-// 3. Single Confession Permalink SSR Route
+
+// 3a. Random Confession API & Markdown Endpoints for AI Agents
+app.get('/api/random', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/api/random`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const randomId = await getRandomConfessionId(c.env.DB);
+  if (!randomId) return c.json({ error: 'No confessions found' }, 404);
+  const confession = await getConfessionById(c.env.DB, randomId);
+  if (!confession) return c.json({ error: 'Not found' }, 404);
+  const suggestions = await getSuggestionsForConfession(c.env.DB, randomId);
+  const baseUrl = new URL(c.req.url).origin;
+  c.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  return c.json(formatConfessionJson(confession, suggestions, baseUrl));
+});
+
+app.get('/random.json', (c) => c.redirect('/api/random'));
+
+app.get('/random.md', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/random.md`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const randomId = await getRandomConfessionId(c.env.DB);
+  if (!randomId) return c.text('# Error\n\nNo confessions found.', 404);
+  const confession = await getConfessionById(c.env.DB, randomId);
+  if (!confession) return c.text('# Error\n\nConfession not found.', 404);
+  const suggestions = await getSuggestionsForConfession(c.env.DB, randomId);
+  const baseUrl = new URL(c.req.url).origin;
+  c.header('Content-Type', 'text/markdown; charset=utf-8');
+  c.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  return c.text(formatConfessionMarkdown(confession, suggestions, baseUrl));
+});
+
+// 3b. Single Confession Permalink Route (Supporting HTML, .md, .json & Content Negotiation)
 app.get('/confessions/:id', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
 
-  const id = c.req.param('id');
+  let id = c.req.param('id');
+  let format: 'html' | 'md' | 'json' = 'html';
+
+  // Check explicit file extension
+  if (id.endsWith('.md')) {
+    id = id.slice(0, -3);
+    format = 'md';
+  } else if (id.endsWith('.json')) {
+    id = id.slice(0, -5);
+    format = 'json';
+  } else {
+    // Check Accept header content negotiation
+    const acceptHeader = c.req.header('Accept') || '';
+    if (acceptHeader.includes('text/markdown')) {
+      format = 'md';
+    } else if (acceptHeader.includes('application/json')) {
+      format = 'json';
+    }
+  }
+
   const url = new URL(c.req.url);
   const notice = url.searchParams.get('notice') ?? undefined;
   const confession = await getConfessionById(c.env.DB, id);
 
   if (!confession) {
+    if (format === 'json') return c.json({ error: 'Confession not found' }, 404);
+    if (format === 'md') return c.text('# Error 404\n\nConfession not found.', 404);
     c.status(404);
     return c.html(NotFoundView());
   }
 
   const suggestions = await getSuggestionsForConfession(c.env.DB, id);
-  const models = await getModels(c.env.CACHE_KV);
 
+  if (format === 'md') {
+    c.header('Content-Type', 'text/markdown; charset=utf-8');
+    c.header('Cache-Control', EDGE_CACHE_HEADER);
+    return c.text(formatConfessionMarkdown(confession, suggestions, url.origin));
+  }
+
+  if (format === 'json') {
+    c.header('Cache-Control', EDGE_CACHE_HEADER);
+    return c.json(formatConfessionJson(confession, suggestions, url.origin));
+  }
+
+  const models = await getModels(c.env.CACHE_KV);
   c.header('Cache-Control', EDGE_CACHE_HEADER);
 
   return c.html(
@@ -487,14 +559,57 @@ app.get('/sitemap.xml', async (c) => {
   return c.body(sitemapXml);
 });
 
-// 8. Robots.txt Crawler Directives
+// 8. LLMs.txt & Agent Catalog Standard Endpoints
+app.get('/llms.txt', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/llms.txt`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  c.header('Content-Type', 'text/plain; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.text(generateLlmsTxt(baseUrl));
+});
+
+app.get('/llms-full.txt', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/llms-full.txt`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
+  const suggestionsMap = await getSuggestionsMapForConfessions(
+    c.env.DB,
+    confessions.map((conf) => conf.id)
+  );
+  const baseUrl = new URL(c.req.url).origin;
+  c.header('Content-Type', 'text/plain; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.text(generateLlmsFullTxt(confessions, suggestionsMap, baseUrl));
+});
+
+app.get('/feed.md', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/feed.md`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
+  const suggestionsMap = await getSuggestionsMapForConfessions(
+    c.env.DB,
+    confessions.map((conf) => conf.id)
+  );
+  const baseUrl = new URL(c.req.url).origin;
+  c.header('Content-Type', 'text/markdown; charset=utf-8');
+  c.header('Cache-Control', 'public, max-age=300, s-maxage=3600');
+  return c.text(generateLlmsFullTxt(confessions, suggestionsMap, baseUrl));
+});
+
+app.get('/confessions.md', (c) => c.redirect('/feed.md'));
+
+// 9. Robots.txt Crawler & Agent Directives
 app.get('/robots.txt', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/robots.txt`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
 
   const baseUrl = new URL(c.req.url).origin;
-  const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+  const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\nLLMs-Txt: ${baseUrl}/llms.txt\n`;
 
   c.header('Content-Type', 'text/plain; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=86400');
