@@ -1,21 +1,29 @@
 import type { ModelOption } from '../core/types';
 
 const KV_MODELS_KEY = 'openrouter_models_v1';
-const CACHE_TTL_SECONDS = 86400; // 24 hours
+const CACHE_TTL_SECONDS = 86400; // 24 hours in Cloudflare KV
+const IN_MEMORY_CACHE_TTL_MS = 3600 * 1000; // 1 hour in isolate RAM
+
+let memoryCache: { models: ModelOption[]; expiresAt: number } | null = null;
 
 export async function getModels(kv?: KVNamespace): Promise<ModelOption[]> {
+  // 0. Fast-path: return from in-memory RAM cache if warm (zero KV cost)
+  if (memoryCache && Date.now() < memoryCache.expiresAt && memoryCache.models.length > 0) {
+    return memoryCache.models;
+  }
+
   // 1. Try reading from Cloudflare KV if binding is available
   if (kv) {
     try {
       const cached = await kv.get<ModelOption[]>(KV_MODELS_KEY, 'json');
       if (cached && Array.isArray(cached) && cached.length > 0) {
+        memoryCache = { models: cached, expiresAt: Date.now() + IN_MEMORY_CACHE_TTL_MS };
         return cached;
       }
     } catch {
       // Ignore KV errors and fallback to fetch
     }
   }
-
   // 2. Fetch fresh models from OpenRouter API with a 3-second timeout
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
@@ -53,6 +61,7 @@ export async function getModels(kv?: KVNamespace): Promise<ModelOption[]> {
       }
     }
 
+    memoryCache = { models, expiresAt: Date.now() + IN_MEMORY_CACHE_TTL_MS };
     return models;
   } catch (err) {
     clearTimeout(timeoutId);

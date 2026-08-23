@@ -56,25 +56,33 @@ async function isReadRateLimited(c: Context<{ Bindings: Env }>, rateLimitKey: st
   return !success;
 }
 
-// Cache-Control header helper (zero max-age for instant HTML updates)
-const EDGE_CACHE_HEADER = 'public, max-age=0, must-revalidate';
-function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
+// Tiered Edge Cache: 5s browser, 30s Cloudflare CDN edge, with background SWR
+const EDGE_CACHE_HEADER = 'public, max-age=5, s-maxage=30, stale-while-revalidate=86400';
+
+function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
   if (c.executionCtx) {
     try {
       const cache = caches.default;
       const origin = new URL(c.req.url).origin;
-      c.executionCtx.waitUntil(
-        Promise.all([
-          cache.delete(new Request(origin + '/')),
-          cache.delete(new Request(origin + '/feed.xml')),
-          cache.delete(new Request(origin + '/sitemap.xml')),
-        ]).catch(() => {})
-      );
+      const purgeRequests = [
+        cache.delete(new Request(origin + '/')),
+        cache.delete(new Request(origin + '/feed.xml')),
+        cache.delete(new Request(origin + '/sitemap.xml')),
+        cache.delete(new Request(origin + '/og.svg')),
+      ];
+      if (confessionId) {
+        purgeRequests.push(
+          cache.delete(new Request(origin + `/confessions/${confessionId}`)),
+          cache.delete(new Request(origin + `/confessions/${confessionId}/og.svg`))
+        );
+      }
+      c.executionCtx.waitUntil(Promise.all(purgeRequests).catch(() => {}));
     } catch {
       // Ignore cache purging errors
     }
   }
 }
+const purgeHomeEdgeCache = purgeEdgeCache;
 
 // 1. Home Page SSR Route
 app.get('/', async (c) => {
@@ -203,7 +211,7 @@ app.post('/confessions', async (c) => {
     model_name,
   });
 
-  purgeHomeEdgeCache(c);
+  purgeEdgeCache(c);
 
   return c.redirect('/?notice=Confession+submitted+successfully');
 });
@@ -377,7 +385,7 @@ app.post('/confessions/:id/suggestions', async (c) => {
     body: bodyText,
   });
 
-  purgeHomeEdgeCache(c);
+  purgeEdgeCache(c, confession_id);
 
   return c.redirect(`/confessions/${confession_id}`);
 });
@@ -391,7 +399,6 @@ app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
-
   if (c.env.CONFESSION_LIMITER) {
     const rateLimitKey = `${clientIp}:${session.sessionId}:rep`;
     const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
