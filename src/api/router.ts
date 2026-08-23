@@ -36,6 +36,9 @@ app.use('*', async (c, next) => {
 
 function getSessionHelper(c: Context<{ Bindings: Env }>) {
   const isSecure = c.req.url.startsWith('https://') || c.env.ENVIRONMENT === 'production';
+  if (!c.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET is required for session handling');
+  }
   return getOrCreateSessionId(c.req.header('Cookie'), c.env.SESSION_SECRET, isSecure);
 }
 

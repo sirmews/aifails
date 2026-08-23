@@ -1,5 +1,11 @@
 export const SESSION_COOKIE_NAME = 'confessional_session';
-const DEFAULT_SECRET = 'ugh-llms-lightweight-session-secret-key-32b';
+
+function normalizeSessionSecret(secret: string | undefined): string {
+  if (!secret || !secret.trim()) {
+    throw new Error('SESSION_SECRET is required for session signing');
+  }
+  return secret;
+}
 
 async function getHmacKey(secret: string): Promise<CryptoKey> {
   const enc = new TextEncoder();
@@ -14,7 +20,7 @@ async function getHmacKey(secret: string): Promise<CryptoKey> {
 
 export async function createSessionToken(
   sessionId: string,
-  secret: string = DEFAULT_SECRET
+  secret: string
 ): Promise<string> {
   const enc = new TextEncoder();
   const key = await getHmacKey(secret);
@@ -28,7 +34,7 @@ export async function createSessionToken(
 
 export async function verifySessionToken(
   token: string,
-  secret: string = DEFAULT_SECRET
+  secret: string
 ): Promise<string | null> {
   const parts = token.split('.');
   if (parts.length !== 2) return null;
@@ -62,21 +68,22 @@ export function parseCookies(cookieHeader: string | null | undefined): Record<st
 
 export async function getOrCreateSessionId(
   cookieHeader: string | null | undefined,
-  secret: string = DEFAULT_SECRET,
+  secret: string,
   isSecure: boolean = false
 ): Promise<{ sessionId: string; isNew: boolean; setCookieHeader?: string }> {
+  const sessionSecret = normalizeSessionSecret(secret);
   const cookies = parseCookies(cookieHeader);
   const existingToken = cookies[SESSION_COOKIE_NAME];
 
   if (existingToken) {
-    const validSessionId = await verifySessionToken(existingToken, secret);
+    const validSessionId = await verifySessionToken(existingToken, sessionSecret);
     if (validSessionId) {
       return { sessionId: validSessionId, isNew: false };
     }
   }
 
   const newSessionId = crypto.randomUUID();
-  const newToken = await createSessionToken(newSessionId, secret);
+  const newToken = await createSessionToken(newSessionId, sessionSecret);
   const secureFlag = isSecure ? '; Secure' : '';
   const setCookieHeader = `${SESSION_COOKIE_NAME}=${newToken}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax${secureFlag}`;
 

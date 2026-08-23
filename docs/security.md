@@ -8,7 +8,7 @@ Prompt Confessional is anonymous, so abuse control cannot depend on logins. Floo
 | --- | --- | --- |
 | Edge | Workers rate limiter bindings | Counts are per PoP, not global. Fast enough for flood defense. |
 | Rate-limit key | `${clientIp}:${sessionId}` | Shared office/cellular IPs are not blanket-locked. Needs a valid session cookie. |
-| Session | HMAC-SHA256 cookie `confessional_session` | Stops clients minting random session ids to vote twice. Secret is currently a hardcoded default. |
+| Session | HMAC-SHA256 cookie `confessional_session` | Stops clients minting random session ids to vote twice. Secret is loaded from `SESSION_SECRET` and must be configured. |
 | Votes | D1 composite PK `(confession_id, session_id)` + `INSERT OR IGNORE` | One extra write on a real vote. Globally unique. |
 
 ## Solidarity request path

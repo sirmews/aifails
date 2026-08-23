@@ -50,6 +50,6 @@ GitHub Actions typechecks on every push to `main`, deploys the Worker, and runs 
 1. A real D1 database and KV namespace, with their ids in `wrangler.jsonc`
 2. GitHub secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
 3. Production Turnstile keys (`TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) as Worker secrets
-4. A non-default HMAC session secret (today it is hardcoded in `src/auth/session.ts`)
+4. A non-default HMAC session secret in `SESSION_SECRET` (Worker secret)
 
 Until those exist, CI typecheck will pass and deploy / nightly backup will fail.
