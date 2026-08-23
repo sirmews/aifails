@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Confessional — Light &amp; Warm Tailwind Palettes</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 24px 16px;
+      background: #e2e8f0;
+      color: #0f172a;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* THEME 1: Tailwind Stone & Amber (Warm Editorial Paper — Top Recommendation) */
+    .theme-stone-amber {
+      --bg-canvas: #f5f5f4;         /* stone-100 */
+      --bg-card: #ffffff;           /* white */
+      --bg-subtle: #fafaf9;         /* stone-50 */
+      --border-main: #e7e5e4;       /* stone-200 */
+      --border-subtle: #d6d3d1;     /* stone-300 */
+      --border-shelf: #a8a29e;      /* stone-400 */
+      --text-main: #1c1917;         /* stone-900 */
+      --text-sub: #57534e;          /* stone-600 */
+      --text-mute: #78716c;         /* stone-500 */
+      
+      --accent-bg: #1c1917;         /* stone-900 (Keycap) */
+      --accent-text: #fafaf9;
+      --accent-shelf: #000000;
+      
+      --solidarity-bg: #fff1f2;     /* rose-50 */
+      --solidarity-border: #f43f5e; /* rose-500 */
+      --solidarity-text: #e11d48;   /* rose-600 */
+      --solidarity-accent: #e11d48;
+      --solidarity-shelf: #be123c;  /* rose-700 */
+      
+      --amber-bg: #fffbeb;          /* amber-50 */
+      --amber-border: #f59e0b;      /* amber-500 */
+      --amber-text: #b45309;        /* amber-700 */
+      --amber-shelf: #d97706;       /* amber-600 */
+      
+      --danger-border: #ef4444;     /* red-500 */
+      --danger-bg: #fef2f2;         /* red-50 */
+      --danger-text: #dc2626;       /* red-600 */
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    /* THEME 2: Tailwind Amber Honey (Sunlit Studio Warmth) */
+    .theme-amber-honey {
+      --bg-canvas: #fffbeb;         /* amber-50 */
+      --bg-card: #ffffff;           /* white */
+      --bg-subtle: #fef3c7;         /* amber-100 */
+      --border-main: #fde68a;       /* amber-200 */
+      --border-subtle: #fcd34d;     /* amber-300 */
+      --border-shelf: #fbbf24;      /* amber-400 */
+      --text-main: #292524;         /* warm stone-900 */
+      --text-sub: #78350f;          /* amber-900/70 */
+      --text-mute: #92400e;         /* amber-800 */
+      
+      --accent-bg: #d97706;         /* amber-600 */
+      --accent-text: #ffffff;
+      --accent-shelf: #92400e;      /* amber-800 */
+      
+      --solidarity-bg: #fff1f2;     /* rose-50 */
+      --solidarity-border: #f43f5e; /* rose-500 */
+      --solidarity-text: #be123c;   /* rose-700 */
+      --solidarity-accent: #e11d48;
+      --solidarity-shelf: #9f1239;  /* rose-800 */
+      
+      --amber-bg: #fef3c7;          /* amber-100 */
+      --amber-border: #d97706;      /* amber-600 */
+      --amber-text: #92400e;        /* amber-800 */
+      --amber-shelf: #b45309;       /* amber-700 */
+      
+      --danger-border: #f87171;
+      --danger-bg: #fef2f2;
+      --danger-text: #b91c1c;
+      --card-shadow: 0 2px 6px rgba(217,119,6,0.08);
+    }
+
+    /* THEME 3: Tailwind Orange & Warm Oatmeal (Vibrant & Playful) */
+    .theme-orange-oatmeal {
+      --bg-canvas: #faf6f0;         /* warm oatmeal */
+      --bg-card: #ffffff;           /* white */
+      --bg-subtle: #f5ede2;         /* soft biscuit */
+      --border-main: #e8dccb;       /* warm clay */
+      --border-subtle: #d8c6af;
+      --border-shelf: #b89f82;
+      --text-main: #26201b;         /* deep roasted text */
+      --text-sub: #63584e;
+      --text-mute: #8c7e70;
+      
+      --accent-bg: #ea580c;         /* orange-600 */
+      --accent-text: #ffffff;
+      --accent-shelf: #9a3412;      /* orange-800 */
+      
+      --solidarity-bg: #fff1f2;     /* rose-50 */
+      --solidarity-border: #f43f5e; /* rose-500 */
+      --solidarity-text: #e11d48;   /* rose-600 */
+      --solidarity-accent: #e11d48;
+      --solidarity-shelf: #be123c;  /* rose-700 */
+      
+      --amber-bg: #fff7ed;          /* orange-50 */
+      --amber-border: #ea580c;      /* orange-600 */
+      --amber-text: #9a3412;        /* orange-800 */
+      --amber-shelf: #c2410c;       /* orange-700 */
+      
+      --danger-border: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-text: #991b1b;
+      --card-shadow: 0 2px 5px rgba(234,88,12,0.06);
+    }
+
+    /* THEME 4: Tailwind Rose & Clean Linen (Soft & Friendly) */
+    .theme-rose-linen {
+      --bg-canvas: #fff5f5;         /* rose-50/50 */
+      --bg-card: #ffffff;           /* white */
+      --bg-subtle: #ffe4e6;         /* rose-100 */
+      --border-main: #fecdd3;       /* rose-200 */
+      --border-subtle: #fda4af;     /* rose-300 */
+      --border-shelf: #fb7185;      /* rose-400 */
+      --text-main: #1f1b24;         /* dark plum ink */
+      --text-sub: #5c5364;
+      --text-mute: #85798e;
+      
+      --accent-bg: #e11d48;         /* rose-600 */
+      --accent-text: #ffffff;
+      --accent-shelf: #9f1239;      /* rose-800 */
+      
+      --solidarity-bg: #ffe4e6;     /* rose-100 */
+      --solidarity-border: #e11d48; /* rose-600 */
+      --solidarity-text: #9f1239;   /* rose-800 */
+      --solidarity-accent: #e11d48;
+      --solidarity-shelf: #881337;  /* rose-900 */
+      
+      --amber-bg: #fef3c7;          /* amber-100 */
+      --amber-border: #f59e0b;      /* amber-500 */
+      --amber-text: #b45309;        /* amber-700 */
+      --amber-shelf: #d97706;       /* amber-600 */
+      
+      --danger-border: #e11d48;
+      --danger-bg: #fff1f2;
+      --danger-text: #be123c;
+      --card-shadow: 0 2px 6px rgba(225,29,72,0.06);
+    }
+
+    /* THEME 5: Tailwind Neutral (Clean Modern Paper & Black Keycaps) */
+    .theme-neutral {
+      --bg-canvas: #f5f5f5;         /* neutral-100 */
+      --bg-card: #ffffff;           /* white */
+      --bg-subtle: #e5e5e5;         /* neutral-200 */
+      --border-main: #e5e5e5;       /* neutral-200 */
+      --border-subtle: #d4d4d4;     /* neutral-300 */
+      --border-shelf: #a3a3a3;      /* neutral-400 */
+      --text-main: #171717;         /* neutral-900 */
+      --text-sub: #525252;          /* neutral-600 */
+      --text-mute: #737373;         /* neutral-500 */
+      
+      --accent-bg: #171717;         /* neutral-900 */
+      --accent-text: #fafafa;
+      --accent-shelf: #000000;
+      
+      --solidarity-bg: #fff1f2;     /* rose-50 */
+      --solidarity-border: #e11d48; /* rose-600 */
+      --solidarity-text: #e11d48;
+      --solidarity-accent: #e11d48;
+      --solidarity-shelf: #be123c;
+      
+      --amber-bg: #fffbeb;          /* amber-50 */
+      --amber-border: #f59e0b;      /* amber-500 */
+      --amber-text: #b45309;
+      --amber-shelf: #d97706;
+      
+      --danger-border: #ef4444;
+      --danger-bg: #fef2f2;
+      --danger-text: #dc2626;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .app-scope {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      min-height: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-main);
+      padding: 32px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      transition: all 0.25s ease;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* 3D Tactile Keycap Logo */
+    .keycap-logo {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background-color: var(--accent-bg);
+      color: var(--accent-text);
+      padding: 6px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid var(--accent-bg);
+      border-bottom: 3px solid var(--accent-shelf);
+      box-shadow: 0 2px 0 0 var(--accent-shelf);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease-out;
+      text-decoration: none;
+    }
+    .keycap-logo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 0 var(--accent-shelf), 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .keycap-logo:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /* 3D Tactile Buttons */
+    .btn-3d {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      border-radius: 6px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--bg-card);
+      color: var(--text-sub);
+      border: 1px solid var(--border-main);
+      border-bottom: 2px solid var(--border-shelf);
+      box-shadow: 0 1.5px 0 0 rgba(0,0,0,0.06);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease-out;
+      text-decoration: none;
+    }
+    .btn-3d:hover {
+      transform: translateY(-1.5px);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+      box-shadow: 0 3px 0 0 var(--border-shelf), 0 3px 6px rgba(0,0,0,0.08);
+    }
+    .btn-3d:active {
+      transform: translateY(1.5px);
+      box-shadow: none;
+    }
+
+    /* Primary CTA Button */
+    .btn-primary-3d {
+      background-color: var(--accent-bg);
+      color: var(--accent-text);
+      border-color: var(--accent-bg);
+      border-bottom: 2.5px solid var(--accent-shelf);
+      box-shadow: 0 2px 0 0 var(--accent-shelf);
+      font-weight: 700;
+    }
+    .btn-primary-3d:hover {
+      transform: translateY(-1.5px);
+      color: var(--accent-text);
+      box-shadow: 0 3.5px 0 0 var(--accent-shelf), 0 4px 10px rgba(0,0,0,0.15);
+      filter: brightness(1.08);
+    }
+    .btn-primary-3d:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /* Solidarity Button */
+    .btn-solidarity-3d:hover {
+      transform: translateY(-1.5px);
+      background-color: var(--solidarity-bg);
+      color: var(--solidarity-text);
+      border-color: var(--solidarity-border);
+      border-bottom: 2.5px solid var(--solidarity-shelf);
+      box-shadow: 0 3px 0 0 var(--solidarity-shelf);
+    }
+    .btn-solidarity-3d.active {
+      transform: translateY(1.5px);
+      background-color: var(--solidarity-bg);
+      color: var(--solidarity-text);
+      border-color: var(--solidarity-border);
+      border-bottom: 2px solid var(--solidarity-border);
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    /* Ackchyually Button */
+    .btn-ackchyually-3d:hover {
+      transform: translateY(-1.5px);
+      background-color: var(--amber-bg);
+      color: var(--amber-text);
+      border-color: var(--amber-border);
+      border-bottom: 2.5px solid var(--amber-shelf);
+      box-shadow: 0 3px 0 0 var(--amber-shelf);
+    }
+
+    /* Card */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border-main);
+      background-color: var(--bg-subtle);
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .section-border {
+      padding-left: 14px;
+      margin-bottom: 16px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-mute);
+      margin-bottom: 3px;
+    }
+    .section-text {
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* Interactive Switcher Top Bar */
+    .prototype-bar {
+      background: #ffffff;
+      border: 1px solid #d4d4d8;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .theme-tab {
+      background: #f4f4f5;
+      color: #52525b;
+      border: 1px solid #d4d4d8;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .theme-tab:hover {
+      background: #e4e4e7;
+      color: #09090b;
+    }
+    .theme-tab.selected {
+      background: #09090b;
+      color: #ffffff;
+      border-color: #09090b;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="prototype-bar">
+    <div style="font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+      <span style="color: #ea580c; font-size: 16px;">☀️</span> Light &amp; Warm Tailwind Palette Switcher:
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <button class="theme-tab selected" onclick="setTheme('stone-amber')">1. Tailwind Stone &amp; Amber (Warm Paper — Top Pick)</button>
+      <button class="theme-tab" onclick="setTheme('amber-honey')">2. Tailwind Amber Honey (Sunlit Studio)</button>
+      <button class="theme-tab" onclick="setTheme('orange-oatmeal')">3. Tailwind Orange &amp; Oatmeal (Warm Craft)</button>
+      <button class="theme-tab" onclick="setTheme('rose-linen')">4. Tailwind Rose &amp; Linen (Soft Berry)</button>
+      <button class="theme-tab" onclick="setTheme('neutral')">5. Tailwind Neutral (Clean Monochrome)</button>
+    </div>
+  </div>
+
+  <div id="appContainer" class="app-scope theme-stone-amber">
+    <div class="container">
+      
+      <!-- Top Navigation Bar -->
+      <header style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid var(--border-main); margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <a href="#" class="keycap-logo">(╯°□°)╯</a>
+          <div>
+            <h1 style="font-size: 18px; font-weight: 800; line-height: 1; letter-spacing: -0.02em;">Prompt Confessional</h1>
+            <p style="font-size: 12px; color: var(--text-sub); margin-top: 3px;">a safe space for AI frustration</p>
+          </div>
+        </div>
+        <button class="btn-3d btn-primary-3d">Confess</button>
+      </header>
+
+      <!-- Hero Statement -->
+      <div style="text-align: center; padding: 8px 0 28px;">
+        <h2 style="font-size: 32px; font-weight: 900; letter-spacing: -0.03em; color: var(--text-main);">You are not alone.</h2>
+        <p style="font-size: 15px; color: var(--text-sub); max-width: 560px; margin: 10px auto 18px; line-height: 1.6;">
+          Working with large language models is one of the most maddening experiences in modern technology. They don't listen. They do too much. Share what you asked for, what it did instead, and how it made you feel.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 24px; font-size: 13px; color: var(--text-mute); font-weight: 600;">
+          <span>🔥 3 confessions</span>
+          <span style="color: var(--solidarity-accent);">♥ 84 in solidarity</span>
+        </div>
+      </div>
+
+      <!-- Sample Confession Card 1 -->
+      <article class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge"><span>🤔</span>Baffled</span>
+            <span class="badge" style="color: var(--text-sub);">anthropic / claude-3.5-sonnet</span>
+          </div>
+          <span style="font-size: 12px; color: var(--text-mute);">1d ago</span>
+        </div>
+
+        <!-- 1. What I asked for -->
+        <div class="section-border" style="border-left: 3px solid var(--border-shelf);">
+          <div class="section-label">What I asked for</div>
+          <div class="section-text">Convert this date string '2026-08-22' to a human-readable format like 'August 22, 2026' in TypeScript.</div>
+        </div>
+
+        <!-- 2. What it did instead -->
+        <div class="section-border" style="border-left: 3px solid var(--danger-border);">
+          <div class="section-label">What it did instead</div>
+          <div class="section-text">Wrote a 140-line custom regex lexer with an enum of Roman numerals and imported a deprecated lunar calendar library.</div>
+        </div>
+
+        <!-- 3. How it made me feel -->
+        <div class="section-border" style="border-left: 3px solid var(--amber-border);">
+          <div class="section-label">How it made me feel</div>
+          <div class="section-text" style="color: var(--text-sub);">&ldquo;I just wanted to format a timestamp for a blog post. Now I question my life choices.&rdquo;</div>
+        </div>
+
+        <!-- Action Bar -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border-main); margin-top: 8px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d btn-solidarity-3d" onclick="toggleSolidarity(this, 25)">
+              <span style="color: var(--solidarity-accent);">♥</span>
+              <span>Solidarity</span>
+              <span class="solidarity-count" style="font-weight: 700;">25</span>
+            </button>
+            <button class="btn-3d btn-ackchyually-3d">
+              <span style="color: var(--amber-border);">💡</span>
+              <span>Ackchyually...</span>
+              <span style="background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber-text); border-radius: 4px; padding: 0 5px; font-size: 11px; font-weight: 800;">2</span>
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d">🔗 Share</button>
+            <button class="btn-3d">🚩 Report</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sample Confession Card 2 -->
+      <article class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge"><span>😡</span>Furious</span>
+            <span class="badge" style="color: var(--text-sub);">openai / gpt-4o</span>
+          </div>
+          <span style="font-size: 12px; color: var(--text-mute);">2d ago</span>
+        </div>
+
+        <div class="section-border" style="border-left: 3px solid var(--border-shelf);">
+          <div class="section-label">What I asked for</div>
+          <div class="section-text">Fix the syntax error on line 42 of this CSS file. Do not change any other lines.</div>
+        </div>
+
+        <div class="section-border" style="border-left: 3px solid var(--danger-border);">
+          <div class="section-label">What it did instead</div>
+          <div class="section-text">Rewrote my entire build pipeline in Grunt, converted all CSS to LESS, and deleted half my media queries.</div>
+        </div>
+
+        <div class="section-border" style="border-left: 3px solid var(--amber-border);">
+          <div class="section-label">How it made me feel</div>
+          <div class="section-text" style="color: var(--text-sub);">&ldquo;I stared at the git diff for ten solid minutes with my hands on my head.&rdquo;</div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border-main); margin-top: 8px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d btn-solidarity-3d" onclick="toggleSolidarity(this, 39)">
+              <span style="color: var(--solidarity-accent);">♥</span>
+              <span>Solidarity</span>
+              <span class="solidarity-count" style="font-weight: 700;">39</span>
+            </button>
+            <button class="btn-3d btn-ackchyually-3d">
+              <span style="color: var(--amber-border);">💡</span>
+              <span>Ackchyually...</span>
+              <span style="background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber-text); border-radius: 4px; padding: 0 5px; font-size: 11px; font-weight: 800;">3</span>
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d">🔗 Share</button>
+            <button class="btn-3d">🚩 Report</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Footer -->
+      <footer style="text-align: center; padding-top: 24px; border-top: 1px solid var(--border-main); color: var(--text-mute); font-size: 13px;">
+        <p>Prompt Confessional — because talking to machines shouldn't feel this lonely.</p>
+        <p style="margin-top: 4px;">Frustratingly made by <span style="color: var(--text-main); font-weight: 600; text-decoration: underline;">Nav</span> with Gemini.</p>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    function setTheme(name) {
+      const container = document.getElementById('appContainer');
+      container.className = 'app-scope theme-' + name;
+      
+      document.querySelectorAll('.theme-tab').forEach(t => t.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function toggleSolidarity(btn, baseCount) {
+      const countSpan = btn.querySelector('.solidarity-count');
+      if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        countSpan.textContent = baseCount;
+      } else {
+        btn.classList.add('active');
+        countSpan.textContent = baseCount + 1;
+      }
+    }
+  </script>
+</body>
+</html>

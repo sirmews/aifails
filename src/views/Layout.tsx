@@ -17,47 +17,41 @@ type LayoutProps = {
 // Embedded CSS Variables for Instant Zero-FOUC Edge SSR
 const THEME_CSS = `
 :root {
-  --bg-primary: #191b22;
-  --bg-card: #222530;
-  --bg-subtle: #2d3140;
-  --border-color: #3b4054;
-  --border-subtle: #4b526b;
-  --text-primary: #f3f4f8;
-  --text-secondary: #c5c9d8;
-  --text-muted: #8d94a8;
-  --accent-primary: #f3f4f8;
-  --accent-hover: #ffffff;
-  --accent-text: #191b22;
-  --badge-bg: #2d3140;
-  --badge-text: #f3f4f8;
-  --quote-bg: #1e212b;
-  --quote-border: #4f5670;
-  --quote-text: #e2e5ef;
-  --amber-bg: #2b1e0a;
-  --amber-border: #b45309;
-  --amber-text: #fde68a;
-  --amber-accent: #f59e0b;
-  --solidarity-bg: #2b1820;
-  --solidarity-border: #f43f5e;
-  --solidarity-text: #fda4af;
-  --solidarity-accent: #fb7185;
-  --danger-bg: #2d0e0e;
-  --danger-border: #dc2626;
+  --bg-primary: #1e334a;
+  --bg-card: #2a4766;
+  --bg-subtle: #3a5e85;
+  --border-color: #0e1a26;
+  --border-subtle: #4e7ba8;
+  --text-primary: #ffffff;
+  --text-secondary: #d6e7f7;
+  --text-muted: #97bede;
+  --accent-primary: #fed41d;
+  --accent-hover: #ffe047;
+  --accent-text: #000000;
+  --badge-bg: #3a5e85;
+  --badge-text: #ffffff;
+  --quote-bg: #223b54;
+  --quote-border: #4e7ba8;
+  --quote-text: #d6e7f7;
+  --amber-bg: #fed41d;
+  --amber-border: #0e1a26;
+  --amber-text: #000000;
+  --amber-accent: #fed41d;
+  --solidarity-bg: #f97316;
+  --solidarity-border: #0e1a26;
+  --solidarity-text: #000000;
+  --solidarity-accent: #f97316;
+  --danger-bg: #401d24;
+  --danger-border: #ef4444;
   --danger-text: #fca5a5;
+  --success-bg: #0d2818;
   --success-border: #16a34a;
   --success-text: #86efac;
 }
 
 body {
   background-color: var(--bg-primary);
-  background-image: 
-    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(245, 158, 11, 0.03), transparent 70%);
-  background-size: 20px 20px, 100% 100%;
-  background-position: 0 0, 0 0;
-  background-attachment: fixed;
   color: var(--text-primary);
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 `;
 
@@ -104,7 +98,7 @@ export function Layout({
         {/* SVG Favicon with Table Flip Icon */}
         <link
           rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23222530'/><text y='58' x='50' text-anchor='middle' font-family='monospace' font-size='22' font-weight='bold' fill='%23f59e0b'>(╯°□°)╯</text></svg>"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%231e334a' stroke='%230e1a26' stroke-width='6'/><rect x='10' y='20' width='80' height='60' rx='10' fill='%23fed41d' stroke='%230e1a26' stroke-width='4'/><text y='58' x='50' text-anchor='middle' font-family='monospace' font-size='18' font-weight='900' fill='%23000000'>(╯°□°)╯</text></svg>"
         />
         {/* SEO RSS & Sitemap Auto-Discovery Links */}
         <link rel="alternate" type="application/rss+xml" title="Prompt Confessional RSS Feed" href="/feed.xml" />
@@ -334,11 +328,7 @@ export function Layout({
                   const countSpan = form.querySelector('.solidarity-count');
                   if (btn && !btn.disabled) {
                     btn.disabled = true;
-                    btn.classList.remove('hover:-translate-y-0.5', 'hover:border-[var(--solidarity-border)]', 'hover:bg-[var(--solidarity-bg)]', 'hover:text-[var(--solidarity-text)]');
-                    btn.classList.add('border-[var(--solidarity-border)]', 'border-b-2', 'bg-[var(--solidarity-bg)]', 'text-[var(--solidarity-text)]', 'font-semibold', 'cursor-default', 'translate-y-0.5', 'shadow-none');
-                      const current = parseInt(countSpan.textContent || '0', 10);
-                      countSpan.textContent = (current + 1).toString();
-                    }
+                    btn.classList.add('bg-[var(--solidarity-bg)]', 'text-[var(--solidarity-text)]', 'translate-x-0.5', 'translate-y-0.5', 'shadow-[0.5px_0.5px_0px_#0e1a26]');
 
                     try {
                       const res = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' } });

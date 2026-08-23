@@ -50,7 +50,7 @@ export function HomeView({
 
       <main class="mx-auto max-w-3xl space-y-4 px-4 pb-16 w-full">
         {/* Search & Filter Toolbar directly over card list */}
-        <div class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-xs mb-6">
+        <div class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4.5 shadow-[3.5px_3.5px_0px_#0e1a26] mb-6">
           <form action="/" method="get" class="flex flex-wrap items-center gap-3">
             {/* Search Input */}
             <div class="relative flex-1 min-w-[200px]">
@@ -64,27 +64,30 @@ export function HomeView({
                 name="q"
                 value={query}
                 placeholder="Search prompts, responses, or feelings..."
-                class="w-full rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)]"
+                class="w-full rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] pl-9 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] font-medium"
               />
             </div>
 
             {/* Mood Dropdown Filter */}
             <select
               name="mood"
-              class="rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--amber-accent)] cursor-pointer"
+              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer font-bold"
             >
               <option value="all" selected={!mood || mood === 'all'}>All Moods</option>
-              <option value="furious" selected={mood === 'furious'}>🤬 Furious</option>
-              <option value="embarrassed" selected={mood === 'embarrassed'}>😳 Embarrassed</option>
-              <option value="amused" selected={mood === 'amused'}>😂 Amused</option>
-              <option value="defeated" selected={mood === 'defeated'}>😔 Defeated</option>
+              <option value="furious" selected={mood === 'furious'}>😡 Furious</option>
+              <option value="defeated" selected={mood === 'defeated'}>😩 Defeated</option>
+              <option value="bewildered" selected={mood === 'bewildered'}>🤯 Bewildered</option>
               <option value="baffled" selected={mood === 'baffled'}>🤔 Baffled</option>
+              <option value="embarrassed" selected={mood === 'embarrassed'}>😳 Embarrassed</option>
+              <option value="amused" selected={mood === 'amused'}>😏 Darkly Amused</option>
+              <option value="numb" selected={mood === 'numb'}>😐 Numb</option>
+              <option value="vengeful" selected={mood === 'vengeful'}>🔥 Vengeful</option>
             </select>
 
             {/* Submit & Reset */}
             <button
               type="submit"
-              class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_1.5px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_2.5px_0_0_#9ba1ad,0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+              class="rounded-md bg-[var(--accent-primary)] px-4 py-2 text-sm font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
             >
               Filter
             </button>
@@ -92,7 +95,7 @@ export function HomeView({
             {(query || (mood && mood !== 'all') || (model && model !== 'all')) && (
               <a
                 href="/"
-                class="rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-medium text-[var(--text-muted)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
+                class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26]"
               >
                 Clear
               </a>

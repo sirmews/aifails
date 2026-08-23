@@ -116,40 +116,30 @@ export function generateSiteOgImageSvg(stats?: { confessionCount?: number; solid
   const solidarityCount = stats?.solidarityCount ?? 84;
 
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="glow" cx="50%" cy="30%" r="60%">
-      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.08" />
-      <stop offset="100%" stop-color="#191b22" stop-opacity="0" />
-    </radialGradient>
-    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.04" />
-    </pattern>
-  </defs>
+  <!-- Solid Matte Canvas Background -->
+  <rect width="1200" height="630" fill="#1e334a" />
 
-  <!-- Canvas Background -->
-  <rect width="1200" height="630" fill="#191b22" />
-  <rect width="1200" height="630" fill="url(#grid)" />
-  <rect width="1200" height="630" fill="url(#glow)" />
-
+  <!-- Hard Shadow for Outer Card -->
+  <rect x="56" y="46" width="1100" height="550" rx="14" fill="#0e1a26" />
   <!-- Outer Card Frame -->
-  <rect x="50" y="40" width="1100" height="550" rx="16" fill="#222530" stroke="#3b4054" stroke-width="2" />
+  <rect x="50" y="40" width="1100" height="550" rx="14" fill="#2a4766" stroke="#0e1a26" stroke-width="3" />
 
   <!-- 3D Keycap Logo Tile -->
   <g transform="translate(90, 80)">
-    <rect width="150" height="52" rx="10" fill="#f3f4f8" stroke="#9ba1ad" stroke-width="2" />
-    <rect y="48" width="150" height="6" rx="2" fill="#9ba1ad" />
-    <text x="75" y="34" font-family="ui-monospace, monospace" font-size="22" font-weight="900" fill="#191b22" text-anchor="middle">(╯°□°)╯</text>
+    <rect x="4" y="4" width="150" height="52" rx="8" fill="#0e1a26" />
+    <rect width="150" height="52" rx="8" fill="#fed41d" stroke="#0e1a26" stroke-width="2.5" />
+    <text x="75" y="34" font-family="ui-monospace, monospace" font-size="22" font-weight="900" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
   </g>
 
   <!-- Header Branding -->
-  <text x="260" y="108" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900" fill="#f3f4f8" letter-spacing="-0.5">Prompt Confessional</text>
-  <text x="260" y="132" font-family="ui-monospace, monospace" font-size="16" font-weight="700" fill="#f59e0b">aifails.wtf</text>
+  <text x="265" y="108" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Prompt Confessional</text>
+  <text x="265" y="134" font-family="ui-monospace, monospace" font-size="17" font-weight="800" fill="#fed41d">aifails.wtf</text>
 
   <!-- Hero Main Title -->
-  <text x="90" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="900" fill="#f3f4f8" letter-spacing="-1">You are not alone.</text>
+  <text x="90" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="54" font-weight="900" fill="#ffffff" letter-spacing="-1">You are not alone.</text>
   
   <!-- Subheading & Punchline -->
-  <text x="90" y="275" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#c5c9d8">
+  <text x="90" y="275" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#d6e7f7">
     <tspan x="90" dy="0">Working with LLMs is one of the most maddening experiences in tech.</tspan>
     <tspan x="90" dy="36">They don&#39;t listen. They do too much. They hallucinate wildly.</tspan>
     <tspan x="90" dy="36">A safe space to vent prompt fails and vote community solidarity.</tspan>
@@ -158,22 +148,25 @@ export function generateSiteOgImageSvg(stats?: { confessionCount?: number; solid
   <!-- Feature Action Badges -->
   <g transform="translate(90, 420)">
     <!-- Confession Pill -->
-    <rect x="0" y="0" width="220" height="46" rx="8" fill="#2d3140" stroke="#4b526b" stroke-width="1.5" />
-    <text x="110" y="29" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#f3f4f8" text-anchor="middle">🤬 ${confessionCount} Confessions</text>
+    <rect x="3" y="3" width="220" height="48" rx="8" fill="#0e1a26" />
+    <rect x="0" y="0" width="220" height="48" rx="8" fill="#3a5e85" stroke="#0e1a26" stroke-width="2" />
+    <text x="110" y="30" font-family="system-ui, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">🤬 ${confessionCount} Confessions</text>
 
-    <!-- Solidarity Pill -->
-    <rect x="235" y="0" width="230" height="46" rx="8" fill="#2b1820" stroke="#f43f5e" stroke-width="1.5" />
-    <text x="350" y="29" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#fda4af" text-anchor="middle">♥ ${solidarityCount} in Solidarity</text>
+    <!-- Solidarity Pill (Coral Pearl Orange) -->
+    <rect x="243" y="3" width="230" height="48" rx="8" fill="#0e1a26" />
+    <rect x="240" y="0" width="230" height="48" rx="8" fill="#f97316" stroke="#0e1a26" stroke-width="2" />
+    <text x="355" y="30" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#000000" text-anchor="middle">♥ ${solidarityCount} in Solidarity</text>
 
-    <!-- Ackchyually Pill -->
-    <rect x="480" y="0" width="260" height="46" rx="8" fill="#2b1e0a" stroke="#b45309" stroke-width="1.5" />
-    <text x="610" y="29" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#fde68a" text-anchor="middle">💡 &quot;Ackchyually...&quot; Fixes</text>
+    <!-- Ackchyually Pill (Bart Yellow) -->
+    <rect x="493" y="3" width="260" height="48" rx="8" fill="#0e1a26" />
+    <rect x="490" y="0" width="260" height="48" rx="8" fill="#fed41d" stroke="#0e1a26" stroke-width="2" />
+    <text x="620" y="30" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#000000" text-anchor="middle">💡 &quot;Ackchyually...&quot; Fixes</text>
   </g>
 
   <!-- URL Footer Banner -->
-  <rect x="50" y="530" width="1100" height="60" rx="0" fill="#1e212b" stroke="#3b4054" stroke-width="1" />
-  <text x="90" y="567" font-family="system-ui, sans-serif" font-size="15" font-weight="500" fill="#8d94a8">Anonymous &amp; Edge-Rendered Prompt Fails</text>
-  <text x="1110" y="567" font-family="ui-monospace, monospace" font-size="16" font-weight="700" fill="#f59e0b" text-anchor="end">https://aifails.wtf</text>
+  <rect x="50" y="530" width="1100" height="60" rx="0" fill="#152435" stroke="#0e1a26" stroke-width="2" />
+  <text x="90" y="567" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#97bede">Anonymous &amp; Edge-Rendered Prompt Fails</text>
+  <text x="1110" y="567" font-family="ui-monospace, monospace" font-size="17" font-weight="900" fill="#fed41d" text-anchor="end">https://aifails.wtf</text>
 </svg>`;
 }
 
@@ -189,63 +182,54 @@ export function generateOgImageSvg(confession: Confession): string {
   const moodUpper = escapeXml(confession.mood ? confession.mood.toUpperCase() : 'FURIOUS');
 
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="card-glow" cx="50%" cy="0%" r="70%">
-      <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.06" />
-      <stop offset="100%" stop-color="#191b22" stop-opacity="0" />
-    </radialGradient>
-    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1" fill="#ffffff" fill-opacity="0.035" />
-    </pattern>
-  </defs>
+  <!-- Solid Matte Background -->
+  <rect width="1200" height="630" fill="#1e334a" />
 
-  <!-- Background -->
-  <rect width="1200" height="630" fill="#191b22" />
-  <rect width="1200" height="630" fill="url(#dot-grid)" />
-  <rect width="1200" height="630" fill="url(#card-glow)" />
-
+  <!-- Hard Shadow -->
+  <rect x="56" y="41" width="1100" height="560" rx="14" fill="#0e1a26" />
   <!-- Main Card Container -->
-  <rect x="50" y="35" width="1100" height="560" rx="16" fill="#222530" stroke="#3b4054" stroke-width="2" />
+  <rect x="50" y="35" width="1100" height="560" rx="14" fill="#2a4766" stroke="#0e1a26" stroke-width="3" />
 
   <!-- Top Bar -->
   <g transform="translate(85, 60)">
     <!-- 3D Keycap Logo Tile -->
-    <rect width="110" height="40" rx="8" fill="#f3f4f8" stroke="#9ba1ad" stroke-width="1.5" />
-    <rect y="37" width="110" height="4" rx="1" fill="#9ba1ad" />
-    <text x="55" y="27" font-family="ui-monospace, monospace" font-size="16" font-weight="900" fill="#191b22" text-anchor="middle">(╯°□°)╯</text>
+    <rect x="3" y="3" width="110" height="40" rx="6" fill="#0e1a26" />
+    <rect width="110" height="40" rx="6" fill="#fed41d" stroke="#0e1a26" stroke-width="2" />
+    <text x="55" y="26" font-family="ui-monospace, monospace" font-size="16" font-weight="900" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
 
     <!-- Branding -->
-    <text x="125" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="900" fill="#f3f4f8">Prompt Confessional</text>
-    <text x="355" y="28" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#f59e0b">• aifails.wtf</text>
+    <text x="125" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="900" fill="#ffffff">Prompt Confessional</text>
+    <text x="375" y="28" font-family="ui-monospace, monospace" font-size="16" font-weight="800" fill="#fed41d">• aifails.wtf</text>
 
-    <!-- Mood Badge -->
-    <rect x="850" y="2" width="165" height="36" rx="6" fill="#2b1820" stroke="#f43f5e" stroke-width="1.5" />
-    <text x="932" y="25" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#fda4af" text-anchor="middle">${moodUpper}</text>
+    <!-- Mood Badge (Solid Coral Pearl Orange) -->
+    <rect x="853" y="5" width="165" height="36" rx="6" fill="#0e1a26" />
+    <rect x="850" y="2" width="165" height="36" rx="6" fill="#f97316" stroke="#0e1a26" stroke-width="2" />
+    <text x="932" y="25" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="#000000" text-anchor="middle">${moodUpper}</text>
   </g>
 
   <!-- Card Body with Left Borders -->
   <g transform="translate(85, 125)">
     <!-- 1. What I asked for -->
-    <rect x="0" y="0" width="4" height="95" rx="2" fill="#4b526b" />
-    <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#8d94a8" letter-spacing="1">WHAT I ASKED FOR • ${modelName.toUpperCase()}</text>
-    <text x="20" y="48" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#f3f4f8">
+    <rect x="0" y="0" width="5" height="95" rx="2" fill="#4e7ba8" />
+    <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="900" fill="#97bede" letter-spacing="1">WHAT I ASKED FOR • ${modelName.toUpperCase()}</text>
+    <text x="20" y="48" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#ffffff">
 ${promptLines.map((l, i) => `      <tspan x="20" dy="${i === 0 ? 0 : 28}">${l}</tspan>`).join('\n')}
     </text>
 
     <!-- 2. What it did instead -->
     <g transform="translate(0, 115)">
-      <rect x="0" y="0" width="4" height="115" rx="2" fill="#dc2626" />
-      <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#fca5a5" letter-spacing="1">WHAT IT DID INSTEAD</text>
-      <text x="20" y="48" font-family="system-ui, sans-serif" font-size="21" font-weight="700" fill="#f3f4f8">
+      <rect x="0" y="0" width="5" height="115" rx="2" fill="#ef4444" />
+      <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="900" fill="#fca5a5" letter-spacing="1">WHAT IT DID INSTEAD</text>
+      <text x="20" y="48" font-family="system-ui, sans-serif" font-size="21" font-weight="800" fill="#ffffff">
 ${failLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 28}">${l}</tspan>`).join('\n')}
       </text>
     </g>
 
     <!-- 3. How it made me feel -->
     <g transform="translate(0, 250)">
-      <rect x="0" y="0" width="4" height="75" rx="2" fill="#f59e0b" />
-      <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#fde68a" letter-spacing="1">HOW IT MADE THEM FEEL</text>
-      <text x="20" y="48" font-family="system-ui, sans-serif" font-size="18" font-weight="500" fill="#c5c9d8">
+      <rect x="0" y="0" width="5" height="75" rx="2" fill="#fed41d" />
+      <text x="20" y="20" font-family="system-ui, sans-serif" font-size="13" font-weight="900" fill="#fed41d" letter-spacing="1">HOW IT MADE THEM FEEL</text>
+      <text x="20" y="48" font-family="system-ui, sans-serif" font-size="19" font-weight="600" fill="#d6e7f7">
 ${feelingLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 25}">&ldquo;${l}&rdquo;</tspan>`).join('\n')}
       </text>
     </g>
@@ -253,10 +237,10 @@ ${feelingLines.map((l, i) => `        <tspan x="20" dy="${i === 0 ? 0 : 25}">&ld
 
   <!-- Bottom Interaction Footer Bar -->
   <g transform="translate(85, 520)">
-    <rect x="0" y="0" width="1015" height="50" rx="8" fill="#1e212b" stroke="#3b4054" stroke-width="1" />
-    <text x="20" y="32" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#fda4af">♥ ${confession.solidarity_count} in solidarity</text>
-    <text x="190" y="32" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#8d94a8">• Submit &quot;Ackchyually...&quot; fixes on aifails.wtf</text>
-    <text x="995" y="32" font-family="ui-monospace, monospace" font-size="14" font-weight="700" fill="#f59e0b" text-anchor="end">https://aifails.wtf/confessions/${confession.id}</text>
+    <rect x="0" y="0" width="1015" height="50" rx="8" fill="#152435" stroke="#0e1a26" stroke-width="2" />
+    <text x="20" y="32" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#f97316">♥ ${confession.solidarity_count} in solidarity</text>
+    <text x="190" y="32" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#97bede">• Submit &quot;Ackchyually...&quot; fixes on aifails.wtf</text>
+    <text x="995" y="32" font-family="ui-monospace, monospace" font-size="14" font-weight="800" fill="#fed41d" text-anchor="end">https://aifails.wtf/confessions/${confession.id}</text>
   </g>
 </svg>`;
 }

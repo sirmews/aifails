@@ -18,28 +18,28 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
   return (
     <div
       id="confess-modal-backdrop"
-      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-md opacity-0 transition-opacity duration-300 ease-out p-0 sm:p-4"
+      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 opacity-0 transition-opacity duration-200 ease-out p-0 sm:p-4"
     >
       <div
         id="confess-modal-card"
-        class="w-full max-h-[90vh] overflow-y-auto rounded-t-lg sm:rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-2xl transition-all duration-300 ease-out translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0 sm:max-w-xl"
+        class="w-full max-h-[90vh] overflow-y-auto rounded-t-lg sm:rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[6px_6px_0px_#0e1a26] transition-all duration-200 ease-out translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0 sm:max-w-xl"
       >
         {/* Modal Header */}
-        <div class="mb-4 flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+        <div class="mb-4 flex items-center justify-between border-b-2 border-[var(--border-color)] pb-3">
           <div class="flex items-center gap-2.5">
-            <div class="flex h-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)] px-2.5 font-mono text-xs font-extrabold tracking-tight border-b-2 border-r border-[#9ba1ad] shadow-[0_2px_0_0_#9ba1ad] select-none">
+            <div class="flex h-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-text)] px-2.5 font-mono text-xs font-black tracking-tight border-2 border-[var(--border-color)] shadow-[2px_2px_0px_#0e1a26] select-none">
               (╯°□°)╯
             </div>
             <div>
-              <h2 class="text-base font-bold text-[var(--text-primary)]">Submit a Confession</h2>
-              <p class="text-xs text-[var(--text-muted)]">Vent about your prompt fail</p>
+              <h2 class="text-base font-black text-[var(--text-primary)]">Submit a Confession</h2>
+              <p class="text-xs font-semibold text-[var(--text-muted)]">Vent about your prompt fail</p>
             </div>
           </div>
 
           <button
             type="button"
             id="close-modal-btn"
-            class="rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] p-1.5 text-[var(--text-muted)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+            class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-1.5 text-[var(--text-muted)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
             aria-label="Close confession modal"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -103,7 +103,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
                     checked={idx === 0}
                     class="peer sr-only"
                   />
-                  <span class="inline-block rounded border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] peer-checked:translate-y-0.5 peer-checked:shadow-none peer-checked:border-[var(--accent-primary)] peer-checked:bg-[var(--accent-primary)] peer-checked:text-[var(--accent-text)]">
+                  <span class="inline-block rounded border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2.5px_2.5px_0px_#0e1a26] peer-checked:translate-x-0.5 peer-checked:translate-y-0.5 peer-checked:shadow-none peer-checked:border-[var(--border-color)] peer-checked:bg-[var(--accent-primary)] peer-checked:text-[var(--accent-text)]">
                     <span class="mr-1">{m.emoji}</span>
                     {m.label}
                   </span>
@@ -163,7 +163,7 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
 
           <button
             type="submit"
-            class="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent-primary)] px-4 py-3 text-sm font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_2px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_3.5px_0_0_#9ba1ad,0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+            class="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent-primary)] px-4 py-3 text-sm font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[3px_3px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4.5px_4.5px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

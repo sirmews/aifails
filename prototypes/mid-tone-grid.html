@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mid-Tone &amp; Color-Rich Palette Comparison Grid — Prompt Confessional</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090e0b;
+      color: #f4fdf7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 32px 20px;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 28px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .header p { color: #86ab99; font-size: 15px; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .theme-box {
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .theme-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .theme-title { font-size: 16px; font-weight: 800; }
+    .theme-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+
+    /* Theme 1: Vintage Forest Pine */
+    .t-forest { background: #14241d; color: #f2fbf6; }
+    .t-forest .card { background: #1f362c; border: 1px solid #365b4c; }
+    .t-forest .logo { background: #fef08a; color: #14241d; border-bottom: 3px solid #ca8a04; }
+    .t-forest .btn { background: #2b493c; color: #c0dfd1; border: 1px solid #365b4c; border-bottom: 2px solid #2d4f40; }
+    .t-forest .solidarity { background: #2d1822; border-color: #fb7185; color: #fecdd3; border-bottom: 2px solid #be123c; }
+    .t-forest .ackchyually { background: #2d2110; border-color: #f59e0b; color: #fef08a; border-bottom: 2px solid #b45309; }
+
+    /* Theme 2: Petrol Teal & Mustard */
+    .t-petrol { background: #12242b; color: #f0fdfa; }
+    .t-petrol .card { background: #1c3640; border: 1px solid #346071; }
+    .t-petrol .logo { background: #facc15; color: #0e1e24; border-bottom: 3px solid #ca8a04; }
+    .t-petrol .btn { background: #274956; color: #bce3eb; border: 1px solid #346071; border-bottom: 2px solid #274754; }
+    .t-petrol .solidarity { background: #2c1723; border-color: #f43f5e; color: #fda4af; border-bottom: 2px solid #be123c; }
+    .t-petrol .ackchyually { background: #2c2010; border-color: #f59e0b; color: #fef08a; border-bottom: 2px solid #d97706; }
+
+    /* Theme 3: British Racing Green */
+    .t-racing { background: #132216; color: #f7fee7; }
+    .t-racing .card { background: #1e3323; border: 1px solid #3b5a42; }
+    .t-racing .logo { background: #eab308; color: #132216; border-bottom: 3px solid #a16207; }
+    .t-racing .btn { background: #2a4430; color: #d1e7d2; border: 1px solid #3b5a42; border-bottom: 2px solid #293f2f; }
+    .t-racing .solidarity { background: #2b1720; border-color: #fb7185; color: #fecdd3; border-bottom: 2px solid #be123c; }
+    .t-racing .ackchyually { background: #2c1e0e; border-color: #ea580c; color: #fed7aa; border-bottom: 2px solid #c2410c; }
+
+    /* Theme 4: Canyon Terracotta */
+    .t-canyon { background: #241612; color: #fff7ed; }
+    .t-canyon .card { background: #34221b; border: 1px solid #5d4135; }
+    .t-canyon .logo { background: #fed7aa; color: #241612; border-bottom: 3px solid #ea580c; }
+    .t-canyon .btn { background: #463027; color: #edd5c8; border: 1px solid #5d4135; border-bottom: 2px solid #452f26; }
+    .t-canyon .solidarity { background: #301720; border-color: #f43f5e; color: #fecdd3; border-bottom: 2px solid #be123c; }
+    .t-canyon .ackchyually { background: #311e10; border-color: #f97316; color: #ffedd5; border-bottom: 2px solid #c2410c; }
+
+    .keycap {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .card-inner {
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .row-btn {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Mid-Tone &amp; Color-Rich Palette Comparison</h1>
+    <p>Escaping the extremes: rich, saturated, tactile environments with authentic personality and 3D mechanical keycaps.</p>
+  </div>
+
+  <div class="grid">
+    
+    <!-- Option 1 -->
+    <div class="theme-box t-forest">
+      <div class="theme-header">
+        <div>
+          <div class="theme-title">1. Vintage Forest Pine &amp; Butter Keycaps</div>
+          <div style="font-size: 12px; color: #82ab99;">Deep botanical pine, warm spruce card, glowing butter yellow keycap</div>
+        </div>
+        <span class="theme-tag" style="background: #fef08a; color: #14241d;">Top Pick</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <div class="keycap logo">(╯°□°)╯</div>
+        <span style="font-weight: 800; font-size: 14px;">Prompt Confessional</span>
+      </div>
+      <div class="card card-inner">
+        <div style="font-size: 11px; color: #82ab99; margin-bottom: 8px; font-weight: 700;">WHAT I ASKED FOR (CLAUDE 3.5 SONNET)</div>
+        <div style="font-size: 13px; margin-bottom: 10px;">Convert this date string '2026-08-22' to human-readable...</div>
+        <div style="font-size: 11px; color: #f87171; margin-bottom: 4px; font-weight: 700;">WHAT IT DID INSTEAD</div>
+        <div style="font-size: 13px; margin-bottom: 8px;">Wrote a 140-line custom regex lexer with Roman numerals.</div>
+        <div class="row-btn">
+          <div class="btn-pill solidarity">♥ Solidarity 25</div>
+          <div class="btn-pill ackchyually">💡 Ackchyually... 2</div>
+          <div class="btn-pill btn">🔗 Share</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 2 -->
+    <div class="theme-box t-petrol">
+      <div class="theme-header">
+        <div>
+          <div class="theme-title">2. Deep Petrol Teal &amp; Mustard</div>
+          <div style="font-size: 12px; color: #7fa8b7;">Oceanic petrol slate, sea-stone cards, warm mustard yellow keycap</div>
+        </div>
+        <span class="theme-tag" style="background: #facc15; color: #0e1e24;">Scandinavian</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <div class="keycap logo">(╯°□°)╯</div>
+        <span style="font-weight: 800; font-size: 14px;">Prompt Confessional</span>
+      </div>
+      <div class="card card-inner">
+        <div style="font-size: 11px; color: #7fa8b7; margin-bottom: 8px; font-weight: 700;">WHAT I ASKED FOR (CLAUDE 3.5 SONNET)</div>
+        <div style="font-size: 13px; margin-bottom: 10px;">Convert this date string '2026-08-22' to human-readable...</div>
+        <div style="font-size: 11px; color: #f87171; margin-bottom: 4px; font-weight: 700;">WHAT IT DID INSTEAD</div>
+        <div style="font-size: 13px; margin-bottom: 8px;">Wrote a 140-line custom regex lexer with Roman numerals.</div>
+        <div class="row-btn">
+          <div class="btn-pill solidarity">♥ Solidarity 25</div>
+          <div class="btn-pill ackchyually">💡 Ackchyually... 2</div>
+          <div class="btn-pill btn">🔗 Share</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 3 -->
+    <div class="theme-box t-racing">
+      <div class="theme-header">
+        <div>
+          <div class="theme-title">3. British Racing Green &amp; Brass</div>
+          <div style="font-size: 12px; color: #8ea992;">Heritage dark olive racing green, moss card, antique brass keycap</div>
+        </div>
+        <span class="theme-tag" style="background: #eab308; color: #132216;">Heritage</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <div class="keycap logo">(╯°□°)╯</div>
+        <span style="font-weight: 800; font-size: 14px;">Prompt Confessional</span>
+      </div>
+      <div class="card card-inner">
+        <div style="font-size: 11px; color: #8ea992; margin-bottom: 8px; font-weight: 700;">WHAT I ASKED FOR (CLAUDE 3.5 SONNET)</div>
+        <div style="font-size: 13px; margin-bottom: 10px;">Convert this date string '2026-08-22' to human-readable...</div>
+        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px; font-weight: 700;">WHAT IT DID INSTEAD</div>
+        <div style="font-size: 13px; margin-bottom: 8px;">Wrote a 140-line custom regex lexer with Roman numerals.</div>
+        <div class="row-btn">
+          <div class="btn-pill solidarity">♥ Solidarity 25</div>
+          <div class="btn-pill ackchyually">💡 Ackchyually... 2</div>
+          <div class="btn-pill btn">🔗 Share</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 4 -->
+    <div class="theme-box t-canyon">
+      <div class="theme-header">
+        <div>
+          <div class="theme-title">4. Canyon Terracotta Clay</div>
+          <div style="font-size: 12px; color: #b89889;">Warm earthy terracotta clay, canyon sienna card, sandstone keycap</div>
+        </div>
+        <span class="theme-tag" style="background: #fed7aa; color: #241612;">Warm Earth</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <div class="keycap logo">(╯°□°)╯</div>
+        <span style="font-weight: 800; font-size: 14px;">Prompt Confessional</span>
+      </div>
+      <div class="card card-inner">
+        <div style="font-size: 11px; color: #b89889; margin-bottom: 8px; font-weight: 700;">WHAT I ASKED FOR (CLAUDE 3.5 SONNET)</div>
+        <div style="font-size: 13px; margin-bottom: 10px;">Convert this date string '2026-08-22' to human-readable...</div>
+        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px; font-weight: 700;">WHAT IT DID INSTEAD</div>
+        <div style="font-size: 13px; margin-bottom: 8px;">Wrote a 140-line custom regex lexer with Roman numerals.</div>
+        <div class="row-btn">
+          <div class="btn-pill solidarity">♥ Solidarity 25</div>
+          <div class="btn-pill ackchyually">💡 Ackchyually... 2</div>
+          <div class="btn-pill btn">🔗 Share</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -95,7 +95,7 @@ export function PermalinkView({
         <div class="flex flex-wrap items-center justify-between gap-3 pb-2">
           <a
             href="/"
-            class="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
+            class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26]"
           >
             ← Back to all prompt fails
           </a>
@@ -105,7 +105,7 @@ export function PermalinkView({
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`"What it did instead: ${failSnippet}" — AI Fail on aifails.wtf`)}&url=${encodeURIComponent(url)}`}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] active:translate-y-0.5 active:shadow-none"
+              class="inline-flex items-center gap-1 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-2.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26]"
               title="Share on X / Twitter"
             >
               <svg class="h-3 w-3 fill-current" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@ export function PermalinkView({
               href={`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(ogTitle)}`}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] active:translate-y-0.5 active:shadow-none"
+              class="inline-flex items-center gap-1 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-2.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26]"
               title="Share on Reddit"
             >
               <svg class="h-3 w-3 fill-current" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ export function PermalinkView({
         <ConfessionCard confession={confession} suggestions={suggestions} isPermalink={true} />
 
         {/* 2. Unified "Ackchyually..." Suggestions Card */}
-        <section class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-xs space-y-3">
+        <section class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5.5 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
           <div class="flex items-center gap-2 pb-3 border-b border-[var(--border-color)]">
             <svg class="h-4 w-4 text-[var(--amber-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -184,24 +184,24 @@ export function PermalinkView({
         {/* 3. Standalone "Ackchyually..." Form Card (Below the comments) */}
         <SuggestionForm confessionId={confession.id} turnstileSiteKey={turnstileSiteKey} />
         {/* Bottom Discover More Bar */}
-        <div class="rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-6 text-center space-y-3">
-          <h3 class="text-base font-bold text-[var(--text-primary)]">
+        <div class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-6 text-center space-y-3 shadow-[3.5px_3.5px_0px_#0e1a26]">
+          <h3 class="text-base font-black text-[var(--text-primary)]">
             Have your own AI prompt horror story?
           </h3>
-          <p class="text-xs text-[var(--text-muted)] max-w-md mx-auto">
+          <p class="text-xs font-semibold text-[var(--text-muted)] max-w-md mx-auto">
             Don&#39;t suffer in silence. Share what you asked for, what it did instead, and find solidarity.
           </p>
           <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
             <button
               type="button"
               onclick="document.getElementById('open-confess-btn')?.click()"
-              class="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent-primary)] px-4 py-2 text-xs font-bold text-[var(--accent-text)] border border-[var(--accent-primary)] border-b-2 border-b-[#9ba1ad] shadow-[0_1.5px_0_0_#9ba1ad] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_2.5px_0_0_#9ba1ad,0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+              class="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent-primary)] px-4 py-2 text-xs font-black text-[var(--accent-text)] border-2 border-[var(--border-color)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
             >
               <span>Confess Anonymously</span>
             </button>
             <a
               href="/"
-              class="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-color)] border-b-2 border-b-[var(--border-subtle)] bg-[var(--bg-subtle)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] shadow-[0_1px_0_0_rgba(0,0,0,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
+              class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-4 py-2 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26]"
             >
               <span>Browse All Prompt Fails →</span>
             </a>
