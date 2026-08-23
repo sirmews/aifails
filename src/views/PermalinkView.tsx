@@ -112,15 +112,15 @@ export function PermalinkView({
             </a>
           </div>
           <div class="flex items-center gap-2">
-            {/* High-Res Share Card Modal Button */}
+            {/* High-Res Share Image Modal Button */}
             <button
               id="open-share-modal-btn"
               type="button"
               class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-2.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
-              title="Preview and copy 2x high-res card image for Slack & Discord"
+              title="Preview and share 2x high-res image for Slack, Discord, and Twitter"
             >
               <span>📸</span>
-              <span>Card</span>
+              <span>Share Image</span>
             </button>
 
             <a
