@@ -149,8 +149,9 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                   fetch('/api/models')
                     .then(function(res) { return res.ok ? res.json() : null; })
                     .then(function(data) {
-                      if (Array.isArray(data) && data.length > 0) {
-                        allModels = data;
+                      const modelsPayload = Array.isArray(data) ? data : (data && Array.isArray(data.models) ? data.models : null);
+                      if (modelsPayload && modelsPayload.length > 0) {
+                        allModels = modelsPayload;
                         if (!modelDropdown.classList.contains('hidden')) {
                           renderAndFilter();
                         }
@@ -172,32 +173,58 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                     return !query || searchStr.indexOf(query) !== -1;
                   });
 
+                  modelDropdown.textContent = '';
+
                   if (filtered.length === 0) {
-                    modelDropdown.innerHTML = '<div class="px-3 py-2.5 text-xs text-[var(--text-muted)] italic text-center">No matching models found</div>';
+                    const noMatches = document.createElement('div');
+                    noMatches.className = 'px-3 py-2.5 text-xs text-[var(--text-muted)] italic text-center';
+                    noMatches.textContent = 'No matching models found';
+                    modelDropdown.appendChild(noMatches);
                     modelDropdown.classList.remove('hidden');
                     return;
                   }
 
-                  const itemsHtml = filtered.map(function(m) {
+                  const header = document.createElement('div');
+                  header.className = 'sticky top-0 bg-[var(--bg-card)]/95 backdrop-blur-xs px-3 py-1 border-b border-[var(--border-color)] text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider flex justify-between';
+                  const headerLabel = document.createElement('span');
+                  headerLabel.textContent = query ? 'Matching Models' : 'All Available Models';
+                  const headerCount = document.createElement('span');
+                  headerCount.textContent = String(filtered.length);
+                  header.appendChild(headerLabel);
+                  header.appendChild(headerCount);
+                  modelDropdown.appendChild(header);
+
+                  filtered.forEach(function(m) {
                     const val = m.provider ? m.provider + ' / ' + m.name : m.name;
-                    const providerHtml = m.provider ? '<span class="font-semibold text-[var(--text-primary)]">' + m.provider + '</span><span class="text-[var(--text-muted)]"> / </span>' : '';
-                    return '<div class="model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors flex items-center justify-between" data-value="' + val + '">' +
-                      '<div>' + providerHtml + '<span class="text-[var(--text-secondary)]">' + m.name + '</span></div>' +
-                    '</div>';
-                  }).join('');
+                    const option = document.createElement('div');
+                    option.className = 'model-option cursor-pointer rounded px-3 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition-colors flex items-center justify-between';
+                    option.dataset.value = val;
 
-                  const headerHtml = '<div class="sticky top-0 bg-[var(--bg-card)]/95 backdrop-blur-xs px-3 py-1 border-b border-[var(--border-color)] text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider flex justify-between">' +
-                    '<span>' + (query ? 'Matching Models' : 'All Available Models') + '</span>' +
-                    '<span>' + filtered.length + '</span>' +
-                  '</div>';
+                    const labelWrap = document.createElement('div');
+                    if (m.provider) {
+                      const providerSpan = document.createElement('span');
+                      providerSpan.className = 'font-semibold text-[var(--text-primary)]';
+                      providerSpan.textContent = m.provider;
 
-                  modelDropdown.innerHTML = headerHtml + itemsHtml;
+                      const separator = document.createElement('span');
+                      separator.className = 'text-[var(--text-muted)]';
+                      separator.textContent = ' / ';
 
-                  modelDropdown.querySelectorAll('.model-option').forEach(function(opt) {
-                    opt.addEventListener('click', function() {
-                      modelInput.value = opt.getAttribute('data-value') || '';
+                      labelWrap.appendChild(providerSpan);
+                      labelWrap.appendChild(separator);
+                    }
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'text-[var(--text-secondary)]';
+                    nameSpan.textContent = m.name;
+                    labelWrap.appendChild(nameSpan);
+
+                    option.appendChild(labelWrap);
+                    option.addEventListener('click', function() {
+                      modelInput.value = option.dataset.value || '';
                       modelDropdown.classList.add('hidden');
                     });
+                    modelDropdown.appendChild(option);
                   });
 
                   modelDropdown.classList.remove('hidden');

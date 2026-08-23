@@ -39,6 +39,19 @@ function getSessionHelper(c: Context<{ Bindings: Env }>) {
   return getOrCreateSessionId(c.req.header('Cookie'), c.env.SESSION_SECRET, isSecure);
 }
 
+function getClientIp(c: Context<{ Bindings: Env }>) {
+  return c.req.header('cf-connecting-ip') || '127.0.0.1';
+}
+
+async function isReadRateLimited(c: Context<{ Bindings: Env }>, rateLimitKey: string): Promise<boolean> {
+  if (!c.env.READ_LIMITER) {
+    return false;
+  }
+
+  const { success } = await c.env.READ_LIMITER.limit({ key: rateLimitKey });
+  return !success;
+}
+
 // Cache-Control header helper for heavy edge caching
 const EDGE_CACHE_HEADER = 'public, max-age=30, s-maxage=120, stale-while-revalidate=86400';
 function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
@@ -62,6 +75,10 @@ function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
 // 1. Home Page SSR Route
 app.get('/', async (c) => {
   const url = new URL(c.req.url);
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const notice = url.searchParams.get('notice') ?? undefined;
   const query = url.searchParams.get('q') ?? undefined;
   const mood = url.searchParams.get('mood') ?? undefined;
@@ -180,6 +197,10 @@ app.post('/confessions', async (c) => {
 
 // 3. Single Confession Permalink SSR Route
 app.get('/confessions/:id', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const id = c.req.param('id');
   const url = new URL(c.req.url);
   const notice = url.searchParams.get('notice') ?? undefined;
@@ -359,6 +380,10 @@ app.post('/confessions/:confessionId/suggestions/:suggestionId/report', async (c
 
 // 6. RSS 2.0 XML Feed Endpoint
 app.get('/feed.xml', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/feed.xml`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
   const baseUrl = new URL(c.req.url).origin;
   const rssXml = generateRssFeed(confessions, baseUrl);
@@ -368,10 +393,20 @@ app.get('/feed.xml', async (c) => {
   return c.body(rssXml);
 });
 
-app.get('/rss.xml', (c) => c.redirect('/feed.xml'));
+app.get('/rss.xml', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/rss.xml`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
+  return c.redirect('/feed.xml');
+});
 
 // 7. Dynamic XML Sitemap Endpoint
 app.get('/sitemap.xml', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/sitemap.xml`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const { confessions } = await getConfessions(c.env.DB, { limit: 50 });
   const baseUrl = new URL(c.req.url).origin;
   const sitemapXml = generateSitemapXml(confessions, baseUrl);
@@ -382,7 +417,11 @@ app.get('/sitemap.xml', async (c) => {
 });
 
 // 8. Robots.txt Crawler Directives
-app.get('/robots.txt', (c) => {
+app.get('/robots.txt', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/robots.txt`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const baseUrl = new URL(c.req.url).origin;
   const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
 
@@ -393,6 +432,10 @@ app.get('/robots.txt', (c) => {
 
 // 9. Dynamic SVG Social Card Banner Endpoint
 app.get('/confessions/:id/og.svg', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions/og.svg`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
   const id = c.req.param('id');
   const confession = await getConfessionById(c.env.DB, id);
 
@@ -408,6 +451,10 @@ app.get('/confessions/:id/og.svg', async (c) => {
 
 // 10. Models JSON API Endpoint
 app.get('/api/models', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/api/models`)) {
+    return c.json({ error: 'Rate limit exceeded. Please slow down.' }, 429);
+  }
+
   const models = await getModels(c.env.CACHE_KV);
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   return c.json({ models });
@@ -415,6 +462,10 @@ app.get('/api/models', async (c) => {
 
 // 11. Confessions JSON API Endpoint
 app.get('/api/confessions', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/api/confessions`)) {
+    return c.json({ error: 'Rate limit exceeded. Please slow down.' }, 429);
+  }
+
   const url = new URL(c.req.url);
   const query = url.searchParams.get('q') ?? undefined;
   const mood = url.searchParams.get('mood') ?? undefined;

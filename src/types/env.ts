@@ -7,6 +7,7 @@ export interface Env {
   CACHE_KV?: KVNamespace;
   CONFESSION_LIMITER?: RateLimit;
   SOLIDARITY_LIMITER?: RateLimit;
+  READ_LIMITER?: RateLimit;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
   SESSION_SECRET?: string;
