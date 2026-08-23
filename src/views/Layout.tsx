@@ -31,10 +31,13 @@ const THEME_CSS = `
   --amber-border: #b45309;
   --amber-text: #fde68a;
   --amber-accent: #f59e0b;
+  --solidarity-bg: #2b1820;
+  --solidarity-border: #f43f5e;
+  --solidarity-text: #fda4af;
+  --solidarity-accent: #fb7185;
   --danger-bg: #2d0e0e;
   --danger-border: #dc2626;
   --danger-text: #fca5a5;
-  --success-bg: #0d2818;
   --success-border: #16a34a;
   --success-text: #86efac;
 }
@@ -294,9 +297,8 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                   const countSpan = form.querySelector('.solidarity-count');
                   if (btn && !btn.disabled) {
                     btn.disabled = true;
-                    btn.classList.remove('hover:-translate-y-0.5', 'hover:border-[var(--danger-border)]', 'hover:bg-[var(--danger-bg)]', 'hover:text-[var(--danger-text)]');
-                    btn.classList.add('border-[var(--danger-border)]', 'border-b-2', 'bg-[var(--danger-bg)]', 'text-[var(--danger-text)]', 'font-semibold', 'cursor-default', 'translate-y-0.5', 'shadow-none');
-                    if (countSpan) {
+                    btn.classList.remove('hover:-translate-y-0.5', 'hover:border-[var(--solidarity-border)]', 'hover:bg-[var(--solidarity-bg)]', 'hover:text-[var(--solidarity-text)]');
+                    btn.classList.add('border-[var(--solidarity-border)]', 'border-b-2', 'bg-[var(--solidarity-bg)]', 'text-[var(--solidarity-text)]', 'font-semibold', 'cursor-default', 'translate-y-0.5', 'shadow-none');
                       const current = parseInt(countSpan.textContent || '0', 10);
                       countSpan.textContent = (current + 1).toString();
                     }
