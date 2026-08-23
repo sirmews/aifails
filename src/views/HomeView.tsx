@@ -31,7 +31,7 @@ export function HomeView({
   hasMore = false,
 }: HomeViewProps) {
   const totalSolidarity = confessions.reduce((sum, c) => sum + c.solidarity_count, 0);
-
+  const hasActiveFilter = Boolean(query || (mood && mood !== 'all') || (model && model !== 'all'));
   return (
     <Layout turnstileSiteKey={turnstileSiteKey}>
       <Header />
@@ -92,12 +92,21 @@ export function HomeView({
               Filter
             </button>
 
-            {(query || (mood && mood !== 'all') || (model && model !== 'all')) && (
+            {hasActiveFilter ? (
               <a
                 href="/"
                 class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2 text-sm font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26]"
               >
                 Clear
+              </a>
+            ) : (
+              <a
+                href="/random"
+                class="inline-flex items-center gap-1.5 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2 text-sm font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[3px_3px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26]"
+                title="Jump to a random prompt fail"
+              >
+                <span>🔀</span>
+                <span>Random</span>
               </a>
             )}
           </form>
