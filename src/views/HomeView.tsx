@@ -141,8 +141,8 @@ export function HomeView({
         {hasMore && nextCursor && (
           <div class="pt-6 text-center">
             <a
-              href={`/?q=${encodeURIComponent(query ?? '')}&mood=${encodeURIComponent(mood ?? '')}&cursor=${encodeURIComponent(nextCursor)}`}
-              class="inline-flex items-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-card)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] shadow-xs hover:bg-[var(--bg-subtle)] active:scale-95 transition-all"
+              href={`/?q=${encodeURIComponent(query ?? '')}&mood=${encodeURIComponent(mood ?? '')}&model=${encodeURIComponent(model ?? '')}&cursor=${encodeURIComponent(nextCursor)}`}
+              class="inline-flex items-center gap-2 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-6 py-2.5 text-sm font-bold text-[var(--text-primary)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[var(--bg-subtle)] hover:shadow-[4px_4px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0e1a26] cursor-pointer"
             >
               Load Older Confessions ↓
             </a>
