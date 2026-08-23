@@ -337,9 +337,19 @@ export function Layout({
                     btn.disabled = true;
                     btn.classList.add('bg-[var(--solidarity-bg)]', 'text-[var(--solidarity-text)]', 'translate-x-0.5', 'translate-y-0.5', 'shadow-[0.5px_0.5px_0px_#0e1a26]');
 
+                    if (countSpan) {
+                      const currentCount = parseInt(countSpan.textContent || '0', 10);
+                      countSpan.textContent = String(currentCount + 1);
+                    }
+
                     try {
                       const res = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' } });
-                      if (!res.ok) console.warn('Solidarity update failed');
+                      if (res.ok) {
+                        const data = await res.json();
+                        if (data && typeof data.count === 'number' && countSpan) {
+                          countSpan.textContent = String(data.count);
+                        }
+                      }
                     } catch (err) {
                       console.error('Solidarity network error', err);
                     }

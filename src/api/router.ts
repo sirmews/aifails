@@ -24,6 +24,7 @@ import {
   formatConfessionMarkdown,
   formatConfessionJson,
 } from '../services/agent';
+import { handleMcpJsonRpc, type JsonRpcRequest } from '../services/mcp';
 import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
@@ -43,7 +44,7 @@ app.use('*', async (c, next) => {
   // RFC 8288 & RFC 9727 Section 3 Link Headers for Agent Discovery
   c.header(
     'Link',
-    '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
+    '</.well-known/api-catalog>; rel="api-catalog", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
   );
 });
 
@@ -621,6 +622,87 @@ app.get('/.well-known/api-catalog', async (c) => {
     'Access-Control-Allow-Origin': '*',
   });
 });
+
+// 8b. Model Context Protocol (MCP) Server & Discovery Card Endpoints
+app.post('/mcp', async (c) => {
+  const clientIp = getClientIp(c);
+  if (await isReadRateLimited(c, `read:${clientIp}:/mcp`)) {
+    return c.json(
+      {
+        jsonrpc: '2.0',
+        id: null,
+        error: { code: -32000, message: 'Rate limit exceeded. Please slow down.' },
+      },
+      429
+    );
+  }
+
+  let body: JsonRpcRequest;
+  try {
+    body = (await c.req.json()) as JsonRpcRequest;
+  } catch {
+    return c.json(
+      {
+        jsonrpc: '2.0',
+        id: null,
+        error: { code: -32700, message: 'Parse error: invalid JSON' },
+      },
+      400
+    );
+  }
+
+  const baseUrl = new URL(c.req.url).origin;
+  const session = await getSessionHelper(c);
+
+  const isWriteRateLimited = async () => {
+    if (!c.env.CONFESSION_LIMITER) return false;
+    const rateLimitKey = `${clientIp}:${session.sessionId}:mcp`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    return !success;
+  };
+
+  const response = await handleMcpJsonRpc(c.env.DB, body, baseUrl, {
+    isWriteRateLimited,
+    onConfessionCreated: () => purgeEdgeCache(c),
+  });
+
+  if (!response) {
+    return c.body(null, 204);
+  }
+
+  c.header('Content-Type', 'application/json; charset=utf-8');
+  c.header('Access-Control-Allow-Origin', '*');
+  return c.json(response);
+});
+
+app.get('/.well-known/mcp/server-card.json', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/.well-known/mcp/server-card.json`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  const serverCard = {
+    serverInfo: {
+      name: 'aifails-mcp',
+      title: 'Prompt Confessional MCP',
+      description: 'LLM failure catalog, anti-pattern guardrails, and community prompt fixes',
+      version: '1.0.0',
+    },
+    transport: {
+      type: 'http',
+      url: `${baseUrl}/mcp`,
+    },
+    capabilities: {
+      tools: true,
+    },
+  };
+  return c.newResponse(JSON.stringify(serverCard, null, 2), 200, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+app.get('/.well-known/mcp.json', (c) => c.redirect('/.well-known/mcp/server-card.json'));
 // 7. Dynamic XML Sitemap Endpoint
 app.get('/sitemap.xml', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/sitemap.xml`)) {
