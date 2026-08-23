@@ -56,8 +56,8 @@ async function isReadRateLimited(c: Context<{ Bindings: Env }>, rateLimitKey: st
   return !success;
 }
 
-// Cache-Control header helper for heavy edge caching
-const EDGE_CACHE_HEADER = 'public, max-age=30, s-maxage=120, stale-while-revalidate=86400';
+// Cache-Control header helper (zero max-age for instant HTML updates)
+const EDGE_CACHE_HEADER = 'public, max-age=0, must-revalidate';
 function purgeHomeEdgeCache(c: Context<{ Bindings: Env }>) {
   if (c.executionCtx) {
     try {
