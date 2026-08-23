@@ -51,41 +51,85 @@ export function ConfessionForm({ models = [], turnstileSiteKey }: ConfessionForm
         {/* Form Body */}
         <form action="/confessions" method="post" class="space-y-4">
           <div>
-            <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)]">
-              What did you ask for?
-            </label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-black uppercase tracking-wider text-[var(--text-primary)]">
+                What did you ask for?
+              </label>
+              <div class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                  data-target="prompt_used"
+                  data-format="code-block"
+                  title="Insert ```code block```"
+                >
+                  <span>&lt;/&gt; code</span>
+                </button>
+                <button
+                  type="button"
+                  class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-1.5 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                  data-target="prompt_used"
+                  data-format="inline-code"
+                  title="Insert `inline code`"
+                >
+                  <span>`code`</span>
+                </button>
+              </div>
+            </div>
             <textarea
               name="prompt_used"
               required
-              placeholder="Write a simple function that returns the current date. Just the date. Nothing else."
+              placeholder="Write a function in TypeScript that formats a date..."
               rows={3}
-              class="w-full resize-none rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+              class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>
           </div>
 
           <div>
-            <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)]">
-              What did it do instead?
-            </label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-black uppercase tracking-wider text-[var(--text-primary)]">
+                What did it do instead?
+              </label>
+              <div class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                  data-target="what_it_did_instead"
+                  data-format="code-block"
+                  title="Insert ```code block```"
+                >
+                  <span>&lt;/&gt; code</span>
+                </button>
+                <button
+                  type="button"
+                  class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-1.5 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                  data-target="what_it_did_instead"
+                  data-format="inline-code"
+                  title="Insert `inline code`"
+                >
+                  <span>`code`</span>
+                </button>
+              </div>
+            </div>
             <textarea
               name="what_it_did_instead"
               required
-              placeholder="It wrote a 200-line class with timezone conversion, a full DateUtils library, and a 3-paragraph explanation of ISO 8601."
+              placeholder="It hallucinated a 200-line class and imported deprecated libraries..."
               rows={3}
-              class="w-full resize-none rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+              class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>
           </div>
 
           <div>
-            <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)]">
+            <label class="mb-1.5 block text-xs font-black uppercase tracking-wider text-[var(--text-primary)]">
               How did it make you feel?
             </label>
             <textarea
               name="how_it_made_them_feel"
               required
-              placeholder="I asked for ONE LINE. One. I got a dissertation."
+              placeholder="I asked for ONE line of code. I got an essay."
               rows={2}
-              class="w-full resize-none rounded-md border border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+              class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
             ></textarea>
           </div>
 

@@ -43,15 +43,40 @@ export function SuggestionForm({ confessionId, turnstileSiteKey }: SuggestionFor
             </span>
           </label>
         </div>
-
-        <textarea
-          name="body"
-          required
-          placeholder="What should they have asked or which model should they have used instead?"
-          rows={3}
-          class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
-        ></textarea>
-
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-black uppercase tracking-wider text-[var(--text-primary)]">
+              Your &quot;Ackchyually...&quot; advice / code fix
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button
+                type="button"
+                class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                data-target="body"
+                data-format="code-block"
+                title="Insert ```code block```"
+              >
+                <span>&lt;/&gt; code</span>
+              </button>
+              <button
+                type="button"
+                class="format-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-1.5 py-0.5 text-[10px] font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] transition-colors cursor-pointer"
+                data-target="body"
+                data-format="inline-code"
+                title="Insert `inline code`"
+              >
+                <span>`code`</span>
+              </button>
+            </div>
+          </div>
+          <textarea
+            name="body"
+            required
+            placeholder="Here is the clean 2-line function they should have asked for..."
+            rows={3}
+            class="w-full resize-none rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none font-medium"
+          ></textarea>
+        </div>
         {/* Cloudflare Turnstile Anti-Bot Verification */}
         {turnstileSiteKey && (
           <div class="my-2 flex justify-end">

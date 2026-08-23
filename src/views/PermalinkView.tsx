@@ -5,6 +5,7 @@ import { ConfessionCard } from './ConfessionCard';
 import { ConfessionForm } from './ConfessionForm';
 import { SuggestionForm } from './SuggestionForm';
 import { Footer } from './Footer';
+import { Markdown } from './Markdown';
 import { timeAgo } from './utils';
 
 type PermalinkViewProps = {
@@ -170,7 +171,7 @@ export function PermalinkView({
                       </form>
                     </div>
                   </div>
-                  <p class="text-sm leading-relaxed text-[var(--text-primary)]">{s.body}</p>
+                  <Markdown content={s.body} class="text-sm pt-1" />
                 </div>
               ))}
             </div>

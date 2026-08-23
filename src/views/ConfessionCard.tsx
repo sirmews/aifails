@@ -1,5 +1,6 @@
 import type { Confession, ConfessionSuggestion } from '../core/types';
 import { timeAgo, moodEmoji, moodLabel } from './utils';
+import { Markdown } from './Markdown';
 
 type ConfessionCardProps = {
   confession: Confession;
@@ -41,20 +42,19 @@ export function ConfessionCard({ confession, suggestions = [], isPermalink = fal
 
       {/* 1. Prompt */}
       <div class="mb-3.5 border-l-4 border-[var(--border-subtle)] pl-3.5">
-        <p class="mb-0.5 text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">
+        <p class="mb-1 text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">
           What I asked for
         </p>
-        <p class="text-sm leading-relaxed text-[var(--text-primary)] font-medium">{confession.prompt_used}</p>
+        <Markdown content={confession.prompt_used} />
       </div>
 
       {/* 2. What it did instead */}
       <div class="mb-3.5 border-l-4 border-[var(--danger-border)] pl-3.5">
-        <p class="mb-0.5 text-xs font-black uppercase tracking-wider text-[var(--danger-text)]">
+        <p class="mb-1 text-xs font-black uppercase tracking-wider text-[var(--danger-text)]">
           What it did instead
         </p>
-        <p class="text-sm leading-relaxed text-[var(--text-primary)] font-medium">{confession.what_it_did_instead}</p>
+        <Markdown content={confession.what_it_did_instead} />
       </div>
-
       {/* 3. The human reaction */}
       <div class="mb-4 border-l-4 border-[var(--amber-accent)] pl-3.5">
         <p class="mb-0.5 text-xs font-black uppercase tracking-wider text-[var(--amber-accent)]">

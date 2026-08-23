@@ -374,6 +374,79 @@ export function Layout({
                   }
                 });
               });
+              // Tab Key Indentation Support in Textareas
+              document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('keydown', (e) => {
+                  if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    const val = textarea.value;
+                    textarea.value = val.substring(0, start) + '  ' + val.substring(end);
+                    textarea.selectionStart = textarea.selectionEnd = start + 2;
+                  }
+                });
+              });
+
+              // Markdown Quick Format Toolbar
+              document.querySelectorAll('.format-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  const targetName = btn.getAttribute('data-target');
+                  const format = btn.getAttribute('data-format');
+                  const textarea = document.querySelector('textarea[name="' + targetName + '"]');
+                  if (!textarea) return;
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const val = textarea.value;
+                  const selected = val.substring(start, end);
+
+                  let replacement = '';
+                  let cursorOffset = 0;
+                  const b3 = String.fromCharCode(96, 96, 96);
+                  const b1 = String.fromCharCode(96);
+
+                  if (format === 'code-block') {
+                    if (selected) {
+                      replacement = b3 + '\n' + selected + '\n' + b3;
+                      cursorOffset = replacement.length;
+                    } else {
+                      replacement = b3 + '\n// paste code here\n' + b3;
+                      cursorOffset = 4;
+                    }
+                  } else if (format === 'inline-code') {
+                    if (selected) {
+                      replacement = b1 + selected + b1;
+                      cursorOffset = replacement.length;
+                    } else {
+                      replacement = b1 + 'code' + b1;
+                      cursorOffset = 1;
+                    }
+                  textarea.value = val.substring(0, start) + replacement + val.substring(end);
+                  textarea.focus();
+                  textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
+                });
+              });
+
+              // Copy Code Block Handler
+              document.querySelectorAll('.copy-code-block-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                  const card = btn.closest('.rounded-md');
+                  const codeEl = card ? card.querySelector('pre code') : null;
+                  if (!codeEl) return;
+                  const codeText = codeEl.textContent || '';
+                  try {
+                    await navigator.clipboard.writeText(codeText);
+                    const span = btn.querySelector('span');
+                    if (span) {
+                      const orig = span.textContent;
+                      span.textContent = 'Copied!';
+                      setTimeout(() => { span.textContent = orig; }, 2000);
+                    }
+                  } catch (err) {
+                    console.error('Failed to copy code', err);
+                  }
+                });
+              });
             });
           `,
           }}
