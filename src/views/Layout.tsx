@@ -369,10 +369,13 @@ export function Layout({
                     const label = btn.querySelector('.copy-label');
                     if (label) {
                       const orig = label.textContent;
-                      label.textContent = 'Copied!';
-                      setTimeout(() => { label.textContent = orig; }, 2000);
+                      label.textContent = '✓ Copied!';
+                      btn.classList.add('text-emerald-400', 'border-emerald-500');
+                      setTimeout(() => {
+                        label.textContent = orig;
+                        btn.classList.remove('text-emerald-400', 'border-emerald-500');
+                      }, 2000);
                     }
-                  } catch (err) {
                     console.error('Failed to copy permalink', err);
                   }
                 });
