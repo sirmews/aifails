@@ -422,6 +422,8 @@ export function Layout({
                       replacement = b1 + 'code' + b1;
                       cursorOffset = 1;
                     }
+                  }
+
                   textarea.value = val.substring(0, start) + replacement + val.substring(end);
                   textarea.focus();
                   textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
