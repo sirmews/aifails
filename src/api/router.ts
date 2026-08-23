@@ -17,7 +17,7 @@ import { getOrCreateSessionId } from '../auth/session';
 import { redactSecrets } from '../utils/gitleaks';
 import { sanitizeContent } from '../utils/moderation';
 import { generateRssFeed, generateSitemapXml, generateOgImageSvg, generateSiteOgImageSvg } from '../services/seo';
-import { svgToPng } from '../services/og-png';
+import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
 import { NotFoundView } from '../views/NotFoundView';
@@ -480,28 +480,20 @@ app.get('/robots.txt', async (c) => {
   c.header('Cache-Control', 'public, max-age=86400');
   return c.text(robotsTxt);
 });
-// 9. Site-wide Homepage Dynamic Social PNG & SVG Cards
+// 9. Site-wide Static 1200x630 Social Preview PNG (100% WhatsApp/iMessage compatible)
 app.get('/og.png', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/og.png`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
 
-  const { confessions } = await getConfessions(c.env.DB, { limit: 100 });
-  const totalSolidarity = confessions.reduce((sum, item) => sum + item.solidarity_count, 0);
-
-  const svg = generateSiteOgImageSvg({
-    confessionCount: confessions.length,
-    solidarityCount: totalSolidarity,
-  });
-
-  const pngBytes = await svgToPng(svg);
-  return new Response(pngBytes, {
+  return new Response(OG_DEFAULT_PNG_BYTES, {
     headers: {
       'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=86400, s-maxage=604800',
     },
   });
 });
+
 app.get('/api/og.png', (c) => c.redirect('/og.png'));
 
 app.get('/og.svg', async (c) => {
@@ -530,16 +522,7 @@ app.get('/confessions/:id/og.png', async (c) => {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
 
-  const id = c.req.param('id');
-  const confession = await getConfessionById(c.env.DB, id);
-
-  if (!confession) {
-    return c.text('Not Found', 404);
-  }
-
-  const svg = generateOgImageSvg(confession);
-  const pngBytes = await svgToPng(svg);
-  return new Response(pngBytes, {
+  return new Response(OG_DEFAULT_PNG_BYTES, {
     headers: {
       'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=86400, s-maxage=604800',
