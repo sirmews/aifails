@@ -3,6 +3,7 @@ import type { Env } from '../types/env';
 import {
   getConfessions,
   getConfessionById,
+  getRandomConfessionId,
   createConfession,
   incrementSolidarity,
   createSuggestion,
@@ -217,6 +218,25 @@ app.post('/confessions', async (c) => {
   return c.redirect('/?notice=Confession+submitted+successfully');
 });
 
+
+// 3. Random Confession Route
+app.get('/random', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/random`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+
+  const excludeId = c.req.query('exclude') || undefined;
+  const randomId = await getRandomConfessionId(c.env.DB, excludeId);
+
+  // Set no-cache on the random redirect so every hit picks a fresh random fail
+  c.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  if (randomId) {
+    return c.redirect(`/confessions/${randomId}`);
+  }
+
+  return c.redirect('/');
+});
 // 3. Single Confession Permalink SSR Route
 app.get('/confessions/:id', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/confessions`)) {

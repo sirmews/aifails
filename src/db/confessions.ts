@@ -84,6 +84,22 @@ export async function getConfessionById(db: D1Database, id: string): Promise<Con
 
   return result ?? null;
 }
+
+export async function getRandomConfessionId(db: D1Database, excludeId?: string): Promise<string | null> {
+  if (excludeId) {
+    const result = await db
+      .prepare(`SELECT id FROM confessions WHERE is_hidden = 0 AND id != ? ORDER BY RANDOM() LIMIT 1`)
+      .bind(excludeId)
+      .first<{ id: string }>();
+    if (result?.id) return result.id;
+  }
+
+  const result = await db
+    .prepare(`SELECT id FROM confessions WHERE is_hidden = 0 ORDER BY RANDOM() LIMIT 1`)
+    .first<{ id: string }>();
+
+  return result?.id ?? null;
+}
 export async function createConfession(db: D1Database, input: NewConfession): Promise<Confession> {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
