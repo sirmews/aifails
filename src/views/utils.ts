@@ -2,6 +2,8 @@ const MOODS = [
   { value: 'furious', label: 'Furious', emoji: '😡' },
   { value: 'defeated', label: 'Defeated', emoji: '😩' },
   { value: 'bewildered', label: 'Bewildered', emoji: '🤯' },
+  { value: 'baffled', label: 'Baffled', emoji: '🤔' },
+  { value: 'embarrassed', label: 'Embarrassed', emoji: '😳' },
   { value: 'amused', label: 'Darkly Amused', emoji: '😏' },
   { value: 'numb', label: 'Numb', emoji: '😐' },
   { value: 'vengeful', label: 'Vengeful', emoji: '🔥' },
