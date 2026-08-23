@@ -77,7 +77,7 @@ export function Layout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
         <meta name="description" content={description} />
-        <meta name="theme-color" content="#191b22" />
+        <meta name="theme-color" content="#1e334a" />
 
         {/* Canonical & Open Graph */}
         <meta property="og:site_name" content="Prompt Confessional • aifails.wtf" />
