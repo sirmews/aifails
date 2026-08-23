@@ -97,12 +97,16 @@ export function PermalinkView({
                     </span>
                     <div class="flex items-center gap-2">
                       <span class="text-[var(--text-muted)]">{timeAgo(s.created_at)}</span>
-                      <form action={`/confessions/${confession.id}/suggestions/${s.id}/report`} method="post" class="inline m-0 p-0">
+                      <form
+                        action={`/confessions/${confession.id}/suggestions/${s.id}/report`}
+                        method="post"
+                        class="confirm-submit-form inline m-0 p-0"
+                        data-confirm-message="Report this suggestion for moderation review?"
+                      >
                         <button
                           type="submit"
                           title="Report this suggestion"
                           class="inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--danger-text)] hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] transition-colors cursor-pointer"
-                          onclick="return confirm('Report this suggestion for moderation review?');"
                         >
                           <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />

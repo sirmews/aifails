@@ -307,6 +307,17 @@ export function Layout({ title = 'Prompt Confessional — A safe space for AI fr
                 });
               });
 
+              // Confirm Moderation Report Submissions Before Posting
+              document.querySelectorAll('form.confirm-submit-form[data-confirm-message]').forEach(form => {
+                form.addEventListener('submit', (e) => {
+                  const message = form.getAttribute('data-confirm-message');
+                  if (!message) return;
+                  if (!window.confirm(message)) {
+                    e.preventDefault();
+                  }
+                });
+              });
+
               // Copy Permalink Handler
               document.querySelectorAll('.copy-permalink-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
