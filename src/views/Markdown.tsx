@@ -134,16 +134,13 @@ export function Markdown({ content, class: className = '' }: MarkdownProps) {
           return (
             <div
               key={idx}
-              class="my-2.5 rounded-md border-2 border-[var(--border-color)] bg-[#152435] shadow-[2.5px_2.5px_0px_#0e1a26] overflow-hidden"
+              class="relative my-3 rounded-md border-2 border-[var(--border-color)] bg-[#152435] shadow-[2.5px_2.5px_0px_#0e1a26] overflow-hidden"
             >
-              <div class="flex items-center justify-between px-3 py-1.5 border-b-2 border-[var(--border-color)] bg-[#0f1a26] text-[11px] font-mono font-bold text-[var(--text-muted)] select-none">
-                <span class="uppercase text-[10px] tracking-wider text-[var(--amber-accent)]">
-                  {block.lang}
-                </span>
+              <div class="absolute right-2.5 top-2.5 z-10">
                 <button
                   type="button"
-                  class="copy-code-block-btn inline-flex items-center gap-1 text-[10px] font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-                  title="Copy code snippet"
+                  class="copy-code-block-btn inline-flex items-center gap-1 rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[10px] font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] shadow-xs transition-colors cursor-pointer"
+                  title="Copy code"
                 >
                   <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -151,9 +148,7 @@ export function Markdown({ content, class: className = '' }: MarkdownProps) {
                   <span>Copy</span>
                 </button>
               </div>
-              <pre class="p-3.5 overflow-x-auto font-mono text-xs sm:text-sm text-[#f0fdfa] leading-relaxed select-text font-medium">
-                <code>{block.code}</code>
-              </pre>
+              <pre class="p-3.5 pr-16 overflow-x-auto font-mono text-xs sm:text-sm text-[#f0fdfa] leading-relaxed select-text font-medium"><code>{block.code}</code></pre>
             </div>
           );
         }
