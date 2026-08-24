@@ -28,6 +28,7 @@ import { handleMcpJsonRpc, type JsonRpcRequest } from '../services/mcp';
 import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
+import { McpView } from '../views/McpView';
 import { NotFoundView } from '../views/NotFoundView';
 export const app = new Hono<{ Bindings: Env }>();
 
@@ -624,6 +625,18 @@ app.get('/.well-known/api-catalog', async (c) => {
 });
 
 // 8b. Model Context Protocol (MCP) Server & Discovery Card Endpoints
+app.get('/mcp', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/mcp`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const acceptHeader = c.req.header('accept') || '';
+  if (acceptHeader.includes('application/json')) {
+    return c.redirect('/.well-known/mcp/server-card.json');
+  }
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.html(McpView());
+});
+
 app.post('/mcp', async (c) => {
   const clientIp = getClientIp(c);
   if (await isReadRateLimited(c, `read:${clientIp}:/mcp`)) {
@@ -673,6 +686,14 @@ app.post('/mcp', async (c) => {
   c.header('Content-Type', 'application/json; charset=utf-8');
   c.header('Access-Control-Allow-Origin', '*');
   return c.json(response);
+});
+
+app.options('/mcp', (c) => {
+  c.header('Access-Control-Allow-Origin', '*');
+  c.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+  c.header('Access-Control-Max-Age', '86400');
+  return c.body(null, 204);
 });
 
 app.get('/.well-known/mcp/server-card.json', async (c) => {
