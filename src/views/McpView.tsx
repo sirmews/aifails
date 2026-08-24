@@ -87,50 +87,49 @@ export function McpView() {
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--accent-primary)] px-3 py-1.5 text-xs font-black text-[var(--accent-text)] shadow-[2.5px_2.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer shrink-0"
               data-tab="claude-code"
             >
-              🤖 Claude Code
+              Claude Code
             </button>
             <button
               type="button"
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] cursor-pointer shrink-0"
               data-tab="claude-desktop"
             >
-              🖥️ Claude Desktop
+              Claude Desktop
             </button>
             <button
               type="button"
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] cursor-pointer shrink-0"
               data-tab="cursor"
             >
-              ⚡ Cursor &amp; Windsurf
+              Cursor &amp; Windsurf
             </button>
             <button
               type="button"
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] cursor-pointer shrink-0"
               data-tab="codex"
             >
-              🧠 Codex
+              Codex
             </button>
             <button
               type="button"
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] cursor-pointer shrink-0"
               data-tab="pi"
             >
-              🥧 Pi
+              Pi
             </button>
             <button
               type="button"
               class="mcp-tab-btn rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)] shadow-[2px_2px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:border-[var(--border-subtle)] cursor-pointer shrink-0"
               data-tab="opencode"
             >
-              💻 OpenCode
+              OpenCode
             </button>
           </div>
-
           {/* Tab 1: Claude Code CLI */}
           <div id="tab-panel-claude-code" class="mcp-tab-panel rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>🤖</span> Claude Code CLI Integration
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                Claude Code CLI Integration
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">Terminal CLI</span>
             </div>
@@ -152,8 +151,8 @@ export function McpView() {
           {/* Tab 2: Claude Desktop */}
           <div id="tab-panel-claude-desktop" class="mcp-tab-panel hidden rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>🖥️</span> Claude Desktop App
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                Claude Desktop App
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">claude_desktop_config.json</span>
             </div>
@@ -175,8 +174,8 @@ export function McpView() {
           {/* Tab 3: Cursor & Windsurf */}
           <div id="tab-panel-cursor" class="mcp-tab-panel hidden rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>⚡</span> Cursor &amp; Windsurf
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                Cursor &amp; Windsurf
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">.cursor/mcp.json</span>
             </div>
@@ -198,8 +197,8 @@ export function McpView() {
           {/* Tab 4: Codex CLI */}
           <div id="tab-panel-codex" class="mcp-tab-panel hidden rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>🧠</span> OpenAI Codex CLI
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                OpenAI Codex CLI
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">~/.codex/config.json</span>
             </div>
@@ -221,8 +220,8 @@ export function McpView() {
           {/* Tab 5: Pi Coding Agent */}
           <div id="tab-panel-pi" class="mcp-tab-panel hidden rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>🥧</span> Pi Coding Agent (`pi`)
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                Pi Coding Agent (`pi`)
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">~/.pi/config.json</span>
             </div>
@@ -244,8 +243,8 @@ export function McpView() {
           {/* Tab 6: OpenCode */}
           <div id="tab-panel-opencode" class="mcp-tab-panel hidden rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 sm:p-6 shadow-[3.5px_3.5px_0px_#0e1a26] space-y-3">
             <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2.5">
-              <span class="text-sm font-black text-[var(--text-primary)] flex items-center gap-2">
-                <span>💻</span> OpenCode
+              <span class="text-sm font-black text-[var(--text-primary)]">
+                OpenCode
               </span>
               <span class="text-[11px] font-mono text-[var(--text-muted)] font-bold">opencode.json</span>
             </div>
@@ -274,9 +273,8 @@ export function McpView() {
           <div class="grid gap-3 sm:grid-cols-3">
             {/* Tool 1 */}
             <div class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-[2px_2px_0px_#0e1a26] space-y-1.5">
-              <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-[var(--accent-primary)]">
-                <span>🛡️</span>
-                <span>get_anti_patterns</span>
+              <div class="font-mono text-xs font-bold text-[var(--accent-primary)]">
+                get_anti_patterns
               </div>
               <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
                 Queries known LLM traps by framework (e.g. NAPI-rs, Tailwind, Rust) and returns actionable negative prompt rules.
@@ -285,9 +283,8 @@ export function McpView() {
 
             {/* Tool 2 */}
             <div class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-[2px_2px_0px_#0e1a26] space-y-1.5">
-              <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-[#38bdf8]">
-                <span>🔀</span>
-                <span>get_random_fail</span>
+              <div class="font-mono text-xs font-bold text-[#38bdf8]">
+                get_random_fail
               </div>
               <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
                 Fetches a random prompt failure with developer reaction and community prompt fixes.
@@ -296,9 +293,8 @@ export function McpView() {
 
             {/* Tool 3 */}
             <div class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-[2px_2px_0px_#0e1a26] space-y-1.5">
-              <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-emerald-400">
-                <span>✍️</span>
-                <span>submit_fail</span>
+              <div class="font-mono text-xs font-bold text-emerald-400">
+                submit_fail
               </div>
               <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
                 Anonymously contributes prompt failures directly from agent sessions with automated Gitleaks secret scrubbing.
