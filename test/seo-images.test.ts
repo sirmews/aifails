@@ -17,14 +17,15 @@ const sampleConfession: Confession = {
 };
 
 describe('SEO OG Image Generator', () => {
-  it('generates site OG SVG with 1200x630 dimensions, large headline, and no busy action buttons', () => {
+  it('generates site OG SVG with 1200x630 dimensions, 3-part layout, and no busy action buttons', () => {
     const svg = generateSiteOgImageSvg();
     expect(svg).toContain('width="1200"');
     expect(svg).toContain('height="630"');
     expect(svg).toContain('viewBox="0 0 1200 630"');
-    expect(svg).toContain('You are not alone.');
-    expect(svg).toContain('font-size="70"');
-    expect(svg).toContain('font-size="32"');
+    expect(svg).toContain('Prompt Confessional');
+    expect(svg).toContain('WHAT I ASKED FOR');
+    expect(svg).toContain('WHAT IT DID INSTEAD');
+    expect(svg).toContain('HOW IT MADE THEM FEEL');
     expect(svg).toContain('https://aifails.wtf');
 
     // Verify noisy buttons are removed
@@ -41,9 +42,9 @@ describe('SEO OG Image Generator', () => {
     expect(svg).toContain('WHAT IT DID INSTEAD');
     expect(svg).toContain('HOW IT MADE THEM FEEL');
     expect(svg).toContain('ANTHROPIC / CLAUDE-3-5-SONNET');
-    expect(svg).toContain('font-size="30"'); // Prompt font size
-    expect(svg).toContain('font-size="32"'); // Fail font size
-    expect(svg).toContain('font-size="28"'); // Feeling font size
+    expect(svg).toContain('font-size="28"'); // Prompt font size
+    expect(svg).toContain('font-size="30"'); // Fail font size
+    expect(svg).toContain('font-size="26"'); // Feeling font size
     expect(svg).toContain('https://aifails.wtf/confessions/test-confession-123');
 
     // Verify noisy solidarity button is removed from footer
@@ -99,14 +100,13 @@ describe('OG Image HTTP Endpoints', () => {
     const buffer = await res.arrayBuffer();
     expect(buffer.byteLength).toBe(OG_DEFAULT_PNG_BYTES.length);
   });
-
   it('GET /og.svg returns 200 image/svg+xml with simplified layout', async () => {
     const res = await app.request('https://aifails.wtf/og.svg', {}, mockEnv as any);
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('image/svg+xml');
 
     const text = await res.text();
-    expect(text).toContain('You are not alone.');
+    expect(text).toContain('Prompt Confessional');
     expect(text).not.toContain('in Solidarity');
   });
 
