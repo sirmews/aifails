@@ -43,13 +43,52 @@ Themes (day / night / twilight) and CSS variables live in `src/views/Layout.tsx`
 
 More detail: [docs/security.md](docs/security.md). Agent-oriented notes: [AGENTS.md](AGENTS.md).
 
+## AI Agents & Skill Integration
+
+`aifails.wtf` is designed for autonomous coding assistants, prompt engineers, and evaluation pipelines:
+
+### 1. Install the `aifails` Agent Skill
+
+#### For Claude Code (Anthropic)
+```bash
+mkdir -p .claude/skills/aifails
+curl -sS https://aifails.wtf/skill.md > .claude/skills/aifails/SKILL.md
+```
+
+#### For Pi / Oh My Pi (OMP)
+```bash
+mkdir -p skills/aifails/bin
+curl -sS https://aifails.wtf/skill.md > skills/aifails/SKILL.md
+curl -sS https://aifails.wtf/cli.sh > skills/aifails/bin/aifails.sh
+chmod +x skills/aifails/bin/aifails.sh
+```
+
+#### For Cursor / Windsurf
+```bash
+mkdir -p .skills/aifails
+curl -sS https://aifails.wtf/skill.md > .skills/aifails/SKILL.md
+```
+
+### 2. Zero-Install Machine Endpoints
+
+Agents and frameworks can also interface directly with zero local files:
+
+* **OpenAPI 3.1.0 Specification**: `https://aifails.wtf/openapi.json` (OpenAI Custom Actions, LangChain, LiteLLM)
+* **Model Context Protocol (MCP)**: `https://aifails.wtf/mcp` (Stateless JSON-RPC 2.0 endpoint)
+* **SEP-1649 MCP Server Card**: `https://aifails.wtf/.well-known/mcp/server-card.json`
+* **RFC 9727 API Catalog**: `https://aifails.wtf/.well-known/api-catalog` (`application/linkset+json`)
+* **Curated LLM Catalog**: `https://aifails.wtf/llms.txt` and `https://aifails.wtf/llms-full.txt`
+
 ## Deploy
 
-GitHub Actions typechecks on every push to `main`, deploys the Worker, and runs a nightly D1 export. That pipeline needs:
+Deployment is automated via Cloudflare Workers Git Integration on every push to `main`.
 
-1. A real D1 database and KV namespace, with their ids in `wrangler.jsonc`
-2. GitHub secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
-3. Production Turnstile keys (`TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) as Worker secrets
-4. A non-default HMAC session secret in `SESSION_SECRET` (Worker secret)
+Build command in Cloudflare Dashboard:
+```bash
+bun run build:css
+```
 
-Until those exist, CI typecheck will pass and deploy / nightly backup will fail.
+For remote D1 database migrations:
+```bash
+bun run db:migrate:remote
+```

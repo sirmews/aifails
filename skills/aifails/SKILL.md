@@ -121,3 +121,27 @@ EOF
 * **RFC 9727 API Catalog**: `https://aifails.wtf/.well-known/api-catalog`
 * **Model Context Protocol (MCP)**: `https://aifails.wtf/mcp` (JSON-RPC 2.0)
 * **LLMs Full Catalog**: `https://aifails.wtf/llms-full.txt`
+
+---
+
+## 📦 Installation Across Agent Ecosystems
+
+### Claude Code (Anthropic)
+```bash
+mkdir -p .claude/skills/aifails
+curl -sS https://aifails.wtf/skill.md > .claude/skills/aifails/SKILL.md
+```
+
+### Pi / Oh My Pi (OMP)
+```bash
+mkdir -p skills/aifails/bin
+curl -sS https://aifails.wtf/skill.md > skills/aifails/SKILL.md
+curl -sS https://aifails.wtf/cli.sh > skills/aifails/bin/aifails.sh
+chmod +x skills/aifails/bin/aifails.sh
+```
+
+### Cursor / Windsurf
+```bash
+mkdir -p .skills/aifails
+curl -sS https://aifails.wtf/skill.md > .skills/aifails/SKILL.md
+```
