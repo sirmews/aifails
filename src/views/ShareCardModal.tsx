@@ -73,53 +73,37 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
         {/* Carousel Slide Navigation Toolbar (Only in Carousel Mode) */}
         <div
           id="carousel-nav-bar"
-          class="hidden items-center justify-between gap-2 rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] p-2"
+          class="hidden items-center justify-center gap-2.5 sm:gap-3 rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-subtle)] py-1.5 px-3"
         >
-          <div class="flex items-center gap-1.5 overflow-x-auto">
-            <button
-              id="slide-tab-1"
-              type="button"
-              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--accent-primary)] px-2.5 py-1 text-xs font-black text-[var(--accent-text)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-all cursor-pointer"
-            >
-              1. The Prompt
-            </button>
-            <button
-              id="slide-tab-2"
-              type="button"
-              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-all hover:text-[var(--text-primary)] cursor-pointer"
-            >
-              2. What It Did
-            </button>
-            <button
-              id="slide-tab-3"
-              type="button"
-              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-all hover:text-[var(--text-primary)] cursor-pointer"
-            >
-              3. Reaction & CTA
-            </button>
-          </div>
+          <button
+            id="slide-prev-btn"
+            type="button"
+            class="flex items-center gap-1 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-black text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[2.5px_2.5px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
+            title="Previous slide"
+          >
+            <span>◀</span>
+            <span class="text-[11px] font-bold hidden sm:inline">Prev</span>
+          </button>
 
-          <div class="flex items-center gap-1.5">
-            <button
-              id="slide-prev-btn"
-              type="button"
-              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2 py-1 text-xs font-black text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
-              title="Previous slide"
+          <div class="flex items-center gap-1.5 select-none">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Slide</span>
+            <span
+              id="slide-indicator"
+              class="rounded border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2 py-0.5 text-xs font-black text-[var(--text-primary)] shadow-[1px_1px_0px_#0e1a26]"
             >
-              ◀
-            </button>
-            <span id="slide-indicator" class="text-xs font-black text-[var(--text-primary)] px-1 select-none">
               1 / 3
             </span>
-            <button
-              id="slide-next-btn"
-              type="button"
-              class="rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2 py-1 text-xs font-black text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
-              title="Next slide"
-            >
-              ▶
-            </button>
           </div>
+
+          <button
+            id="slide-next-btn"
+            type="button"
+            class="flex items-center gap-1 rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-black text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-transform duration-100 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-[var(--text-primary)] hover:shadow-[2.5px_2.5px_0px_#0e1a26] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0.5px_0.5px_0px_#0e1a26] cursor-pointer"
+            title="Next slide"
+          >
+            <span class="text-[11px] font-bold hidden sm:inline">Next</span>
+            <span>▶</span>
+          </button>
         </div>
 
         {/* Live Canvas Preview */}
@@ -241,9 +225,6 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
   var controlsSingle = document.getElementById('controls-single');
   var controlsCarousel = document.getElementById('controls-carousel');
 
-  var slideTab1 = document.getElementById('slide-tab-1');
-  var slideTab2 = document.getElementById('slide-tab-2');
-  var slideTab3 = document.getElementById('slide-tab-3');
   var slidePrevBtn = document.getElementById('slide-prev-btn');
   var slideNextBtn = document.getElementById('slide-next-btn');
   var slideIndicator = document.getElementById('slide-indicator');
@@ -298,13 +279,9 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
   }
 
   function updateSlideUI() {
-    slideIndicator.textContent = currentSlide + ' / 3';
-    var activeTabClass = 'rounded-md border-2 border-[var(--border-color)] bg-[var(--accent-primary)] px-2.5 py-1 text-xs font-black text-[var(--accent-text)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-all cursor-pointer';
-    var inactiveTabClass = 'rounded-md border-2 border-[var(--border-color)] bg-[var(--bg-card)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] shadow-[1.5px_1.5px_0px_#0e1a26] transition-all hover:text-[var(--text-primary)] cursor-pointer';
-
-    slideTab1.className = currentSlide === 1 ? activeTabClass : inactiveTabClass;
-    slideTab2.className = currentSlide === 2 ? activeTabClass : inactiveTabClass;
-    slideTab3.className = currentSlide === 3 ? activeTabClass : inactiveTabClass;
+    if (slideIndicator) {
+      slideIndicator.textContent = currentSlide + ' / 3';
+    }
   }
 
   function setSlide(slideNum) {
@@ -316,9 +293,6 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
   if (tabSingle) tabSingle.addEventListener('click', function() { setMode('single'); });
   if (tabCarousel) tabCarousel.addEventListener('click', function() { setMode('carousel'); });
 
-  if (slideTab1) slideTab1.addEventListener('click', function() { setSlide(1); });
-  if (slideTab2) slideTab2.addEventListener('click', function() { setSlide(2); });
-  if (slideTab3) slideTab3.addEventListener('click', function() { setSlide(3); });
 
   if (slidePrevBtn) {
     slidePrevBtn.addEventListener('click', function() {
