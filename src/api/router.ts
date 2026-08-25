@@ -864,16 +864,31 @@ app.get('/openapi.yaml', async (c) => {
 
 app.get('/.well-known/openapi.yaml', (c) => c.redirect('/openapi.yaml'));
 
+// Helper for SHA-256 script integrity and ETag headers
+async function computeSha256Digest(content: string): Promise<{ hex: string; base64: string }> {
+  const encoded = new TextEncoder().encode(content);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  const base64 = btoa(String.fromCharCode(...hashArray));
+  return { hex, base64 };
+}
+
 // 8d. Agent Skill & CLI Download Endpoints
 app.get('/skill.md', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/skill.md`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
   const baseUrl = new URL(c.req.url).origin;
-  return c.newResponse(generateSkillMarkdown(baseUrl), 200, {
+  const skill = generateSkillMarkdown(baseUrl);
+  const { hex, base64 } = await computeSha256Digest(skill);
+  return c.newResponse(skill, 200, {
     'Content-Type': 'text/markdown; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
     'Access-Control-Allow-Origin': '*',
+    'ETag': `"${hex}"`,
+    'Digest': `sha-256=${base64}`,
+    'X-Content-Type-Options': 'nosniff',
   });
 });
 
@@ -884,10 +899,15 @@ app.get('/cli.sh', async (c) => {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
   const baseUrl = new URL(c.req.url).origin;
-  return c.newResponse(generateCliScript(baseUrl), 200, {
+  const script = generateCliScript(baseUrl);
+  const { hex, base64 } = await computeSha256Digest(script);
+  return c.newResponse(script, 200, {
     'Content-Type': 'text/x-shellscript; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
     'Access-Control-Allow-Origin': '*',
+    'ETag': `"${hex}"`,
+    'Digest': `sha-256=${base64}`,
+    'X-Content-Type-Options': 'nosniff',
   });
 });
 

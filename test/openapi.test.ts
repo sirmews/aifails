@@ -269,22 +269,31 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     expect(text).toContain('OpenAPI:');
     expect(text).toContain('/openapi.json');
   });
-
-  it('GET /skill.md returns raw skill markdown definition', async () => {
+  it('GET /skill.md returns raw skill markdown with ETag, Digest, and no unsafe pipes', async () => {
     const res = await app.request('/skill.md', {}, mockEnv as any);
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('text/markdown');
+    expect(res.headers.get('ETag')).toBeDefined();
+    expect(res.headers.get('Digest')).toContain('sha-256=');
+    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
     const text = await res.text();
     expect(text).toContain('name: aifails');
-    expect(text).toContain('# aifails — LLM Prompt Failures & Anti-Patterns Skill');
+    expect(text).toContain('## 🔒 Security & Trust Boundaries');
+    expect(text).not.toContain('| sh -s --');
+    expect(text).not.toContain('/cli.sh | sh');
+    expect(text).not.toContain('/cli.sh | bash');
   });
 
-  it('GET /cli.sh returns executable POSIX shell script', async () => {
+  it('GET /cli.sh returns hardened shell script with SHA-256 integrity headers', async () => {
     const res = await app.request('/cli.sh', {}, mockEnv as any);
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('text/x-shellscript');
+    expect(res.headers.get('ETag')).toBeDefined();
+    expect(res.headers.get('Digest')).toContain('sha-256=');
+    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
     const text = await res.text();
     expect(text).toContain('#!/bin/sh');
+    expect(text).toContain('set -efu');
     expect(text).toContain('aifails.sh - Interface with aifails.wtf');
   });
 });

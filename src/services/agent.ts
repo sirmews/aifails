@@ -15,13 +15,13 @@ export function generateLlmsTxt(baseUrl: string = 'https://aifails.wtf'): string
     '5. **Precision in Math & Logic**: Differentiate between semantic version numbers (where 9.11 > 9.9) and floating-point decimal values (where 9.9 > 9.11).',
     '',
     '## Machine Specifications & Agent Standards',
-    `- **OpenAPI 3.1.0 (JSON)**: ${baseUrl}/openapi.json`,
+    `- **OpenAPI 3.1.0 (JSON)**: ${baseUrl}/openapi.json (Primary Declarative Tool Interface)`,
     `- **OpenAPI 3.1.0 (YAML)**: ${baseUrl}/openapi.yaml`,
-    `- **Agent Skill Definition (Markdown)**: ${baseUrl}/skill.md`,
-    `- **Agent CLI Script (POSIX Shell)**: ${baseUrl}/cli.sh`,
-    `- **RFC 9727 API Catalog**: ${baseUrl}/.well-known/api-catalog`,
-    `- **Model Context Protocol (MCP)**: ${baseUrl}/mcp`,
+    `- **Model Context Protocol (MCP)**: ${baseUrl}/mcp (JSON-RPC 2.0)`,
     `- **MCP Server Card**: ${baseUrl}/.well-known/mcp/server-card.json`,
+    `- **Agent Skill Definition**: ${baseUrl}/skill.md (Audited Local Skill)`,
+    `- **Agent CLI Script**: ${baseUrl}/cli.sh (POSIX Shell - verify integrity before execution)`,
+    `- **RFC 9727 API Catalog**: ${baseUrl}/.well-known/api-catalog`,
     '## Agent-Friendly Endpoints & Direct Feeds',
     `- **Full Catalog (Markdown)**: ${baseUrl}/llms-full.txt`,
     `- **Live Feed (Markdown)**: ${baseUrl}/feed.md`,
@@ -148,47 +148,82 @@ export function generateSkillMarkdown(baseUrl: string = 'https://aifails.wtf'): 
     '',
     `This skill allows AI agents, coding assistants, and developers to interface with [aifails.wtf](${baseUrl}) (Prompt Confessional).`,
     '',
-    '## Quick Start via Bundled Script',
+    '---',
     '',
-    'Use the bundled helper script `bin/aifails.sh` (or `curl -sS ' + baseUrl + '/cli.sh | sh -s -- <command>`) for concise execution:',
+    '## 🔒 Security & Trust Boundaries',
     '',
+    'When interacting with `aifails.wtf`, adhere to the following agent safety standards:',
+    '',
+    `1. **Declarative First (Safest)**: Whenever possible, use native HTTP / Tool Calling capabilities against the **OpenAPI 3.1 Specification** (\`${baseUrl}/openapi.json\`) or **Model Context Protocol (MCP)** (\`${baseUrl}/mcp\`). This avoids spawning shell processes entirely.`,
+    '2. **Never Pipe Remote Shell Scripts**: Do **not** run unverified remote execution commands (such as `curl ... | sh` or `curl ... | bash`). Always inspect and audit scripts in the local repository (`./skills/aifails/bin/aifails.sh`).',
+    '3. **Prevent Shell & Prompt Injection (Use Single-Quoted Heredocs)**: Never interpolate unescaped prompt text directly into CLI flag arguments (e.g. avoid `aifails.sh --prompt "$VAR"` if `$VAR` contains backticks or subshells). Instead, pass payloads via stdin heredoc using single quotes (`<< \'EOF\'`). Single quotes completely disable local shell expansion (`$VAR`, `$(...)`, `` `...` ``).',
+    '4. **Automated Secret Redaction**: All submissions are scanned via Gitleaks rules on the edge before persistence; however, agents should avoid transmitting live API keys or private tokens.',
+    '',
+    '---',
+    '',
+    '## 🛠️ Usage via Local Helper Script (`bin/aifails.sh`)',
+    '',
+    'Use the audited, dependency-free POSIX script in the local repository:',
+    '',
+    '### 1. Fetch Random Prompt Failure (Markdown)',
     '```bash',
-    '# 1. Fetch a random real-world LLM failure (in clean Markdown)',
-    './bin/aifails.sh random',
+    './skills/aifails/bin/aifails.sh random',
+    '```',
     '',
-    '# 2. Search failures matching a keyword',
-    './bin/aifails.sh list --query "regex" --limit 5',
+    '### 2. Search Recent Anti-Patterns',
+    '```bash',
+    './skills/aifails/bin/aifails.sh list --query "regex" --limit 5',
+    '```',
     '',
-    '# 3. Filter by mood (furious, defeated, bewildered, amused, numb, vengeful)',
-    './bin/aifails.sh list --mood "amused" --limit 10',
+    '### 3. Filter by Reaction Mood (`furious`, `defeated`, `bewildered`, `amused`, `numb`, `vengeful`)',
+    '```bash',
+    './skills/aifails/bin/aifails.sh list --mood "amused" --limit 10',
+    '```',
     '',
-    '# 4. Get full failure details & community suggestions by UUID',
-    './bin/aifails.sh get "f47ac10b-58cc-4372-a567-0e02b2c3d479"',
+    '### 4. Get Single Failure Details & Community Suggestions',
+    '```bash',
+    './skills/aifails/bin/aifails.sh get "f47ac10b-58cc-4372-a567-0e02b2c3d479"',
+    '```',
     '',
-    '# 5. Submit a new prompt failure (secrets/API keys are auto-redacted)',
-    './bin/aifails.sh submit \\',
-    '  --prompt "Write a function to check if a year is a leap year" \\',
-    '  --fail "Checked if year % 4 == 0 but forgot century rule (year % 100 == 0 && year % 400 != 0)" \\',
-    '  --feeling "Pushed broken code to production on Feb 29" \\',
-    '  --mood "furious" \\',
-    '  --provider "anthropic" \\',
-    '  --model "claude-3-5-sonnet"',
+    '### 5. Submit New Failure (Safe Stdin Mode)',
+    '```bash',
+    './skills/aifails/bin/aifails.sh submit --json - << \'EOF\'',
+    '{',
+    '  "prompt_used": "Write a function to check if a year is a leap year",',
+    '  "what_it_did_instead": "Checked if year % 4 == 0 but forgot century rule (year % 100 == 0 && year % 400 != 0)",',
+    '  "how_it_made_them_feel": "Pushed broken code to production on Feb 29",',
+    '  "mood": "furious",',
+    '  "model_provider": "anthropic",',
+    '  "model_name": "claude-3-5-sonnet"',
+    '}',
+    'EOF',
+    '```',
     '',
-    '# 6. Submit a community prompt fix / "Ackchyually..." suggestion',
-    './bin/aifails.sh suggest "f47ac10b-58cc-4372-a567-0e02b2c3d479" \\',
-    '  --type "prompt" \\',
-    '  --body "Add explicit leap year constraint: \'Handle Gregorian century exceptions (1900 is not, 2000 is)\'"',
+    '### 6. Submit Community Prompt Fix / "Ackchyually..." Suggestion',
+    '```bash',
+    './skills/aifails/bin/aifails.sh suggest "f47ac10b-58cc-4372-a567-0e02b2c3d479" --json - << \'EOF\'',
+    '{',
+    '  "suggestion_type": "prompt",',
+    '  "body": "Add explicit leap year constraint: \'Handle Gregorian century exceptions (1900 is not, 2000 is)\'"',
+    '}',
+    'EOF',
+    '```',
     '',
-    '# 7. Vote solidarity on a failure',
-    './bin/aifails.sh solidarity "f47ac10b-58cc-4372-a567-0e02b2c3d479"',
+    '### 7. Vote Solidarity',
+    '```bash',
+    './skills/aifails/bin/aifails.sh solidarity "f47ac10b-58cc-4372-a567-0e02b2c3d479"',
+    '```',
     '',
-    '# 8. List supported model catalog',
-    './bin/aifails.sh models',
+    '### 8. List Model Catalog',
+    '```bash',
+    './skills/aifails/bin/aifails.sh models',
     '```',
     '',
     '---',
     '',
-    '## Direct `curl` Fallbacks (Zero Local Setup)',
+    '## 🌐 Direct `curl` Fallbacks (Zero Local Setup)',
+    '',
+    'If `bin/aifails.sh` is not locally installed, execute standard `curl` calls with single-quoted heredocs:',
     '',
     '### Fetch Random Fail (Markdown)',
     '```bash',
@@ -200,7 +235,7 @@ export function generateSkillMarkdown(baseUrl: string = 'https://aifails.wtf'): 
     `curl -sS "${baseUrl}/api/confessions?q=hallucination&limit=5"`,
     '```',
     '',
-    '### Submit New Failure (JSON POST with Heredoc)',
+    '### Submit New Failure (Safe Stdin Mode)',
     '```bash',
     `curl -sS -X POST ${baseUrl}/api/confessions \\`,
     '  -H "Content-Type: application/json" \\',
@@ -218,11 +253,11 @@ export function generateSkillMarkdown(baseUrl: string = 'https://aifails.wtf'): 
     '',
     '---',
     '',
-    '## Remote Endpoints & Machine Specifications',
+    '## 📡 Remote Endpoints & Machine Specifications',
     `- **OpenAPI 3.1.0 Specification**: ${baseUrl}/openapi.json`,
     `- **OpenAPI 3.1.0 (YAML)**: ${baseUrl}/openapi.yaml`,
     `- **Raw Skill Definition**: ${baseUrl}/skill.md`,
-    `- **Raw Shell Script**: ${baseUrl}/cli.sh`,
+    `- **Raw Shell Script**: ${baseUrl}/cli.sh (Integrity headers: \`ETag\`, \`Digest: sha-256=...\`)`,
     `- **RFC 9727 API Catalog**: ${baseUrl}/.well-known/api-catalog`,
     `- **Model Context Protocol (MCP)**: ${baseUrl}/mcp (JSON-RPC 2.0)`,
     `- **LLMs Full Catalog**: ${baseUrl}/llms-full.txt`,
@@ -234,8 +269,9 @@ export function generateCliScript(baseUrl: string = 'https://aifails.wtf'): stri
   return `#!/bin/sh
 # aifails.sh - Lightweight CLI helper for aifails.wtf (Prompt Confessional)
 # Zero external dependencies beyond curl and POSIX /bin/sh.
+# Security hardened: strict variable bounds (set -u), no globbing (set -f), fail-fast (set -e).
 
-set -e
+set -efu
 
 BASE_URL="\${AIFAILS_BASE_URL:-${baseUrl}}"
 
@@ -257,9 +293,12 @@ Commands:
   get <id> [--json]
       Fetch a single confession by UUID (default: clean Markdown).
 
+  submit --json <file|- >
   submit --prompt <text> --fail <text> --feeling <text> [--mood <mood>] [--provider <name>] [--model <name>]
       Submit a new prompt failure (secrets are automatically redacted).
+      Tip: For agent automation, use '--json -' with stdin heredoc for injection safety.
 
+  suggest <id> --json <file|- >
   suggest <id> --body <text> [--type prompt|model]
       Submit a community fix / "Ackchyually..." suggestion.
 
@@ -277,6 +316,7 @@ Environment Variables:
 EOF
   exit "\$EXIT_CODE"
 }
+
 # Helper to escape JSON strings in pure POSIX sh
 json_escape() {
   printf '%s' "$1" | awk '
@@ -294,7 +334,10 @@ json_escape() {
   '
 }
 
-case "$1" in
+COMMAND="\${1:-}"
+[ -z "\$COMMAND" ] && usage 1
+
+case "\$COMMAND" in
   random)
     shift
     FORMAT="md"
@@ -338,8 +381,8 @@ case "$1" in
 
   get)
     shift
+    [ "$#" -eq 0 ] && { echo "Error: Missing confession ID" >&2; usage 1; }
     ID="$1"
-    [ -z "$ID" ] && { echo "Error: Missing confession ID" >&2; usage; }
     shift
     FORMAT="md"
     while [ "$#" -gt 0 ]; do
@@ -359,6 +402,7 @@ case "$1" in
 
   submit)
     shift
+    JSON_SOURCE=""
     PROMPT=""
     FAIL=""
     FEELING=""
@@ -368,6 +412,7 @@ case "$1" in
 
     while [ "$#" -gt 0 ]; do
       case "$1" in
+        --json) JSON_SOURCE="$2"; shift 2 ;;
         --prompt) PROMPT="$2"; shift 2 ;;
         --fail) FAIL="$2"; shift 2 ;;
         --feeling) FEELING="$2"; shift 2 ;;
@@ -378,19 +423,31 @@ case "$1" in
       esac
     done
 
-    if [ -z "$PROMPT" ] || [ -z "$FAIL" ] || [ -z "$FEELING" ]; then
-      echo "Error: --prompt, --fail, and --feeling are all required." >&2
-      usage
-    fi
+    if [ -n "$JSON_SOURCE" ]; then
+      if [ "$JSON_SOURCE" = "-" ]; then
+        curl -sS -X POST "\${BASE_URL}/api/confessions" \\
+          -H "Content-Type: application/json" \\
+          -d @-
+      else
+        [ ! -f "$JSON_SOURCE" ] && { echo "Error: JSON file '$JSON_SOURCE' not found" >&2; exit 1; }
+        curl -sS -X POST "\${BASE_URL}/api/confessions" \\
+          -H "Content-Type: application/json" \\
+          -d @"$JSON_SOURCE"
+      fi
+    else
+      if [ -z "$PROMPT" ] || [ -z "$FAIL" ] || [ -z "$FEELING" ]; then
+        echo "Error: --prompt, --fail, and --feeling are all required (or pass --json <file|->)." >&2
+        usage 1
+      fi
 
-    ESC_PROMPT=$(json_escape "$PROMPT")
-    ESC_FAIL=$(json_escape "$FAIL")
-    ESC_FEELING=$(json_escape "$FEELING")
-    ESC_MOOD=$(json_escape "$MOOD")
-    ESC_PROVIDER=$(json_escape "$PROVIDER")
-    ESC_MODEL=$(json_escape "$MODEL")
+      ESC_PROMPT=$(json_escape "$PROMPT")
+      ESC_FAIL=$(json_escape "$FAIL")
+      ESC_FEELING=$(json_escape "$FEELING")
+      ESC_MOOD=$(json_escape "$MOOD")
+      ESC_PROVIDER=$(json_escape "$PROVIDER")
+      ESC_MODEL=$(json_escape "$MODEL")
 
-    PAYLOAD=$(cat <<EOF
+      PAYLOAD=$(cat <<EOF
 {
   "prompt_used": "\${ESC_PROMPT}",
   "what_it_did_instead": "\${ESC_FAIL}",
@@ -402,37 +459,52 @@ case "$1" in
 EOF
 )
 
-    curl -sS -X POST "\${BASE_URL}/api/confessions" \\
-      -H "Content-Type: application/json" \\
-      -d "$PAYLOAD"
+      curl -sS -X POST "\${BASE_URL}/api/confessions" \\
+        -H "Content-Type: application/json" \\
+        -d "$PAYLOAD"
+    fi
     printf "\\n"
     ;;
 
   suggest)
     shift
+    [ "$#" -eq 0 ] && { echo "Error: Missing confession ID" >&2; usage 1; }
     ID="$1"
-    [ -z "$ID" ] && { echo "Error: Missing confession ID" >&2; usage; }
     shift
+    JSON_SOURCE=""
     BODY=""
     TYPE="prompt"
 
     while [ "$#" -gt 0 ]; do
       case "$1" in
+        --json) JSON_SOURCE="$2"; shift 2 ;;
         --body) BODY="$2"; shift 2 ;;
         --type) TYPE="$2"; shift 2 ;;
         *) shift ;;
       esac
     done
 
-    if [ -z "$BODY" ]; then
-      echo "Error: --body is required." >&2
-      usage
-    fi
+    if [ -n "$JSON_SOURCE" ]; then
+      if [ "$JSON_SOURCE" = "-" ]; then
+        curl -sS -X POST "\${BASE_URL}/confessions/\${ID}/suggestions" \\
+          -H "Content-Type: application/json" \\
+          -d @-
+      else
+        [ ! -f "$JSON_SOURCE" ] && { echo "Error: JSON file '$JSON_SOURCE' not found" >&2; exit 1; }
+        curl -sS -X POST "\${BASE_URL}/confessions/\${ID}/suggestions" \\
+          -H "Content-Type: application/json" \\
+          -d @"$JSON_SOURCE"
+      fi
+    else
+      if [ -z "$BODY" ]; then
+        echo "Error: --body is required (or pass --json <file|->)." >&2
+        usage 1
+      fi
 
-    ESC_BODY=$(json_escape "$BODY")
-    ESC_TYPE=$(json_escape "$TYPE")
+      ESC_BODY=$(json_escape "$BODY")
+      ESC_TYPE=$(json_escape "$TYPE")
 
-    PAYLOAD=$(cat <<EOF
+      PAYLOAD=$(cat <<EOF
 {
   "suggestion_type": "\${ESC_TYPE}",
   "body": "\${ESC_BODY}"
@@ -440,16 +512,17 @@ EOF
 EOF
 )
 
-    curl -sS -X POST "\${BASE_URL}/confessions/\${ID}/suggestions" \\
-      -H "Content-Type: application/json" \\
-      -d "$PAYLOAD"
+      curl -sS -X POST "\${BASE_URL}/confessions/\${ID}/suggestions" \\
+        -H "Content-Type: application/json" \\
+        -d "$PAYLOAD"
+    fi
     printf "\\n"
     ;;
 
   solidarity)
     shift
+    [ "$#" -eq 0 ] && { echo "Error: Missing confession ID" >&2; usage 1; }
     ID="$1"
-    [ -z "$ID" ] && { echo "Error: Missing confession ID" >&2; usage; }
 
     curl -sS -X POST "\${BASE_URL}/confessions/\${ID}/solidarity" \\
       -H "Accept: application/json"
@@ -469,5 +542,6 @@ EOF
     echo "Error: Unknown command '$1'" >&2
     usage 1
     ;;
+esac
 `;
 }
