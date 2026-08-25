@@ -457,66 +457,88 @@ app.post('/confessions/:id/suggestions', async (c) => {
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
+  const isJson = c.req.header('content-type')?.includes('application/json');
 
   if (c.env.CONFESSION_LIMITER) {
-    const rateLimitKey = `${clientIp}:${session.sessionId}:sug`;
+    const rateLimitKey = isJson ? `${clientIp}:sug` : `${clientIp}:${session.sessionId}:sug`;
     const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
     if (!success) {
+      if (isJson) {
+        return c.json({ error: 'Rate limit exceeded. Please wait a minute before submitting another suggestion.' }, 429);
+      }
       return c.text('Rate limit exceeded. Please wait a minute before submitting another suggestion.', 429);
     }
   }
 
-  const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+  let suggestion_type: 'prompt' | 'model' = 'prompt';
+  let rawBodyText = '';
 
-  const turnstileToken =
-    typeof bodyData['cf-turnstile-response'] === 'string'
-      ? bodyData['cf-turnstile-response'].trim()
-      : '';
+  if (isJson) {
+    const jsonBody = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+    suggestion_type = jsonBody['suggestion_type'] === 'model' ? 'model' : 'prompt';
+    rawBodyText = typeof jsonBody['body'] === 'string' ? jsonBody['body'].trim() : '';
+  } else {
+    const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+    const turnstileToken =
+      typeof bodyData['cf-turnstile-response'] === 'string'
+        ? bodyData['cf-turnstile-response'].trim()
+        : '';
 
-  if (c.env.TURNSTILE_SITE_KEY) {
-    const turnstileResult = await verifyTurnstileToken({
-      token: turnstileToken,
-      secretKey: c.env.TURNSTILE_SECRET_KEY,
-      remoteIp: clientIp,
-      expectedAction: 'suggestion',
-      expectedHostnames: [
-        'aifails.wtf',
-        'www.aifails.wtf',
-        'ugh-llms.sirmews.workers.dev',
-        'localhost',
-        '127.0.0.1',
-        new URL(c.req.url).hostname,
-      ],
-      environment: c.env.ENVIRONMENT,
-    });
+    if (c.env.TURNSTILE_SITE_KEY) {
+      const turnstileResult = await verifyTurnstileToken({
+        token: turnstileToken,
+        secretKey: c.env.TURNSTILE_SECRET_KEY,
+        remoteIp: clientIp,
+        expectedAction: 'suggestion',
+        expectedHostnames: [
+          'aifails.wtf',
+          'www.aifails.wtf',
+          'ugh-llms.sirmews.workers.dev',
+          'localhost',
+          '127.0.0.1',
+          new URL(c.req.url).hostname,
+        ],
+        environment: c.env.ENVIRONMENT,
+      });
 
-    if (!turnstileResult.success) {
-      return c.text('Bot verification failed. Please try again.', 400);
+      if (!turnstileResult.success) {
+        return c.text('Bot verification failed. Please try again.', 400);
+      }
     }
+
+    suggestion_type =
+      typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model'
+        ? 'model'
+        : 'prompt';
+    rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
   }
 
-  const suggestion_type =
-    typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model'
-      ? 'model'
-      : 'prompt';
-  const rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
-
   if (!rawBodyText) {
+    if (isJson) {
+      return c.json({ error: 'Suggestion body cannot be empty.' }, 400);
+    }
     return c.text('Suggestion body cannot be empty.', 400);
   }
   if (rawBodyText.length > 2000) {
+    if (isJson) {
+      return c.json({ error: 'Suggestion exceeds maximum allowed length of 2000 characters.' }, 400);
+    }
     return c.text('Suggestion exceeds maximum allowed length of 2000 characters.', 400);
   }
 
   const bodyText = sanitizeContent(redactSecrets(rawBodyText).cleanText).cleanText;
 
-  await createSuggestion(c.env.DB, {
+  const suggestion = await createSuggestion(c.env.DB, {
     confession_id,
     suggestion_type,
     body: bodyText,
   });
 
   purgeEdgeCache(c, confession_id);
+
+  if (isJson) {
+    return c.json({ success: true, id: suggestion.id, suggestion }, 201);
+  }
 
   return c.redirect(`/confessions/${confession_id}`);
 });
@@ -970,7 +992,10 @@ app.get('/api/confessions', async (c) => {
   const model = url.searchParams.get('model') ?? undefined;
   const cursor = url.searchParams.get('cursor') ?? undefined;
 
-  const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit: 50 });
+  const limitParam = parseInt(url.searchParams.get('limit') || '20', 10);
+  const limit = Math.min(Math.max(isNaN(limitParam) ? 20 : limitParam, 1), 50);
+
+  const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit });
   c.header('Cache-Control', EDGE_CACHE_HEADER);
   return c.json(result);
 });
@@ -984,7 +1009,7 @@ app.post('/api/confessions', async (c) => {
 
   // Edge Rate Limiter check (5 posts / minute per IP+session)
   if (c.env.CONFESSION_LIMITER) {
-    const rateLimitKey = `${clientIp}:${session.sessionId}:api`;
+    const rateLimitKey = `${clientIp}:api`;
     const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
     if (!success) {
       return c.json({ error: 'Rate limit exceeded. Please wait a minute before submitting another confession.' }, 429);
@@ -996,7 +1021,9 @@ app.post('/api/confessions', async (c) => {
   const rawPrompt = typeof body['prompt_used'] === 'string' ? body['prompt_used'].trim() : '';
   const rawWhatHappened = typeof body['what_it_did_instead'] === 'string' ? body['what_it_did_instead'].trim() : '';
   const rawFeeling = typeof body['how_it_made_them_feel'] === 'string' ? body['how_it_made_them_feel'].trim() : '';
-  const mood = (typeof body['mood'] === 'string' && body['mood']) || 'furious';
+  const allowedMoods = new Set(['furious', 'defeated', 'bewildered', 'amused', 'numb', 'vengeful']);
+  const rawMood = typeof body['mood'] === 'string' ? body['mood'].trim() : '';
+  const mood = allowedMoods.has(rawMood) ? rawMood : 'furious';
   const modelQuery = typeof body['model_query'] === 'string' ? body['model_query'].trim() : '';
   const explicitProvider = typeof body['model_provider'] === 'string' ? body['model_provider'].trim() : '';
   const explicitModel = typeof body['model_name'] === 'string' ? body['model_name'].trim() : '';

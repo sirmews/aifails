@@ -71,7 +71,7 @@ export function generateOpenApiSpec(baseUrl: string = 'https://aifails.wtf'): Re
               schema: {
                 type: 'string',
                 enum: ['furious', 'defeated', 'bewildered', 'amused', 'numb', 'vengeful'],
-                example: 'facepalm',
+                example: 'furious',
               },
             },
             {
@@ -713,8 +713,12 @@ export function generateOpenApiSpec(baseUrl: string = 'https://aifails.wtf'): Re
         },
         SolidarityResponse: {
           type: 'object',
-          required: ['count', 'added'],
+          required: ['success', 'count', 'added', 'alreadyVoted'],
           properties: {
+            success: {
+              type: 'boolean',
+              example: true,
+            },
             count: {
               type: 'integer',
               description: 'Total solidarity count after the vote.',
