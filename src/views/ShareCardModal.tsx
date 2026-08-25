@@ -654,23 +654,17 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
       // Prompt Body
       ctx.fillStyle = '#ffffff';
       ctx.font = '700 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      var pLines = wrapText(ctx, cardData.prompt, contentW - 72, 8);
+      var pLines = wrapText(ctx, cardData.prompt, contentW - 72, 9);
       for (var l = 0; l < pLines.length; l++) {
         ctx.fillText(pLines[l], contentX + 36, contentY + 104 + l * 54);
       }
 
-      // Target Model Badge at Bottom of Slide 1
-      var mBadgeY = contentY + contentH - 90;
-      ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillStyle = '#97bede';
-      ctx.fillText('Target Model: ' + cardData.model, contentX + 36, mBadgeY);
-
       // Swipe Cue
+      var swipeY = contentY + contentH - 40;
       ctx.textAlign = 'right';
       ctx.fillStyle = '#60a5fa';
       ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText('Swipe to see what happened ➔', contentX + contentW - 36, mBadgeY);
-
+      ctx.fillText('Swipe to see what happened ➔', contentX + contentW - 36, swipeY);
     } else if (slideNum === 2) {
       // --- SLIDE 2: THE FAILURE ---
       ctx.fillStyle = '#13202e';
