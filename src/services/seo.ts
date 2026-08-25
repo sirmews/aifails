@@ -107,6 +107,21 @@ export function generateSitemapXml(confessions: Confession[], baseUrl: string): 
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>${escapeXml(`${baseUrl}/changelog`)}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${escapeXml(`${baseUrl}/mcp`)}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${escapeXml(`${baseUrl}/openapi.json`)}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 ${urlsXml}
 </urlset>`;
 }

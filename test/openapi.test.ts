@@ -246,12 +246,27 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     expect(describedBy.some((s: any) => s.href.endsWith('/skill.md'))).toBe(true);
   });
 
-  it('Global Link header includes OpenAPI spec, CLI script, and skill', async () => {
+  it('Global Link header and SEO meta tags include canonical, robots, and OpenAPI spec', async () => {
     const res = await app.request('/', {}, mockEnv as any);
     const linkHeader = res.headers.get('Link') || '';
     expect(linkHeader).toContain('</openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"');
     expect(linkHeader).toContain('</cli.sh>; rel="service-desc"; type="text/x-shellscript"');
     expect(linkHeader).toContain('</skill.md>; rel="describedby"; type="text/markdown"');
+
+    const html = await res.text();
+    expect(html).toContain('<link rel="canonical" href="https://aifails.wtf/"');
+    expect(html).toContain('max-image-preview:large');
+    expect(html).toContain('SearchAction');
+  });
+
+  it('GET /sitemap.xml includes top-level routes and confessions', async () => {
+    const res = await app.request('/sitemap.xml', {}, mockEnv as any);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('application/xml');
+    const xml = await res.text();
+    expect(xml).toContain('/changelog');
+    expect(xml).toContain('/mcp');
+    expect(xml).toContain('/openapi.json');
   });
   it('GET /llms.txt documents OpenAPI 3.1 specifications', async () => {
     const res = await app.request('/llms.txt', {}, mockEnv as any);

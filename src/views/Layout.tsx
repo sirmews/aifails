@@ -77,7 +77,12 @@ export function Layout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
         <meta name="description" content={description} />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="theme-color" content="#1e334a" />
+        <meta name="apple-mobile-web-app-title" content="aifails.wtf" />
+
+        {/* Canonical Link */}
+        <link rel="canonical" href={ogUrl} />
 
         {/* Canonical & Open Graph (WhatsApp, Facebook, Discord, iMessage compliant) */}
         <meta property="og:site_name" content="Prompt Confessional • aifails.wtf" />

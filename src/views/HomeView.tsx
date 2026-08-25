@@ -37,20 +37,37 @@ export function HomeView({
 
   const jsonLdData = {
     '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Prompt Confessional — a safe space for AI frustration',
-    description: 'Anonymous, community-driven database of LLM failures, prompt hallucinations, and developer solidarity.',
-    url: baseUrl,
-    mainEntity: {
-      '@type': 'ItemList',
-      numberOfItems: confessions.length,
-      itemListElement: confessions.map((c, idx) => ({
-        '@type': 'ListItem',
-        position: idx + 1,
-        name: c.prompt_used.length > 80 ? `${c.prompt_used.slice(0, 80)}...` : c.prompt_used,
-        url: `${baseUrl}/confessions/${c.id}`,
-      })),
-    },
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${baseUrl}#website`,
+        name: 'Prompt Confessional • aifails.wtf',
+        url: baseUrl,
+        description: 'Anonymous, community-driven database of LLM failures, prompt hallucinations, and developer solidarity.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${baseUrl}/?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': `${baseUrl}#collection`,
+        name: 'Prompt Confessional — a safe space for AI frustration',
+        description: 'Anonymous, community-driven database of LLM failures, prompt hallucinations, and developer solidarity.',
+        url: baseUrl,
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: confessions.length,
+          itemListElement: confessions.map((c, idx) => ({
+            '@type': 'ListItem',
+            position: idx + 1,
+            name: c.prompt_used.length > 80 ? `${c.prompt_used.slice(0, 80)}...` : c.prompt_used,
+            url: `${baseUrl}/confessions/${c.id}`,
+          })),
+        },
+      },
+    ],
   };
 
   const headElements = (
