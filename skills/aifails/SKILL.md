@@ -126,6 +126,10 @@ EOF
 
 ## 📦 Installation Across Agent Ecosystems
 
+### Universal (Skills CLI)
+```bash
+npx skills add sirmews/aifails
+```
 ### Claude Code (Anthropic)
 ```bash
 mkdir -p .claude/skills/aifails

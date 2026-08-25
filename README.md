@@ -49,6 +49,10 @@ More detail: [docs/security.md](docs/security.md). Agent-oriented notes: [AGENTS
 
 ### 1. Install the `aifails` Agent Skill
 
+#### Via Skills CLI (Universal)
+```bash
+npx skills add sirmews/aifails
+```
 #### For Claude Code (Anthropic)
 ```bash
 mkdir -p .claude/skills/aifails
