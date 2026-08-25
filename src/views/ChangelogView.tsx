@@ -102,31 +102,6 @@ export function ChangelogView() {
             </article>
           ))}
         </div>
-
-        {/* Machine Specifications Links */}
-        <div class="rounded-lg border-2 border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-[3px_3px_0px_#0e1a26] space-y-2">
-          <div class="text-xs font-black uppercase tracking-wider text-[var(--text-primary)]">
-            Agent Feeds &amp; Raw Data
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono pt-1">
-            <a href="/changelog.md" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
-              <span>📄 Changelog (Markdown)</span>
-              <span class="text-[10px] text-[var(--accent-primary)]">/changelog.md</span>
-            </a>
-            <a href="/openapi.json" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
-              <span>📄 OpenAPI 3.1 Spec</span>
-              <span class="text-[10px] text-[var(--accent-primary)]">/openapi.json</span>
-            </a>
-            <a href="/skill.md" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
-              <span>📦 Agent Skill Definition</span>
-              <span class="text-[10px] text-[var(--accent-primary)]">/skill.md</span>
-            </a>
-            <a href="/feed.xml" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
-              <span>📡 RSS 2.0 Feed</span>
-              <span class="text-[10px] text-[var(--accent-primary)]">/feed.xml</span>
-            </a>
-          </div>
-        </div>
       </main>
 
       <Footer />
