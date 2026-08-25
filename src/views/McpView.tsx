@@ -418,6 +418,10 @@ export function McpView() {
               <span>📄 OpenAPI 3.1 (JSON)</span>
               <span class="text-[10px] text-[var(--accent-primary)]">/openapi.json</span>
             </a>
+            <a href="/.well-known/agent-skills/index.json" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
+              <span>⚡ Skills Index (RFC v0.2.0)</span>
+              <span class="text-[10px] text-[var(--accent-primary)]">/.well-known/agent-skills/index.json</span>
+            </a>
             <a href="/skill.md" class="rounded border border-[var(--border-color)] bg-[var(--bg-subtle)] p-2 hover:border-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-between">
               <span>📦 Raw Skill Definition</span>
               <span class="text-[10px] text-[var(--accent-primary)]">/skill.md</span>

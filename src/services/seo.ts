@@ -122,6 +122,11 @@ export function generateSitemapXml(confessions: Confession[], baseUrl: string): 
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>${escapeXml(`${baseUrl}/.well-known/agent-skills/index.json`)}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 ${urlsXml}
 </urlset>`;
 }

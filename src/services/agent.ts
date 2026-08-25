@@ -1,5 +1,21 @@
 import type { Confession, ConfessionSuggestion } from '../core/types';
 
+export interface AgentSkillDiscoveryEntry {
+  name: string;
+  type: 'skill-md' | 'archive';
+  description: string;
+  url: string;
+  digest: string;
+}
+
+export interface AgentSkillsDiscoveryIndex {
+  $schema: string;
+  skills: AgentSkillDiscoveryEntry[];
+}
+
+export const AIFAILS_SKILL_DESCRIPTION =
+  'Query, search, and submit LLM hallucinations, prompt failures, and anti-patterns to aifails.wtf. Use when debugging prompt issues, researching model-specific failure modes, evaluating LLM edge cases, or contributing community prompt fixes ("Ackchyually...").';
+
 export function generateLlmsTxt(baseUrl: string = 'https://aifails.wtf'): string {
   return [
     '# aifails.wtf — Prompt Confessional',
@@ -19,6 +35,7 @@ export function generateLlmsTxt(baseUrl: string = 'https://aifails.wtf'): string
     `- **OpenAPI 3.1.0 (YAML)**: ${baseUrl}/openapi.yaml`,
     `- **Model Context Protocol (MCP)**: ${baseUrl}/mcp (JSON-RPC 2.0)`,
     `- **MCP Server Card**: ${baseUrl}/.well-known/mcp/server-card.json`,
+    `- **Agent Skills Discovery Index (v0.2.0)**: ${baseUrl}/.well-known/agent-skills/index.json`,
     `- **Agent Skill Definition**: ${baseUrl}/skill.md (Audited Local Skill)`,
     `- **Agent CLI Script**: ${baseUrl}/cli.sh (POSIX Shell - verify integrity before execution)`,
     `- **RFC 9727 API Catalog**: ${baseUrl}/.well-known/api-catalog`,
@@ -141,7 +158,7 @@ export function generateSkillMarkdown(baseUrl: string = 'https://aifails.wtf'): 
   return [
     '---',
     'name: aifails',
-    'description: Query, search, and submit LLM hallucinations, prompt failures, and anti-patterns to aifails.wtf. Use when debugging prompt issues, researching model-specific failure modes, evaluating LLM edge cases, or contributing community prompt fixes ("Ackchyually...").',
+    `description: ${AIFAILS_SKILL_DESCRIPTION}`,
     '---',
     '',
     '# aifails — LLM Prompt Failures & Anti-Patterns Skill',
@@ -291,6 +308,29 @@ export function generateSkillMarkdown(baseUrl: string = 'https://aifails.wtf'): 
     '```',
     '',
   ].join('\n');
+}
+
+export async function generateAgentSkillsIndex(
+  baseUrl: string = 'https://aifails.wtf'
+): Promise<AgentSkillsDiscoveryIndex> {
+  const skillMarkdown = generateSkillMarkdown(baseUrl);
+  const encoded = new TextEncoder().encode(skillMarkdown);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+  return {
+    $schema: 'https://schemas.agentskills.io/discovery/0.2.0/schema.json',
+    skills: [
+      {
+        name: 'aifails',
+        type: 'skill-md',
+        description: AIFAILS_SKILL_DESCRIPTION,
+        url: `${baseUrl}/.well-known/agent-skills/aifails/SKILL.md`,
+        digest: `sha256:${hex}`,
+      },
+    ],
+  };
 }
 
 export function generateCliScript(baseUrl: string = 'https://aifails.wtf'): string {

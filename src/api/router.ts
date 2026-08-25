@@ -23,6 +23,7 @@ import {
   generateLlmsFullTxt,
   generateSkillMarkdown,
   generateCliScript,
+  generateAgentSkillsIndex,
   formatConfessionMarkdown,
   formatConfessionJson,
 } from '../services/agent';
@@ -50,7 +51,7 @@ app.use('*', async (c, next) => {
   // RFC 8288 & RFC 9727 Section 3 Link Headers for Agent Discovery
   c.header(
     'Link',
-    '</.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </cli.sh>; rel="service-desc"; type="text/x-shellscript", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown", </skill.md>; rel="describedby"; type="text/markdown"'
+    '</.well-known/api-catalog>; rel="api-catalog", </.well-known/agent-skills/index.json>; rel="service-desc"; type="application/json", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </cli.sh>; rel="service-desc"; type="text/x-shellscript", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown", </skill.md>; rel="describedby"; type="text/markdown"'
   );
 });
 
@@ -641,6 +642,10 @@ app.get('/.well-known/api-catalog', async (c) => {
             type: 'application/json',
           },
           {
+            href: `${baseUrl}/.well-known/agent-skills/index.json`,
+            type: 'application/json',
+          },
+          {
             href: `${baseUrl}/llms.txt`,
             type: 'text/plain',
           },
@@ -662,6 +667,10 @@ app.get('/.well-known/api-catalog', async (c) => {
           },
           {
             href: `${baseUrl}/skill.md`,
+            type: 'text/markdown',
+          },
+          {
+            href: `${baseUrl}/.well-known/agent-skills/aifails/SKILL.md`,
             type: 'text/markdown',
           },
         ],
@@ -918,6 +927,24 @@ app.get('/cli.sh', async (c) => {
 
 app.get('/bin/aifails.sh', (c) => c.redirect('/cli.sh'));
 
+// 8f. RFC v0.2.0 Agent Skills Discovery Index & Artifacts
+app.get('/.well-known/agent-skills/index.json', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/.well-known/agent-skills/index.json`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  const index = await generateAgentSkillsIndex(baseUrl);
+  return c.newResponse(JSON.stringify(index, null, 2), 200, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+    'X-Content-Type-Options': 'nosniff',
+  });
+});
+
+app.get('/.well-known/agent-skills/aifails/SKILL.md', (c) => c.redirect('/skill.md'));
+app.get('/.well-known/skills/index.json', (c) => c.redirect('/.well-known/agent-skills/index.json', 301));
+
 // 8e. Product Changelog Endpoints (HTML & Markdown)
 app.get('/changelog', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/changelog`)) {
@@ -993,6 +1020,7 @@ Allow: /
 Sitemap: ${baseUrl}/sitemap.xml
 LLMs-Txt: ${baseUrl}/llms.txt
 OpenAPI: ${baseUrl}/openapi.json
+Agent-Skills: ${baseUrl}/.well-known/agent-skills/index.json
 `;
 
   c.header('Content-Type', 'text/plain; charset=utf-8');
