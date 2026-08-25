@@ -27,11 +27,13 @@ import {
   formatConfessionJson,
 } from '../services/agent';
 import { generateOpenApiSpec, generateOpenApiYaml } from '../services/openapi';
+import { generateChangelogMarkdown } from '../services/changelog';
 import { handleMcpJsonRpc, type JsonRpcRequest } from '../services/mcp';
 import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
 import { PermalinkView } from '../views/PermalinkView';
 import { McpView } from '../views/McpView';
+import { ChangelogView } from '../views/ChangelogView';
 import { NotFoundView } from '../views/NotFoundView';
 export const app = new Hono<{ Bindings: Env }>();
 
@@ -915,6 +917,40 @@ app.get('/cli.sh', async (c) => {
 });
 
 app.get('/bin/aifails.sh', (c) => c.redirect('/cli.sh'));
+
+// 8e. Product Changelog Endpoints (HTML & Markdown)
+app.get('/changelog', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/changelog`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const acceptHeader = c.req.header('Accept') || '';
+  const baseUrl = new URL(c.req.url).origin;
+
+  if (acceptHeader.includes('text/markdown')) {
+    return c.newResponse(generateChangelogMarkdown(baseUrl), 200, {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'Vary': 'Accept',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    });
+  }
+
+  c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  return c.html(ChangelogView());
+});
+
+app.get('/changelog.md', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/changelog.md`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  return c.newResponse(generateChangelogMarkdown(baseUrl), 200, {
+    'Content-Type': 'text/markdown; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+// 9. Robots.txt Crawler, Content-Signal & Agent Directives
 app.get('/robots.txt', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/robots.txt`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);

@@ -296,6 +296,34 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     expect(text).toContain('set -efu');
     expect(text).toContain('aifails.sh - Interface with aifails.wtf');
   });
+
+  it('GET /changelog returns HTML view and supports Markdown negotiation', async () => {
+    const resHtml = await app.request('/changelog', {}, mockEnv as any);
+    expect(resHtml.status).toBe(200);
+    expect(resHtml.headers.get('Content-Type')).toContain('text/html');
+    const html = await resHtml.text();
+    expect(html).toContain('Product Changelog');
+    expect(html).toContain('v1.2.0');
+
+    const resMd = await app.request(
+      '/changelog',
+      { headers: { 'Accept': 'text/markdown' } },
+      mockEnv as any
+    );
+    expect(resMd.status).toBe(200);
+    expect(resMd.headers.get('Content-Type')).toContain('text/markdown');
+    const md = await resMd.text();
+    expect(md).toContain('# aifails.wtf — Product Changelog');
+  });
+
+  it('GET /changelog.md returns pure markdown changelog', async () => {
+    const res = await app.request('/changelog.md', {}, mockEnv as any);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('text/markdown');
+    const text = await res.text();
+    expect(text).toContain('# aifails.wtf — Product Changelog & Release Stream');
+    expect(text).toContain('## [v1.2.0]');
+  });
 });
 
 describe('JSON API Endpoints (Agent Interfacing)', () => {

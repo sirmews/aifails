@@ -31,6 +31,15 @@ export function Footer() {
         </a>
         <span class="text-[var(--border-subtle)]">•</span>
         <a
+          href="/changelog"
+          class="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)] hover:underline transition-colors"
+          title="Product Changelog & Release Notes"
+        >
+          <span>📦</span>
+          <span>Changelog</span>
+        </a>
+        <span class="text-[var(--border-subtle)]">•</span>
+        <a
           href="/sitemap.xml"
           class="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)] hover:underline transition-colors"
           title="XML Sitemap"
