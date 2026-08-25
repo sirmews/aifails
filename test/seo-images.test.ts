@@ -26,7 +26,7 @@ describe('SEO OG Image Generator', () => {
     expect(svg).toContain('WHAT I ASKED FOR');
     expect(svg).toContain('WHAT IT DID INSTEAD');
     expect(svg).toContain('HOW IT MADE THEM FEEL');
-    expect(svg).toContain('https://aifails.wtf');
+    expect(svg).toContain('aifails.wtf');
 
     // Verify noisy buttons are removed
     expect(svg).not.toContain('in Solidarity');
@@ -45,7 +45,7 @@ describe('SEO OG Image Generator', () => {
     expect(svg).toContain('font-size="28"'); // Prompt font size
     expect(svg).toContain('font-size="30"'); // Fail font size
     expect(svg).toContain('font-size="26"'); // Feeling font size
-    expect(svg).toContain('https://aifails.wtf/confessions/test-confession-123');
+    expect(svg).toContain('FURIOUS');
 
     // Verify noisy solidarity button is removed from footer
     expect(svg).not.toContain('in solidarity');

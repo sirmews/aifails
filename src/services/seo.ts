@@ -141,57 +141,50 @@ export function generateSiteOgImageSvg(_stats?: { confessionCount?: number; soli
   <!-- Outer Card Frame -->
   <rect x="50" y="38" width="1100" height="552" rx="16" fill="#2a4766" stroke="#0e1a26" stroke-width="3.5" />
 
-  <!-- Top Bar: Prominent Keycap Logo & Large Title -->
-  <g transform="translate(85, 50)">
-    <!-- 3D Keycap Logo Button (Large & Bold) -->
-    <rect x="4" y="4" width="170" height="60" rx="10" fill="#0e1a26" />
-    <rect width="170" height="60" rx="10" fill="#fed41d" stroke="#0e1a26" stroke-width="3" />
-    <text x="85" y="39" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="900" letter-spacing="-2" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
+  <!-- Top Bar: Balanced Keycap & Right Domain Badge -->
+  <g transform="translate(85, 62)">
+    <!-- 3D Keycap Logo Button -->
+    <rect x="3" y="3" width="155" height="52" rx="9" fill="#0e1a26" />
+    <rect width="155" height="52" rx="9" fill="#fed41d" stroke="#0e1a26" stroke-width="2.5" />
+    <text x="77" y="34" font-family="-apple-system, system-ui, sans-serif" font-size="22" font-weight="900" letter-spacing="-1.5" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
 
     <!-- Branding Text Group -->
-    <text x="195" y="27" font-family="-apple-system, system-ui, sans-serif" font-size="36" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Prompt Confessional</text>
-    <text x="195" y="51" font-family="-apple-system, system-ui, sans-serif" font-size="17" font-weight="700" fill="#97bede">a safe space for AI frustration</text>
+    <text x="180" y="24" font-family="-apple-system, system-ui, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Prompt Confessional</text>
+    <text x="180" y="46" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="700" fill="#97bede">a safe space for AI frustration</text>
 
     <!-- Site Domain Badge (Top Right) -->
-    <rect x="864" y="7" width="165" height="46" rx="8" fill="#0e1a26" />
-    <rect x="860" y="3" width="165" height="46" rx="8" fill="#fed41d" stroke="#0e1a26" stroke-width="2.5" />
-    <text x="942" y="32" font-family="ui-monospace, Menlo, monospace" font-size="18" font-weight="900" fill="#000000" text-anchor="middle">aifails.wtf</text>
+    <rect x="878" y="3" width="152" height="52" rx="9" fill="#0e1a26" />
+    <rect x="875" y="0" width="152" height="52" rx="9" fill="#fed41d" stroke="#0e1a26" stroke-width="2.5" />
+    <text x="951" y="32" font-family="ui-monospace, Menlo, monospace" font-size="18" font-weight="900" fill="#000000" text-anchor="middle">aifails.wtf</text>
   </g>
 
-  <!-- Card Body with Signature 3-Part Layout -->
-  <g transform="translate(85, 132)">
+  <!-- Card Body with Signature 3-Part Layout (Spacious & Clean) -->
+  <g transform="translate(85, 148)">
     <!-- 1. What I asked for -->
-    <rect x="0" y="0" width="7" height="96" rx="3" fill="#4e7ba8" />
+    <rect x="0" y="0" width="7" height="104" rx="3" fill="#4e7ba8" />
     <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#97bede" letter-spacing="1.5">WHAT I ASKED FOR</text>
-    <text x="24" y="56" font-family="-apple-system, system-ui, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
+    <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
       <tspan x="24" dy="0">&quot;Fix a simple typo and keep the existing tests passing.&quot;</tspan>
     </text>
 
     <!-- 2. What it did instead -->
-    <g transform="translate(0, 116)">
-      <rect x="0" y="0" width="7" height="142" rx="3" fill="#ef4444" />
+    <g transform="translate(0, 130)">
+      <rect x="0" y="0" width="7" height="146" rx="3" fill="#ef4444" />
       <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#fca5a5" letter-spacing="1.5">WHAT IT DID INSTEAD</text>
-      <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="30" font-weight="800" fill="#ffffff">
+      <text x="24" y="62" font-family="-apple-system, system-ui, sans-serif" font-size="30" font-weight="800" fill="#ffffff">
         <tspan x="24" dy="0">Rewrote the entire test framework from scratch in Rust,</tspan>
-        <tspan x="24" dy="40">deleted 40 passing tests, and left the typo untouched.</tspan>
+        <tspan x="24" dy="42">deleted 40 passing tests, and left the typo untouched.</tspan>
       </text>
     </g>
 
     <!-- 3. How it made me feel -->
-    <g transform="translate(0, 278)">
-      <rect x="0" y="0" width="7" height="82" rx="3" fill="#fed41d" />
+    <g transform="translate(0, 302)">
+      <rect x="0" y="0" width="7" height="88" rx="3" fill="#fed41d" />
       <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#fed41d" letter-spacing="1.5">HOW IT MADE THEM FEEL</text>
-      <text x="24" y="58" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="600" fill="#d6e7f7">
+      <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="600" fill="#d6e7f7">
         <tspan x="24" dy="0">&quot;Stared at my ceiling for 20 minutes wondering why I chose tech.&quot;</tspan>
       </text>
     </g>
-  </g>
-
-  <!-- Clean Watermark Footer Bar -->
-  <g transform="translate(85, 526)">
-    <rect x="0" y="0" width="1025" height="48" rx="8" fill="#152435" stroke="#0e1a26" stroke-width="2" />
-    <text x="24" y="30" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="700" fill="#97bede">Prompt Confessional • Anonymous &amp; Edge-Rendered Prompt Fails</text>
-    <text x="1000" y="30" font-family="ui-monospace, Menlo, monospace" font-size="17" font-weight="800" fill="#fed41d" text-anchor="end">https://aifails.wtf</text>
   </g>
 </svg>`;
 }
@@ -216,56 +209,49 @@ export function generateOgImageSvg(confession: Confession): string {
   <!-- Main Card Container -->
   <rect x="50" y="38" width="1100" height="552" rx="16" fill="#2a4766" stroke="#0e1a26" stroke-width="3.5" />
 
-  <!-- Top Bar: Prominent Keycap Logo & Large Title -->
-  <g transform="translate(85, 50)">
+  <!-- Top Bar: Balanced Keycap & Right Mood Badge -->
+  <g transform="translate(85, 62)">
     <!-- 3D Keycap Logo Tile -->
-    <rect x="4" y="4" width="170" height="60" rx="10" fill="#0e1a26" />
-    <rect width="170" height="60" rx="10" fill="#fed41d" stroke="#0e1a26" stroke-width="3" />
-    <text x="85" y="39" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="900" letter-spacing="-2" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
+    <rect x="3" y="3" width="155" height="52" rx="9" fill="#0e1a26" />
+    <rect width="155" height="52" rx="9" fill="#fed41d" stroke="#0e1a26" stroke-width="2.5" />
+    <text x="77" y="34" font-family="-apple-system, system-ui, sans-serif" font-size="22" font-weight="900" letter-spacing="-1.5" fill="#000000" text-anchor="middle">(╯°□°)╯</text>
 
     <!-- Branding Text Group -->
-    <text x="195" y="27" font-family="-apple-system, system-ui, sans-serif" font-size="36" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Prompt Confessional</text>
-    <text x="195" y="51" font-family="-apple-system, system-ui, sans-serif" font-size="17" font-weight="700" fill="#97bede">a safe space for AI frustration</text>
+    <text x="180" y="24" font-family="-apple-system, system-ui, sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Prompt Confessional</text>
+    <text x="180" y="46" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="700" fill="#97bede">a safe space for AI frustration</text>
 
     <!-- Mood Badge (Top Right) -->
-    <rect x="864" y="7" width="165" height="46" rx="8" fill="#0e1a26" />
-    <rect x="860" y="3" width="165" height="46" rx="8" fill="#f97316" stroke="#0e1a26" stroke-width="2.5" />
-    <text x="942" y="32" font-family="-apple-system, system-ui, sans-serif" font-size="17" font-weight="900" fill="#000000" text-anchor="middle">${moodUpper}</text>
+    <rect x="878" y="3" width="152" height="52" rx="9" fill="#0e1a26" />
+    <rect x="875" y="0" width="152" height="52" rx="9" fill="#f97316" stroke="#0e1a26" stroke-width="2.5" />
+    <text x="951" y="33" font-family="-apple-system, system-ui, sans-serif" font-size="17" font-weight="900" fill="#000000" text-anchor="middle">${moodUpper}</text>
   </g>
 
-  <!-- Card Body with Left Borders -->
-  <g transform="translate(85, 132)">
+  <!-- Card Body with Left Borders (Spacious & Clean) -->
+  <g transform="translate(85, 148)">
     <!-- 1. What I asked for -->
-    <rect x="0" y="0" width="7" height="96" rx="3" fill="#4e7ba8" />
+    <rect x="0" y="0" width="7" height="104" rx="3" fill="#4e7ba8" />
     <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#97bede" letter-spacing="1.5">WHAT I ASKED FOR • ${modelName.toUpperCase()}</text>
-    <text x="24" y="56" font-family="-apple-system, system-ui, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
-${promptLines.map((l, i) => `      <tspan x="24" dy="${i === 0 ? 0 : 36}">${l}</tspan>`).join('\n')}
+    <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
+${promptLines.map((l, i) => `      <tspan x="24" dy="${i === 0 ? 0 : 38}">${l}</tspan>`).join('\n')}
     </text>
 
     <!-- 2. What it did instead -->
-    <g transform="translate(0, 116)">
-      <rect x="0" y="0" width="7" height="142" rx="3" fill="#ef4444" />
+    <g transform="translate(0, 130)">
+      <rect x="0" y="0" width="7" height="146" rx="3" fill="#ef4444" />
       <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#fca5a5" letter-spacing="1.5">WHAT IT DID INSTEAD</text>
-      <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="30" font-weight="800" fill="#ffffff">
-${failLines.map((l, i) => `        <tspan x="24" dy="${i === 0 ? 0 : 38}">${l}</tspan>`).join('\n')}
+      <text x="24" y="62" font-family="-apple-system, system-ui, sans-serif" font-size="30" font-weight="800" fill="#ffffff">
+${failLines.map((l, i) => `        <tspan x="24" dy="${i === 0 ? 0 : 40}">${l}</tspan>`).join('\n')}
       </text>
     </g>
 
     <!-- 3. How it made me feel -->
-    <g transform="translate(0, 278)">
-      <rect x="0" y="0" width="7" height="82" rx="3" fill="#fed41d" />
+    <g transform="translate(0, 302)">
+      <rect x="0" y="0" width="7" height="88" rx="3" fill="#fed41d" />
       <text x="24" y="22" font-family="-apple-system, system-ui, sans-serif" font-size="15" font-weight="900" fill="#fed41d" letter-spacing="1.5">HOW IT MADE THEM FEEL</text>
-      <text x="24" y="58" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="600" fill="#d6e7f7">
-${feelingLines.map((l, i) => `        <tspan x="24" dy="${i === 0 ? 0 : 34}">&quot;${l}&quot;</tspan>`).join('\n')}
+      <text x="24" y="60" font-family="-apple-system, system-ui, sans-serif" font-size="26" font-weight="600" fill="#d6e7f7">
+${feelingLines.map((l, i) => `        <tspan x="24" dy="${i === 0 ? 0 : 36}">&quot;${l}&quot;</tspan>`).join('\n')}
       </text>
     </g>
-  </g>
-
-  <!-- Bottom Watermark Footer Bar (Clean & Streamlined - No Busy Buttons) -->
-  <g transform="translate(85, 526)">
-    <rect x="0" y="0" width="1025" height="48" rx="8" fill="#152435" stroke="#0e1a26" stroke-width="2" />
-    <text x="24" y="30" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="700" fill="#97bede">Prompt Confessional • aifails.wtf</text>
-    <text x="1000" y="30" font-family="ui-monospace, Menlo, monospace" font-size="17" font-weight="800" fill="#fed41d" text-anchor="end">https://aifails.wtf/confessions/${confession.id}</text>
   </g>
 </svg>`;
 }
