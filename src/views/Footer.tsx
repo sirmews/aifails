@@ -6,10 +6,10 @@ export function Footer() {
         <a
           href="/mcp"
           class="inline-flex items-center gap-1.5 hover:text-[var(--accent-primary)] hover:underline transition-colors"
-          title="Connect to Claude Desktop, Cursor, and Windsurf via Model Context Protocol"
+          title="Connect to Claude Code, Pi, Cursor, Codex, and Claude Desktop via Agent Skills or MCP"
         >
           <span>⚡</span>
-          <span>Connect MCP</span>
+          <span>Agents &amp; Skills</span>
         </a>
         <span class="text-[var(--border-subtle)]">•</span>
         <a

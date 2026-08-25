@@ -687,6 +687,9 @@ app.get('/mcp', async (c) => {
   return c.html(McpView());
 });
 
+app.get('/skills', (c) => c.redirect('/mcp'));
+app.get('/agents', (c) => c.redirect('/mcp'));
+
 app.post('/mcp', async (c) => {
   const clientIp = getClientIp(c);
   if (await isReadRateLimited(c, `read:${clientIp}:/mcp`)) {
