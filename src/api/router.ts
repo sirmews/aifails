@@ -24,6 +24,7 @@ import {
   formatConfessionMarkdown,
   formatConfessionJson,
 } from '../services/agent';
+import { generateOpenApiSpec, generateOpenApiYaml } from '../services/openapi';
 import { handleMcpJsonRpc, type JsonRpcRequest } from '../services/mcp';
 import { OG_DEFAULT_PNG_BYTES } from '../assets/og-default';
 import { HomeView } from '../views/HomeView';
@@ -45,7 +46,7 @@ app.use('*', async (c, next) => {
   // RFC 8288 & RFC 9727 Section 3 Link Headers for Agent Discovery
   c.header(
     'Link',
-    '</.well-known/api-catalog>; rel="api-catalog", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
+    '</.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
   );
 });
 
@@ -75,8 +76,9 @@ async function isReadRateLimited(c: Context<{ Bindings: Env }>, rateLimitKey: st
 const EDGE_CACHE_HEADER = 'public, max-age=5, s-maxage=30, stale-while-revalidate=86400';
 
 function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
-  if (c.executionCtx) {
-    try {
+  try {
+    const executionCtx = c.executionCtx;
+    if (executionCtx && typeof executionCtx.waitUntil === 'function') {
       const cache = caches.default;
       const origin = new URL(c.req.url).origin;
       const purgeRequests = [
@@ -91,10 +93,10 @@ function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
           cache.delete(new Request(origin + `/confessions/${confessionId}/og.svg`))
         );
       }
-      c.executionCtx.waitUntil(Promise.all(purgeRequests).catch(() => {}));
-    } catch {
-      // Ignore cache purging errors
+      executionCtx.waitUntil(Promise.all(purgeRequests).catch(() => {}));
     }
+  } catch {
+    // Ignore cache purging errors in non-Worker or test environments
   }
 }
 const purgeHomeEdgeCache = purgeEdgeCache;
@@ -455,66 +457,88 @@ app.post('/confessions/:id/suggestions', async (c) => {
   if (session.setCookieHeader) {
     c.header('Set-Cookie', session.setCookieHeader);
   }
+  const isJson = c.req.header('content-type')?.includes('application/json');
 
   if (c.env.CONFESSION_LIMITER) {
-    const rateLimitKey = `${clientIp}:${session.sessionId}:sug`;
+    const rateLimitKey = isJson ? `${clientIp}:sug` : `${clientIp}:${session.sessionId}:sug`;
     const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
     if (!success) {
+      if (isJson) {
+        return c.json({ error: 'Rate limit exceeded. Please wait a minute before submitting another suggestion.' }, 429);
+      }
       return c.text('Rate limit exceeded. Please wait a minute before submitting another suggestion.', 429);
     }
   }
 
-  const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+  let suggestion_type: 'prompt' | 'model' = 'prompt';
+  let rawBodyText = '';
 
-  const turnstileToken =
-    typeof bodyData['cf-turnstile-response'] === 'string'
-      ? bodyData['cf-turnstile-response'].trim()
-      : '';
+  if (isJson) {
+    const jsonBody = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+    suggestion_type = jsonBody['suggestion_type'] === 'model' ? 'model' : 'prompt';
+    rawBodyText = typeof jsonBody['body'] === 'string' ? jsonBody['body'].trim() : '';
+  } else {
+    const bodyData = (await c.req.parseBody().catch(() => ({}))) as Record<string, unknown>;
+    const turnstileToken =
+      typeof bodyData['cf-turnstile-response'] === 'string'
+        ? bodyData['cf-turnstile-response'].trim()
+        : '';
 
-  if (c.env.TURNSTILE_SITE_KEY) {
-    const turnstileResult = await verifyTurnstileToken({
-      token: turnstileToken,
-      secretKey: c.env.TURNSTILE_SECRET_KEY,
-      remoteIp: clientIp,
-      expectedAction: 'suggestion',
-      expectedHostnames: [
-        'aifails.wtf',
-        'www.aifails.wtf',
-        'ugh-llms.sirmews.workers.dev',
-        'localhost',
-        '127.0.0.1',
-        new URL(c.req.url).hostname,
-      ],
-      environment: c.env.ENVIRONMENT,
-    });
+    if (c.env.TURNSTILE_SITE_KEY) {
+      const turnstileResult = await verifyTurnstileToken({
+        token: turnstileToken,
+        secretKey: c.env.TURNSTILE_SECRET_KEY,
+        remoteIp: clientIp,
+        expectedAction: 'suggestion',
+        expectedHostnames: [
+          'aifails.wtf',
+          'www.aifails.wtf',
+          'ugh-llms.sirmews.workers.dev',
+          'localhost',
+          '127.0.0.1',
+          new URL(c.req.url).hostname,
+        ],
+        environment: c.env.ENVIRONMENT,
+      });
 
-    if (!turnstileResult.success) {
-      return c.text('Bot verification failed. Please try again.', 400);
+      if (!turnstileResult.success) {
+        return c.text('Bot verification failed. Please try again.', 400);
+      }
     }
+
+    suggestion_type =
+      typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model'
+        ? 'model'
+        : 'prompt';
+    rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
   }
 
-  const suggestion_type =
-    typeof bodyData['suggestion_type'] === 'string' && bodyData['suggestion_type'] === 'model'
-      ? 'model'
-      : 'prompt';
-  const rawBodyText = typeof bodyData['body'] === 'string' ? bodyData['body'].trim() : '';
-
   if (!rawBodyText) {
+    if (isJson) {
+      return c.json({ error: 'Suggestion body cannot be empty.' }, 400);
+    }
     return c.text('Suggestion body cannot be empty.', 400);
   }
   if (rawBodyText.length > 2000) {
+    if (isJson) {
+      return c.json({ error: 'Suggestion exceeds maximum allowed length of 2000 characters.' }, 400);
+    }
     return c.text('Suggestion exceeds maximum allowed length of 2000 characters.', 400);
   }
 
   const bodyText = sanitizeContent(redactSecrets(rawBodyText).cleanText).cleanText;
 
-  await createSuggestion(c.env.DB, {
+  const suggestion = await createSuggestion(c.env.DB, {
     confession_id,
     suggestion_type,
     body: bodyText,
   });
 
   purgeEdgeCache(c, confession_id);
+
+  if (isJson) {
+    return c.json({ success: true, id: suggestion.id, suggestion }, 201);
+  }
 
   return c.redirect(`/confessions/${confession_id}`);
 });
@@ -596,6 +620,22 @@ app.get('/.well-known/api-catalog', async (c) => {
           },
         ],
         'service-desc': [
+          {
+            href: `${baseUrl}/openapi.json`,
+            type: 'application/vnd.oai.openapi+json',
+          },
+          {
+            href: `${baseUrl}/openapi.json`,
+            type: 'application/json',
+          },
+          {
+            href: `${baseUrl}/openapi.yaml`,
+            type: 'application/yaml',
+          },
+          {
+            href: `${baseUrl}/.well-known/mcp/server-card.json`,
+            type: 'application/json',
+          },
           {
             href: `${baseUrl}/llms.txt`,
             type: 'text/plain',
@@ -783,6 +823,36 @@ app.get('/feed.md', async (c) => {
 
 app.get('/confessions.md', (c) => c.redirect('/feed.md'));
 
+// 8c. OpenAPI 3.1 Specification Endpoints (JSON & YAML)
+app.get('/openapi.json', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/openapi.json`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  const spec = generateOpenApiSpec(baseUrl);
+  return c.newResponse(JSON.stringify(spec, null, 2), 200, {
+    'Content-Type': 'application/vnd.oai.openapi+json; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+app.get('/.well-known/openapi.json', (c) => c.redirect('/openapi.json'));
+
+app.get('/openapi.yaml', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/openapi.yaml`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  const yaml = generateOpenApiYaml(baseUrl);
+  return c.newResponse(yaml, 200, {
+    'Content-Type': 'application/yaml; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+app.get('/.well-known/openapi.yaml', (c) => c.redirect('/openapi.yaml'));
 // 9. Robots.txt Crawler, Content-Signal & Agent Directives
 app.get('/robots.txt', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/robots.txt`)) {
@@ -825,6 +895,7 @@ Allow: /
 
 Sitemap: ${baseUrl}/sitemap.xml
 LLMs-Txt: ${baseUrl}/llms.txt
+OpenAPI: ${baseUrl}/openapi.json
 `;
 
   c.header('Content-Type', 'text/plain; charset=utf-8');
@@ -921,11 +992,90 @@ app.get('/api/confessions', async (c) => {
   const model = url.searchParams.get('model') ?? undefined;
   const cursor = url.searchParams.get('cursor') ?? undefined;
 
-  const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit: 50 });
+  const limitParam = parseInt(url.searchParams.get('limit') || '20', 10);
+  const limit = Math.min(Math.max(isNaN(limitParam) ? 20 : limitParam, 1), 50);
+
+  const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit });
   c.header('Cache-Control', EDGE_CACHE_HEADER);
   return c.json(result);
 });
 
+app.post('/api/confessions', async (c) => {
+  const clientIp = getClientIp(c);
+  const session = await getSessionHelper(c);
+  if (session.setCookieHeader) {
+    c.header('Set-Cookie', session.setCookieHeader);
+  }
+
+  // Edge Rate Limiter check (5 posts / minute per IP+session)
+  if (c.env.CONFESSION_LIMITER) {
+    const rateLimitKey = `${clientIp}:api`;
+    const { success } = await c.env.CONFESSION_LIMITER.limit({ key: rateLimitKey });
+    if (!success) {
+      return c.json({ error: 'Rate limit exceeded. Please wait a minute before submitting another confession.' }, 429);
+    }
+  }
+
+  const body = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+
+  const rawPrompt = typeof body['prompt_used'] === 'string' ? body['prompt_used'].trim() : '';
+  const rawWhatHappened = typeof body['what_it_did_instead'] === 'string' ? body['what_it_did_instead'].trim() : '';
+  const rawFeeling = typeof body['how_it_made_them_feel'] === 'string' ? body['how_it_made_them_feel'].trim() : '';
+  const allowedMoods = new Set(['furious', 'defeated', 'bewildered', 'amused', 'numb', 'vengeful']);
+  const rawMood = typeof body['mood'] === 'string' ? body['mood'].trim() : '';
+  const mood = allowedMoods.has(rawMood) ? rawMood : 'furious';
+  const modelQuery = typeof body['model_query'] === 'string' ? body['model_query'].trim() : '';
+  const explicitProvider = typeof body['model_provider'] === 'string' ? body['model_provider'].trim() : '';
+  const explicitModel = typeof body['model_name'] === 'string' ? body['model_name'].trim() : '';
+
+  if (!rawPrompt || !rawWhatHappened || !rawFeeling) {
+    return c.json({ error: 'All confession fields (prompt_used, what_it_did_instead, how_it_made_them_feel) are required.' }, 400);
+  }
+
+  if (rawPrompt.length > 4000 || rawWhatHappened.length > 4000 || rawFeeling.length > 2000) {
+    return c.json({ error: 'Input exceeds maximum allowed length.' }, 400);
+  }
+
+  // Redact secrets/API keys/emails using Gitleaks rules & sanitize hate speech/slurs before DB insert
+  const prompt_used = sanitizeContent(redactSecrets(rawPrompt).cleanText).cleanText;
+  const what_it_did_instead = sanitizeContent(redactSecrets(rawWhatHappened).cleanText).cleanText;
+  const how_it_made_them_feel = sanitizeContent(redactSecrets(rawFeeling).cleanText).cleanText;
+  let model_provider: string | null = explicitProvider || null;
+  let model_name: string | null = explicitModel || null;
+
+  if (!model_name && modelQuery) {
+    if (modelQuery.includes('/')) {
+      const parts = modelQuery.split('/');
+      model_provider = parts[0].trim();
+      model_name = parts.slice(1).join('/').trim();
+    } else {
+      model_name = modelQuery;
+    }
+  }
+
+  const confession = await createConfession(c.env.DB, {
+    prompt_used,
+    what_it_did_instead,
+    how_it_made_them_feel,
+    mood,
+    model_provider,
+    model_name,
+  });
+
+  purgeEdgeCache(c);
+
+  const baseUrl = new URL(c.req.url).origin;
+  return c.json(
+    {
+      success: true,
+      id: confession.id,
+      permalink: `${baseUrl}/confessions/${confession.id}`,
+      markdown_url: `${baseUrl}/confessions/${confession.id}.md`,
+      confession,
+    },
+    201
+  );
+});
 // 12. Branded 404 & 500 Error Handlers
 app.notFound((c) => {
   c.status(404);
