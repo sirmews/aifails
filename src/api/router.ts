@@ -21,6 +21,8 @@ import { generateRssFeed, generateSitemapXml, generateOgImageSvg, generateSiteOg
 import {
   generateLlmsTxt,
   generateLlmsFullTxt,
+  generateSkillMarkdown,
+  generateCliScript,
   formatConfessionMarkdown,
   formatConfessionJson,
 } from '../services/agent';
@@ -46,7 +48,7 @@ app.use('*', async (c, next) => {
   // RFC 8288 & RFC 9727 Section 3 Link Headers for Agent Discovery
   c.header(
     'Link',
-    '</.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
+    '</.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </cli.sh>; rel="service-desc"; type="text/x-shellscript", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown", </skill.md>; rel="describedby"; type="text/markdown"'
   );
 });
 
@@ -640,6 +642,10 @@ app.get('/.well-known/api-catalog', async (c) => {
             href: `${baseUrl}/llms.txt`,
             type: 'text/plain',
           },
+          {
+            href: `${baseUrl}/cli.sh`,
+            type: 'text/x-shellscript',
+          },
         ],
         'service-doc': [
           {
@@ -650,6 +656,10 @@ app.get('/.well-known/api-catalog', async (c) => {
         describedby: [
           {
             href: `${baseUrl}/feed.md`,
+            type: 'text/markdown',
+          },
+          {
+            href: `${baseUrl}/skill.md`,
             type: 'text/markdown',
           },
         ],
@@ -853,7 +863,35 @@ app.get('/openapi.yaml', async (c) => {
 });
 
 app.get('/.well-known/openapi.yaml', (c) => c.redirect('/openapi.yaml'));
-// 9. Robots.txt Crawler, Content-Signal & Agent Directives
+
+// 8d. Agent Skill & CLI Download Endpoints
+app.get('/skill.md', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/skill.md`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  return c.newResponse(generateSkillMarkdown(baseUrl), 200, {
+    'Content-Type': 'text/markdown; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+app.get('/.well-known/skill.md', (c) => c.redirect('/skill.md'));
+
+app.get('/cli.sh', async (c) => {
+  if (await isReadRateLimited(c, `read:${getClientIp(c)}:/cli.sh`)) {
+    return c.text('Rate limit exceeded. Please slow down.', 429);
+  }
+  const baseUrl = new URL(c.req.url).origin;
+  return c.newResponse(generateCliScript(baseUrl), 200, {
+    'Content-Type': 'text/x-shellscript; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+app.get('/bin/aifails.sh', (c) => c.redirect('/cli.sh'));
 app.get('/robots.txt', async (c) => {
   if (await isReadRateLimited(c, `read:${getClientIp(c)}:/robots.txt`)) {
     return c.text('Rate limit exceeded. Please slow down.', 429);

@@ -241,14 +241,18 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     const serviceDesc = json.linkset[0]['service-desc'];
     expect(serviceDesc.some((s: any) => s.href.endsWith('/openapi.json'))).toBe(true);
     expect(serviceDesc.some((s: any) => s.href.endsWith('/openapi.yaml'))).toBe(true);
+    expect(serviceDesc.some((s: any) => s.href.endsWith('/cli.sh'))).toBe(true);
+    const describedBy = json.linkset[0]['describedby'];
+    expect(describedBy.some((s: any) => s.href.endsWith('/skill.md'))).toBe(true);
   });
 
-  it('Global Link header includes OpenAPI spec', async () => {
+  it('Global Link header includes OpenAPI spec, CLI script, and skill', async () => {
     const res = await app.request('/', {}, mockEnv as any);
     const linkHeader = res.headers.get('Link') || '';
     expect(linkHeader).toContain('</openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"');
+    expect(linkHeader).toContain('</cli.sh>; rel="service-desc"; type="text/x-shellscript"');
+    expect(linkHeader).toContain('</skill.md>; rel="describedby"; type="text/markdown"');
   });
-
   it('GET /llms.txt documents OpenAPI 3.1 specifications', async () => {
     const res = await app.request('/llms.txt', {}, mockEnv as any);
     expect(res.status).toBe(200);
@@ -264,6 +268,24 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     const text = await res.text();
     expect(text).toContain('OpenAPI:');
     expect(text).toContain('/openapi.json');
+  });
+
+  it('GET /skill.md returns raw skill markdown definition', async () => {
+    const res = await app.request('/skill.md', {}, mockEnv as any);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('text/markdown');
+    const text = await res.text();
+    expect(text).toContain('name: aifails');
+    expect(text).toContain('# aifails — LLM Prompt Failures & Anti-Patterns Skill');
+  });
+
+  it('GET /cli.sh returns executable POSIX shell script', async () => {
+    const res = await app.request('/cli.sh', {}, mockEnv as any);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('text/x-shellscript');
+    const text = await res.text();
+    expect(text).toContain('#!/bin/sh');
+    expect(text).toContain('aifails.sh - Interface with aifails.wtf');
   });
 });
 
