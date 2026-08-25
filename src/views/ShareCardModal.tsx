@@ -524,7 +524,7 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     ctx.font = '700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Anonymous AI Prompt Fails • Solidarity & Ackchyually Fixes', cardX + 40, footY);
+    ctx.fillText('Anonymous AI Prompt Fails • aifails.wtf', cardX + 40, footY);
 
     ctx.fillStyle = '#fed41d';
     ctx.font = '900 22px ui-monospace, Menlo, monospace';

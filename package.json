@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build:css": "bun scripts/build-css.ts",
-    "prebuild": "bun run build:css",
+    "build:og": "bun scripts/build-og.ts",
+    "prebuild": "bun run build:css && bun run build:og",
     "dev": "bun run build:css && wrangler dev",
     "deploy": "bun run build:css && wrangler deploy",
     "typecheck": "bun run build:css && tsc --noEmit",
@@ -19,6 +20,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^26.3.0",
     "autoprefixer": "^10.4.20",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.5.3",
