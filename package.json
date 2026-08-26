@@ -10,6 +10,8 @@
     "dev": "bun run build:css && wrangler dev",
     "deploy": "bun run build:css && wrangler deploy",
     "typecheck": "bun run build:css && tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "moderate": "bun scripts/moderate.ts",
@@ -23,6 +25,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^26.3.0",
     "autoprefixer": "^10.4.20",
+    "oxlint": "^1.80.0",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.5.3",
     "wrangler": "^4.121.0"

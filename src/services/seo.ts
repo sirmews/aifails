@@ -1,5 +1,6 @@
 import type { Confession } from '../core/types';
 
+// eslint-disable-next-line no-control-regex
 const INVALID_XML_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F]/g;
 
 export function escapeXml(unsafe: string): string {

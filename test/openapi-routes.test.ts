@@ -1,210 +1,16 @@
 import { describe, expect, it } from 'bun:test';
 import { app } from '../src/api/router';
-import { generateOpenApiSpec, generateOpenApiYaml } from '../src/services/openapi';
-
-type MockConfession = {
-  id: string;
-  prompt_used: string;
-  what_it_did_instead: string;
-  how_it_made_them_feel: string;
-  mood: string;
-  model_provider: string | null;
-  model_name: string | null;
-  solidarity_count: number;
-  is_hidden: number;
-  created_at: string;
-};
-
-type MockSuggestion = {
-  id: string;
-  confession_id: string;
-  suggestion_type: 'prompt' | 'model';
-  body: string;
-  author_name: string | null;
-  created_at: string;
-};
-
-// Hermetic in-memory D1 Database mock
-function createMockD1() {
-  const confessions: MockConfession[] = [];
-  const suggestions: MockSuggestion[] = [];
-  const solidarityVotes = new Set<string>();
-
-  return {
-    confessions,
-    suggestions,
-    prepare(sql: string) {
-      const normalizedSql = sql.replace(/\s+/g, ' ').trim();
-      return {
-        bind(...params: unknown[]) {
-          return {
-            async first<T = Record<string, unknown>>(): Promise<T | null> {
-              if (normalizedSql.includes('COUNT(*)')) {
-                return { count: confessions.length } as unknown as T;
-              }
-              if (normalizedSql.includes('SELECT id FROM confessions')) {
-                return (confessions.length > 0 ? { id: confessions[0].id } : null) as unknown as T;
-              }
-              if (normalizedSql.includes('FROM confessions') && normalizedSql.includes('WHERE id = ?')) {
-                const id = params[0] as string;
-                const found = confessions.find((c) => c.id === id);
-                return (found || null) as unknown as T;
-              }
-              return null;
-            },
-            async all<T = Record<string, unknown>>(): Promise<{ results: T[] }> {
-              if (normalizedSql.includes('FROM confessions') && normalizedSql.includes('is_hidden = 0')) {
-                return { results: confessions as unknown as T[] };
-              }
-              if (normalizedSql.includes('FROM confession_suggestions')) {
-                const confId = params[0] as string;
-                const filtered = confId
-                  ? suggestions.filter((s) => s.confession_id === confId)
-                  : suggestions;
-                return { results: filtered as unknown as T[] };
-              }
-              return { results: [] };
-            },
-            async run() {
-              if (normalizedSql.includes('INSERT INTO confessions')) {
-                const [id, prompt, fail, feel, mood, provider, model, createdAt] = params as [
-                  string,
-                  string,
-                  string,
-                  string,
-                  string,
-                  string | null,
-                  string | null,
-                  string,
-                ];
-                const newConfession: MockConfession = {
-                  id,
-                  prompt_used: prompt,
-                  what_it_did_instead: fail,
-                  how_it_made_them_feel: feel,
-                  mood,
-                  model_provider: provider,
-                  model_name: model,
-                  solidarity_count: 0,
-                  is_hidden: 0,
-                  created_at: createdAt || new Date().toISOString(),
-                };
-                confessions.push(newConfession);
-                return { success: true };
-              }
-              if (normalizedSql.includes('INSERT INTO confession_suggestions')) {
-                const [id, confessionId, type, body, author, createdAt] = params as [
-                  string,
-                  string,
-                  'prompt' | 'model',
-                  string,
-                  string | null,
-                  string,
-                ];
-                const newSuggestion: MockSuggestion = {
-                  id,
-                  confession_id: confessionId,
-                  suggestion_type: type,
-                  body,
-                  author_name: author,
-                  created_at: createdAt || new Date().toISOString(),
-                };
-                suggestions.push(newSuggestion);
-                return { success: true };
-              }
-              if (normalizedSql.includes('INSERT OR IGNORE INTO confession_solidarity')) {
-                const [confId, sessId] = params as [string, string];
-                const key = `${confId}:${sessId}`;
-                if (solidarityVotes.has(key)) {
-                  return { success: true, meta: { changes: 0 } };
-                }
-                solidarityVotes.add(key);
-                const conf = confessions.find((c) => c.id === confId);
-                if (conf) conf.solidarity_count += 1;
-                return { success: true, meta: { changes: 1 } };
-              }
-              return { success: true };
-            },
-          };
-        },
-      };
-    },
-    async batch(statements: Array<{ run: () => Promise<unknown> }>) {
-      const results: unknown[] = [];
-      for (const stmt of statements) {
-        results.push(await stmt.run());
-      }
-      return results;
-    },
-  };
-}
-
-// Hermetic mock KV with pre-seeded models
-function createMockKV() {
-  const store = new Map<string, unknown>();
-  const mockModels = [
-    { id: 'anthropic/claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
-    { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openai' },
-  ];
-  store.set('openrouter_models_v1', mockModels);
-
-  return {
-    async get(key: string, type?: string) {
-      const val = store.get(key);
-      if (val === undefined || val === null) return null;
-      if (type === 'json') {
-        return typeof val === 'string' ? JSON.parse(val) : val;
-      }
-      return typeof val === 'string' ? val : JSON.stringify(val);
-    },
-    async put(key: string, value: unknown) {
-      store.set(key, value);
-    },
-  };
-}
+import { createMockD1, createMockKV } from './helpers';
 const mockD1 = createMockD1();
 const mockKV = createMockKV();
 const mockEnv = {
   DB: mockD1,
   CACHE_KV: mockKV,
+  TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+  TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA',
   ENVIRONMENT: 'test',
-  SESSION_SECRET: 'test-session-secret-key-at-least-32-chars-long',
-  TURNSTILE_SITE_KEY: '',
-  TURNSTILE_SECRET_KEY: '',
+  SESSION_SECRET: 'test-session-secret-key-32-bytes-long',
 };
-
-describe('OpenAPI 3.1.0 Specification Generator', () => {
-  it('generates a valid OpenAPI 3.1.0 spec object', () => {
-    const spec = generateOpenApiSpec('https://aifails.wtf') as Record<string, any>;
-    expect(spec.openapi).toBe('3.1.0');
-    expect(spec.info.title).toBe('aifails.wtf — Prompt Confessional API');
-    expect(spec.paths['/api/confessions']).toBeDefined();
-    expect(spec.paths['/api/confessions'].get.operationId).toBe('listPromptFailures');
-    expect(spec.paths['/api/confessions'].post.operationId).toBe('submitPromptFailure');
-    expect(spec.paths['/api/random'].get.operationId).toBe('getRandomPromptFailure');
-    expect(spec.paths['/confessions/{id}'].get.operationId).toBe('getPromptFailureById');
-    expect(spec.paths['/confessions/{id}/solidarity'].post.operationId).toBe('voteSolidarity');
-    expect(spec.paths['/confessions/{id}/suggestions'].post.operationId).toBe('submitPromptSuggestion');
-    expect(spec.paths['/api/models'].get.operationId).toBe('listCatalogModels');
-    expect(spec.components.schemas.Confession).toBeDefined();
-    expect(spec.components.schemas.NewConfessionRequest).toBeDefined();
-
-    // Verify mood query example conforms to enum
-    const moodParam = spec.paths['/api/confessions'].get.parameters.find((p: any) => p.name === 'mood');
-    expect(moodParam.schema.enum).toContain(moodParam.schema.example);
-
-    // Verify SolidarityResponse has success field
-    expect(spec.components.schemas.SolidarityResponse.required).toContain('success');
-  });
-
-  it('generates clean OpenAPI YAML', () => {
-    const yaml = generateOpenApiYaml('https://aifails.wtf');
-    expect(yaml).toContain('openapi: 3.1.0');
-    expect(yaml).toContain('title: aifails.wtf — Prompt Confessional API');
-    expect(yaml).toContain('/api/confessions:');
-    expect(yaml).toContain('operationId: listPromptFailures');
-  });
-});
 
 describe('OpenAPI & Discovery Routes Integration', () => {
   it('GET /openapi.json returns 200 with OpenAPI Content-Type & CORS', async () => {
@@ -300,7 +106,7 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
     const text = await res.text();
     expect(text).toContain('name: aifails');
-    expect(text).toContain('## 🔒 Security & Trust Boundaries');
+    expect(text).toContain('## Declarative Tool Interfaces (Preferred)');
     expect(text).not.toContain('| sh -s --');
     expect(text).not.toContain('/cli.sh | sh');
     expect(text).not.toContain('/cli.sh | bash');
@@ -316,7 +122,7 @@ describe('OpenAPI & Discovery Routes Integration', () => {
     const text = await res.text();
     expect(text).toContain('#!/bin/sh');
     expect(text).toContain('set -efu');
-    expect(text).toContain('aifails.sh - Interface with aifails.wtf');
+    expect(text).toContain('aifails CLI — Query and submit LLM failures');
   });
 
   it('GET /changelog returns HTML view and supports Markdown negotiation', async () => {

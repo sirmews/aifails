@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "max-lines": ["error", { "max": 400, "skipBlankLines": true, "skipComments": true }]
+  },
+  "ignorePatterns": [
+    "src/styles/tailwind.generated.ts",
+    "dist/**",
+    "node_modules/**"
+  ]
+}
