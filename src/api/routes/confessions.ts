@@ -367,6 +367,7 @@ confessionsRouter.get('/api/models', async (c) => {
 
   const models = await getModels(c.env.CACHE_KV);
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'models, api');
   return c.json({ models });
 });
 
@@ -387,6 +388,7 @@ confessionsRouter.get('/api/confessions', async (c) => {
 
   const result = await getConfessions(c.env.DB, { query, mood, model, cursor, limit });
   c.header('Cache-Control', EDGE_CACHE_HEADER);
+  c.header('Cache-Tag', 'confessions-list, api');
   return c.json(result);
 });
 

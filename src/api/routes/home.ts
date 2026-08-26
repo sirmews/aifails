@@ -51,20 +51,29 @@ homeRouter.get('/', async (c) => {
     ),
   ]);
 
+  const isNotice = Boolean(notice);
+
   // Content Negotiation for AI Agents & Automated Crawlers (e.g. Accept: text/markdown)
   const acceptHeader = c.req.header('accept') || c.req.header('Accept') || '';
   if (acceptHeader.includes('text/markdown') || acceptHeader.includes('text/x-markdown')) {
-    return c.newResponse(generateLlmsFullTxt(confessions, suggestionsMap, url.origin), 200, {
+    const headers: Record<string, string> = {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Vary': 'Accept',
-      'Cache-Control': EDGE_CACHE_HEADER,
-    });
+      'Cache-Control': isNotice ? 'private, no-store' : EDGE_CACHE_HEADER,
+    };
+    if (!isNotice) {
+      headers['Cache-Tag'] = 'home, feed';
+    }
+    return c.newResponse(generateLlmsFullTxt(confessions, suggestionsMap, url.origin), 200, headers);
   }
 
   if (acceptHeader.includes('application/json')) {
     c.header('Content-Type', 'application/json; charset=utf-8');
     c.header('Vary', 'Accept');
-    c.header('Cache-Control', EDGE_CACHE_HEADER);
+    c.header('Cache-Control', isNotice ? 'private, no-store' : EDGE_CACHE_HEADER);
+    if (!isNotice) {
+      c.header('Cache-Tag', 'home, api');
+    }
     return c.json({
       confessions: confessions.map((conf) => formatConfessionJson(conf, suggestionsMap[conf.id] || [], url.origin)),
       nextCursor,
@@ -72,7 +81,10 @@ homeRouter.get('/', async (c) => {
     });
   }
   c.header('Vary', 'Accept');
-  c.header('Cache-Control', EDGE_CACHE_HEADER);
+  c.header('Cache-Control', isNotice ? 'private, no-store' : EDGE_CACHE_HEADER);
+  if (!isNotice) {
+    c.header('Cache-Tag', 'home, confessions-list');
+  }
   c.header(
     'Link',
     '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc"; type="text/plain", </llms-full.txt>; rel="service-doc"; type="text/plain", </feed.md>; rel="describedby"; type="text/markdown"'
@@ -131,24 +143,35 @@ homeRouter.get('/confessions/:id', async (c) => {
   }
 
   const suggestions = await getSuggestionsForConfession(c.env.DB, id);
+  const isNotice = Boolean(notice);
   c.header('Vary', 'Accept');
 
   if (format === 'md') {
-    return c.newResponse(formatConfessionMarkdown(confession, suggestions, url.origin), 200, {
+    const headers: Record<string, string> = {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Vary': 'Accept',
-      'Cache-Control': EDGE_CACHE_HEADER,
-    });
+      'Cache-Control': isNotice ? 'private, no-store' : EDGE_CACHE_HEADER,
+    };
+    if (!isNotice) {
+      headers['Cache-Tag'] = `confession-${confession.id}, markdown`;
+    }
+    return c.newResponse(formatConfessionMarkdown(confession, suggestions, url.origin), 200, headers);
   }
 
   if (format === 'json') {
     c.header('Content-Type', 'application/json; charset=utf-8');
-    c.header('Cache-Control', EDGE_CACHE_HEADER);
+    c.header('Cache-Control', isNotice ? 'private, no-store' : EDGE_CACHE_HEADER);
+    if (!isNotice) {
+      c.header('Cache-Tag', `confession-${confession.id}, api`);
+    }
     return c.json(formatConfessionJson(confession, suggestions, url.origin));
   }
 
   const models = await getModels(c.env.CACHE_KV);
-  c.header('Cache-Control', EDGE_CACHE_HEADER);
+  c.header('Cache-Control', isNotice ? 'private, no-store' : EDGE_CACHE_HEADER);
+  if (!isNotice) {
+    c.header('Cache-Tag', `confession-${confession.id}, confessions-detail`);
+  }
 
   return c.html(
     PermalinkView({
