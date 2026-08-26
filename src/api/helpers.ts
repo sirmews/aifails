@@ -45,7 +45,7 @@ export function purgeEdgeTags(c: Context<{ Bindings: Env }>, tags: string[]) {
 }
 
 export function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
-  const tags = ['home', 'confessions-list', 'feed', 'sitemap', 'og-image', 'seo'];
+  const tags = ['home', 'confessions-list', 'feed', 'sitemap', 'og-image', 'seo', 'llms-txt'];
   if (confessionId) {
     tags.push(`confession-${confessionId}`);
   }

@@ -131,7 +131,7 @@ discoveryRouter.get('/llms-full.txt', async (c) => {
   const baseUrl = new URL(c.req.url).origin;
   c.header('Content-Type', 'text/plain; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
-  c.header('Cache-Tag', 'discovery, llms-txt');
+  c.header('Cache-Tag', 'feed, llms-txt, discovery');
   return c.text(generateLlmsFullTxt(confessions, suggestionsMap, baseUrl));
 });
 
@@ -265,6 +265,7 @@ discoveryRouter.get('/changelog', async (c) => {
     });
   }
 
+  c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   c.header('Cache-Tag', 'changelog');
   return c.html(ChangelogView());

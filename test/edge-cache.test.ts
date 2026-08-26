@@ -131,9 +131,18 @@ describe('Workers Cache Headers & Cache-Tag Assertions', () => {
     const resMcp = await app.request('/mcp', { method: 'GET' }, mockEnv);
     expect(resMcp.status).toBe(200);
     expect(resMcp.headers.get('Cache-Tag')).toBe('mcp');
+    expect(resMcp.headers.get('Vary')).toBe('Accept');
+
+    const resChangelog = await app.request('/changelog', { method: 'GET' }, mockEnv);
+    expect(resChangelog.status).toBe(200);
+    expect(resChangelog.headers.get('Cache-Tag')).toBe('changelog');
+    expect(resChangelog.headers.get('Vary')).toBe('Accept');
+
+    const resLlmsFull = await app.request('/llms-full.txt', { method: 'GET' }, mockEnv);
+    expect(resLlmsFull.status).toBe(200);
+    expect(resLlmsFull.headers.get('Cache-Tag')).toBe('feed, llms-txt, discovery');
   });
 });
-
 describe('Global Tag Purging Helper Execution Safety', () => {
   it('purgeEdgeTags calls executionCtx.cache.purge with provided tags', async () => {
     let purgedTags: string[] = [];
@@ -182,6 +191,7 @@ describe('Global Tag Purging Helper Execution Safety', () => {
     expect(purgedTags).toContain('sitemap');
     expect(purgedTags).toContain('og-image');
     expect(purgedTags).toContain('seo');
+    expect(purgedTags).toContain('llms-txt');
     expect(purgedTags).toContain('confession-123-abc');
   });
 

@@ -15,6 +15,7 @@ mcpRouter.get('/mcp', async (c) => {
   if (acceptHeader.includes('application/json')) {
     return c.redirect('/.well-known/mcp/server-card.json');
   }
+  c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   c.header('Cache-Tag', 'mcp');
   return c.html(McpView());
