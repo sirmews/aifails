@@ -313,6 +313,13 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     var ctx = targetCanvas.getContext('2d');
     if (!ctx) return;
 
+    var scale = targetCanvas.width ? targetCanvas.width / 1600 : 1;
+    ctx.save();
+    if (scale !== 1) {
+      ctx.scale(scale, scale);
+    }
+    ctx.imageSmoothingEnabled = true;
+
     var W = 1600;
     var H = 900;
 
@@ -530,15 +537,22 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     ctx.font = '900 22px ui-monospace, Menlo, monospace';
     ctx.textAlign = 'right';
     ctx.fillText('https://aifails.wtf', cardX + cardW - 40, footY);
+    ctx.restore();
   }
 
-  // --- RENDER CAROUSEL SLIDES (1080x1080) ---
+  // --- RENDER CAROUSEL SLIDES (1080x1080 Base) ---
   function renderCarouselSlide(targetCanvas, slideNum) {
     var ctx = targetCanvas.getContext('2d');
     if (!ctx) return;
 
-    var S = 1080;
+    var scale = targetCanvas.width ? targetCanvas.width / 1080 : 1;
+    ctx.save();
+    if (scale !== 1) {
+      ctx.scale(scale, scale);
+    }
+    ctx.imageSmoothingEnabled = true;
 
+    var S = 1080;
     // 1. Canvas Background
     ctx.fillStyle = '#152435';
     ctx.fillRect(0, 0, S, S);
@@ -792,6 +806,7 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     ctx.font = '900 18px ui-monospace, Menlo, monospace';
     ctx.textAlign = 'right';
     ctx.fillText('Confession #' + cardData.id.slice(0, 8), cardX + cardW - 36, footY);
+    ctx.restore();
   }
 
   function drawTerminalDots(ctx, x, y) {
@@ -846,7 +861,7 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     return lines.slice(0, maxLines);
   }
 
-  // --- CLIENT-SIDE PDF BUILDER FOR 3 JPEG PAGES ---
+  // --- CLIENT-SIDE HIGH-DPI PDF BUILDER (2X RETINA EMBED) ---
   function buildCarouselPdf(jpegImages) {
     var encoder = new TextEncoder();
     var chunks = [];
@@ -882,6 +897,10 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     offsets[2] = currentOffset;
     writeStr("2 0 obj\\n<< /Type /Pages /Kids [" + pageRefs.join(" ") + "] /Count " + numPages + " >>\\nendobj\\n");
 
+    // Standard square presentation points (1080x1080 points)
+    var pageWidth = 1080;
+    var pageHeight = 1080;
+
     for (var i = 0; i < numPages; i++) {
       var img = jpegImages[i];
       var pageObjId = 3 + i * 3;
@@ -889,19 +908,19 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
       var imageObjId = 5 + i * 3;
       var imgName = "Im" + (i + 1);
 
-      // Page Object
+      // Page Object (1080x1080 MediaBox)
       offsets[pageObjId] = currentOffset;
-      writeStr(pageObjId + " 0 obj\\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + img.width + " " + img.height + "] /Resources << /XObject << /" + imgName + " " + imageObjId + " 0 R >> >> /Contents " + contentsObjId + " 0 R >>\\nendobj\\n");
+      writeStr(pageObjId + " 0 obj\\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + pageWidth + " " + pageHeight + "] /Resources << /XObject << /" + imgName + " " + imageObjId + " 0 R >> >> /Contents " + contentsObjId + " 0 R >>\\nendobj\\n");
 
-      // Content Stream
-      var streamContent = "q\\n" + img.width + " 0 0 " + img.height + " 0 0 cm\\n/" + imgName + " Do\\nQ\\n";
+      // Content Stream maps image to page
+      var streamContent = "q\\n" + pageWidth + " 0 0 " + pageHeight + " 0 0 cm\\n/" + imgName + " Do\\nQ\\n";
       var streamBytes = encoder.encode(streamContent);
       offsets[contentsObjId] = currentOffset;
       writeStr(contentsObjId + " 0 obj\\n<< /Length " + streamBytes.length + " >>\\nstream\\n");
       writeBytes(streamBytes);
       writeStr("\\nendstream\\nendobj\\n");
 
-      // Image XObject
+      // Image XObject with full supersampled pixel dimensions (2160x2160)
       offsets[imageObjId] = currentOffset;
       writeStr(imageObjId + " 0 obj\\n<< /Type /XObject /Subtype /Image /Width " + img.width + " /Height " + img.height + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + img.bytes.length + " >>\\nstream\\n");
       writeBytes(img.bytes);
@@ -933,8 +952,9 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
 
   function getSlideJpegBytes(slideNum) {
     var offCanvas = document.createElement('canvas');
-    offCanvas.width = 1080;
-    offCanvas.height = 1080;
+    // 2x Retina supersampling (2160x2160) for razor-sharp vector-grade text in PDF viewers
+    offCanvas.width = 2160;
+    offCanvas.height = 2160;
     renderCarouselSlide(offCanvas, slideNum);
     return new Promise(function(resolve, reject) {
       offCanvas.toBlob(function(blob) {
@@ -943,13 +963,13 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
         reader.onload = function() {
           resolve({
             bytes: new Uint8Array(reader.result),
-            width: 1080,
-            height: 1080
+            width: 2160,
+            height: 2160
           });
         };
         reader.onerror = reject;
         reader.readAsArrayBuffer(blob);
-      }, 'image/jpeg', 0.92);
+      }, 'image/jpeg', 0.98);
     });
   }
 
@@ -985,17 +1005,21 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     }
   });
 
-  // Copy Image Button (Single mode)
+  // Copy Image Button (Single mode - 2x HiDPI 3200x1800)
   if (copyImgBtn && copyImgText) {
     copyImgBtn.addEventListener('click', function() {
       try {
-        canvas.toBlob(function(blob) {
+        var hiCanvas = document.createElement('canvas');
+        hiCanvas.width = 3200;
+        hiCanvas.height = 1800;
+        renderSingleCard(hiCanvas);
+        hiCanvas.toBlob(function(blob) {
           if (!blob) return;
           if (navigator.clipboard && window.ClipboardItem) {
             navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
             ]).then(function() {
-              copyImgText.textContent = '✓ Copied Image!';
+              copyImgText.textContent = '✓ Copied Hi-Res Image!';
               copyImgBtn.classList.remove('bg-[var(--accent-primary)]');
               copyImgBtn.classList.add('bg-emerald-500', 'text-white');
               setTimeout(function() {
@@ -1016,11 +1040,15 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
     });
   }
 
-  // Download Single Card PNG
+  // Download Single Card PNG (2x HiDPI 3200x1800)
   function downloadCardImage() {
+    var hiCanvas = document.createElement('canvas');
+    hiCanvas.width = 3200;
+    hiCanvas.height = 1800;
+    renderSingleCard(hiCanvas);
     var a = document.createElement('a');
     a.download = 'aifails-' + cardData.id + '.png';
-    a.href = canvas.toDataURL('image/png');
+    a.href = hiCanvas.toDataURL('image/png');
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1028,18 +1056,21 @@ export function ShareCardModal({ confession, url }: ShareCardModalProps) {
 
   if (downloadBtn) downloadBtn.addEventListener('click', downloadCardImage);
 
-  // Download Carousel Slide PNG
+  // Download Carousel Slide PNG (2x HiDPI 2160x2160)
   if (downloadSlideBtn) {
     downloadSlideBtn.addEventListener('click', function() {
+      var hiCanvas = document.createElement('canvas');
+      hiCanvas.width = 2160;
+      hiCanvas.height = 2160;
+      renderCarouselSlide(hiCanvas, currentSlide);
       var a = document.createElement('a');
       a.download = 'aifails-' + cardData.id + '-slide-' + currentSlide + '.png';
-      a.href = canvas.toDataURL('image/png');
+      a.href = hiCanvas.toDataURL('image/png');
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     });
   }
-
   // Download LinkedIn Carousel PDF
   if (downloadPdfBtn && downloadPdfText) {
     downloadPdfBtn.addEventListener('click', function() {
