@@ -19,6 +19,7 @@ seoRouter.get('/feed.xml', async (c) => {
 
   c.header('Content-Type', 'application/xml; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'feed, rss');
   return c.text(rssXml);
 });
 
@@ -41,6 +42,7 @@ seoRouter.get('/sitemap.xml', async (c) => {
 
   c.header('Content-Type', 'application/xml; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'sitemap, seo');
   return c.body(sitemapXml);
 });
 
@@ -103,6 +105,7 @@ Agent-Skills: ${baseUrl}/.well-known/agent-skills/index.json
 
   c.header('Content-Type', 'text/plain; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=86400');
+  c.header('Cache-Tag', 'seo, robots');
   return c.text(robotsTxt);
 });
 
@@ -116,6 +119,7 @@ seoRouter.get('/og.png', async (c) => {
     headers: {
       'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+      'Cache-Tag': 'og-image, seo',
     },
   });
 });
@@ -137,6 +141,7 @@ seoRouter.get('/og.svg', async (c) => {
 
   c.header('Content-Type', 'image/svg+xml');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'og-image, seo');
   return c.body(svg);
 });
 
@@ -148,10 +153,12 @@ seoRouter.get('/confessions/:id/og.png', async (c) => {
     return c.text('Rate limit exceeded. Please slow down.', 429);
   }
 
+  const id = c.req.param('id');
   return new Response(OG_DEFAULT_PNG_BYTES, {
     headers: {
       'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+      'Cache-Tag': `confession-${id}, og-image`,
     },
   });
 });
@@ -171,5 +178,6 @@ seoRouter.get('/confessions/:id/og.svg', async (c) => {
   const svg = generateOgImageSvg(confession);
   c.header('Content-Type', 'image/svg+xml');
   c.header('Cache-Control', 'public, max-age=86400, s-maxage=604800');
+  c.header('Cache-Tag', `confession-${id}, og-image`);
   return c.body(svg);
 });

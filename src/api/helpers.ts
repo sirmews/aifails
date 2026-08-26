@@ -27,29 +27,29 @@ export async function isReadRateLimited(c: Context<{ Bindings: Env }>, rateLimit
 // Tiered Edge Cache: 5s browser, 30s Cloudflare CDN edge, with background SWR
 export const EDGE_CACHE_HEADER = 'public, max-age=5, s-maxage=30, stale-while-revalidate=86400';
 
-export function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
+export function purgeEdgeTags(c: Context<{ Bindings: Env }>, tags: string[]) {
   try {
-    const executionCtx = c.executionCtx;
-    if (executionCtx && typeof executionCtx.waitUntil === 'function') {
-      const cache = caches.default;
-      const origin = new URL(c.req.url).origin;
-      const purgeRequests = [
-        cache.delete(new Request(origin + '/')),
-        cache.delete(new Request(origin + '/feed.xml')),
-        cache.delete(new Request(origin + '/sitemap.xml')),
-        cache.delete(new Request(origin + '/og.svg')),
-      ];
-      if (confessionId) {
-        purgeRequests.push(
-          cache.delete(new Request(origin + `/confessions/${confessionId}`)),
-          cache.delete(new Request(origin + `/confessions/${confessionId}/og.svg`))
-        );
-      }
-      executionCtx.waitUntil(Promise.all(purgeRequests).catch(() => {}));
+    const executionCtx = c.executionCtx as {
+      waitUntil?: (promise: Promise<unknown>) => void;
+      cache?: { purge?: (options: { tags?: string[]; pathPrefixes?: string[]; purgeEverything?: boolean }) => Promise<unknown> };
+    } | undefined;
+
+    if (executionCtx && typeof executionCtx.waitUntil === 'function' && executionCtx.cache && typeof executionCtx.cache.purge === 'function') {
+      executionCtx.waitUntil(
+        executionCtx.cache.purge({ tags }).catch(() => {})
+      );
     }
   } catch {
     // Ignore cache purging errors in non-Worker or test environments
   }
+}
+
+export function purgeEdgeCache(c: Context<{ Bindings: Env }>, confessionId?: string) {
+  const tags = ['home', 'confessions-list', 'feed', 'sitemap', 'og-image', 'seo', 'llms-txt'];
+  if (confessionId) {
+    tags.push(`confession-${confessionId}`);
+  }
+  purgeEdgeTags(c, tags);
 }
 
 export async function computeSha256Digest(content: string): Promise<{ hex: string; base64: string }> {

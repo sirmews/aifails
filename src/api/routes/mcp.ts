@@ -15,7 +15,9 @@ mcpRouter.get('/mcp', async (c) => {
   if (acceptHeader.includes('application/json')) {
     return c.redirect('/.well-known/mcp/server-card.json');
   }
+  c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'mcp');
   return c.html(McpView());
 });
 
@@ -106,6 +108,7 @@ mcpRouter.get('/.well-known/mcp/server-card.json', async (c) => {
 
   c.header('Content-Type', 'application/json; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=86400, s-maxage=604800');
+  c.header('Cache-Tag', 'mcp, discovery');
   return c.json(serverCard);
 });
 

@@ -101,6 +101,7 @@ discoveryRouter.get('/.well-known/api-catalog', async (c) => {
   return c.newResponse(JSON.stringify(linkset, null, 2), 200, {
     'Content-Type': 'application/linkset+json; charset=utf-8',
     'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+    'Cache-Tag': 'discovery, api-catalog',
   });
 });
 
@@ -113,6 +114,7 @@ discoveryRouter.get('/llms.txt', async (c) => {
   const baseUrl = new URL(c.req.url).origin;
   c.header('Content-Type', 'text/plain; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'discovery, llms-txt');
   return c.text(generateLlmsTxt(baseUrl));
 });
 
@@ -129,6 +131,7 @@ discoveryRouter.get('/llms-full.txt', async (c) => {
   const baseUrl = new URL(c.req.url).origin;
   c.header('Content-Type', 'text/plain; charset=utf-8');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'feed, llms-txt, discovery');
   return c.text(generateLlmsFullTxt(confessions, suggestionsMap, baseUrl));
 });
 
@@ -146,6 +149,7 @@ discoveryRouter.get('/feed.md', async (c) => {
   return c.newResponse(generateLlmsFullTxt(confessions, suggestionsMap, baseUrl), 200, {
     'Content-Type': 'text/markdown; charset=utf-8',
     'Cache-Control': 'public, max-age=300, s-maxage=3600',
+    'Cache-Tag': 'feed, markdown',
   });
 });
 
@@ -161,6 +165,7 @@ discoveryRouter.get('/openapi.json', async (c) => {
   return c.newResponse(JSON.stringify(spec, null, 2), 200, {
     'Content-Type': 'application/vnd.oai.openapi+json; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'discovery, openapi',
     'Access-Control-Allow-Origin': '*',
   });
 });
@@ -176,6 +181,7 @@ discoveryRouter.get('/openapi.yaml', async (c) => {
   return c.newResponse(yaml, 200, {
     'Content-Type': 'application/yaml; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'discovery, openapi',
     'Access-Control-Allow-Origin': '*',
   });
 });
@@ -193,6 +199,7 @@ discoveryRouter.get('/skill.md', async (c) => {
   return c.newResponse(skill, 200, {
     'Content-Type': 'text/markdown; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'discovery, skill-md',
     'Access-Control-Allow-Origin': '*',
     'ETag': `"${hex}"`,
     'Digest': `sha-256=${base64}`,
@@ -212,6 +219,7 @@ discoveryRouter.get('/cli.sh', async (c) => {
   return c.newResponse(script, 200, {
     'Content-Type': 'text/x-shellscript; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'discovery, cli-sh',
     'Access-Control-Allow-Origin': '*',
     'ETag': `"${hex}"`,
     'Digest': `sha-256=${base64}`,
@@ -231,6 +239,7 @@ discoveryRouter.get('/.well-known/agent-skills/index.json', async (c) => {
   return c.newResponse(JSON.stringify(index, null, 2), 200, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'discovery, agent-skills',
     'Access-Control-Allow-Origin': '*',
     'X-Content-Type-Options': 'nosniff',
   });
@@ -252,10 +261,13 @@ discoveryRouter.get('/changelog', async (c) => {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Vary': 'Accept',
       'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+      'Cache-Tag': 'changelog',
     });
   }
 
+  c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
+  c.header('Cache-Tag', 'changelog');
   return c.html(ChangelogView());
 });
 
@@ -267,6 +279,7 @@ discoveryRouter.get('/changelog.md', async (c) => {
   return c.newResponse(generateChangelogMarkdown(baseUrl), 200, {
     'Content-Type': 'text/markdown; charset=utf-8',
     'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+    'Cache-Tag': 'changelog',
     'Access-Control-Allow-Origin': '*',
   });
 });
