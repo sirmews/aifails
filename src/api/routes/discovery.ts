@@ -268,7 +268,7 @@ discoveryRouter.get('/changelog', async (c) => {
   c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   c.header('Cache-Tag', 'changelog');
-  return c.html(ChangelogView());
+  return c.html(ChangelogView({ baseUrl }));
 });
 
 discoveryRouter.get('/changelog.md', async (c) => {

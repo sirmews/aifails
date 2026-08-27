@@ -51,6 +51,42 @@ type JsonLdNode = {
 };
 
 describe('SEO Date Formatting & Schema.org JSON-LD', () => {
+  const mockD1 = createMockD1();
+  const mockKV = createMockKV();
+
+  const confessionWithSqliteDate = {
+    id: 'test-conf-sqlite-date',
+    prompt_used: 'Help me optimize this SQL query',
+    what_it_did_instead: 'Dropped all database tables without confirmation',
+    how_it_made_them_feel: 'Complete despair',
+    mood: 'defeated',
+    model_provider: 'anthropic',
+    model_name: 'claude-3-5-sonnet',
+    solidarity_count: 10,
+    is_hidden: 0,
+    created_at: '2026-08-28 14:30:00', // SQLite raw date format
+  };
+
+  const suggestionWithSqliteDate = {
+    id: 'test-sug-sqlite-date',
+    confession_id: 'test-conf-sqlite-date',
+    suggestion_type: 'prompt' as const,
+    body: 'Always specify read-only transaction mode in prompt instructions',
+    author_name: null,
+    created_at: '2026-08-28 15:00:00', // SQLite raw date format
+  };
+
+  mockD1.confessions.push(confessionWithSqliteDate);
+  mockD1.suggestions.push(suggestionWithSqliteDate);
+
+  const mockEnv = {
+    DB: mockD1,
+    CACHE_KV: mockKV,
+    TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+    TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA',
+    ENVIRONMENT: 'test',
+    SESSION_SECRET: 'test-session-secret-key-32-bytes-long',
+  };
   describe('toIso8601 utility', () => {
     it('normalizes SQLite datetime string without timezone to strict ISO 8601 UTC with Z', () => {
       const sqliteDate = '2026-08-28 12:34:56';
@@ -98,42 +134,7 @@ describe('SEO Date Formatting & Schema.org JSON-LD', () => {
   });
 
   describe('Single Confession Page JSON-LD Structured Data', () => {
-    const mockD1 = createMockD1();
-    const mockKV = createMockKV();
 
-    const confessionWithSqliteDate = {
-      id: 'test-conf-sqlite-date',
-      prompt_used: 'Help me optimize this SQL query',
-      what_it_did_instead: 'Dropped all database tables without confirmation',
-      how_it_made_them_feel: 'Complete despair',
-      mood: 'defeated',
-      model_provider: 'anthropic',
-      model_name: 'claude-3-5-sonnet',
-      solidarity_count: 10,
-      is_hidden: 0,
-      created_at: '2026-08-28 14:30:00', // SQLite raw date format
-    };
-
-    const suggestionWithSqliteDate = {
-      id: 'test-sug-sqlite-date',
-      confession_id: 'test-conf-sqlite-date',
-      suggestion_type: 'prompt' as const,
-      body: 'Always specify read-only transaction mode in prompt instructions',
-      author_name: null,
-      created_at: '2026-08-28 15:00:00', // SQLite raw date format
-    };
-
-    mockD1.confessions.push(confessionWithSqliteDate);
-    mockD1.suggestions.push(suggestionWithSqliteDate);
-
-    const mockEnv = {
-      DB: mockD1,
-      CACHE_KV: mockKV,
-      TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
-      TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA',
-      ENVIRONMENT: 'test',
-      SESSION_SECRET: 'test-session-secret-key-32-bytes-long',
-    };
 
     it('renders dateCreated and datePublished in ISO 8601 with explicit timezone Z', async () => {
       const res = await app.request(
@@ -219,6 +220,81 @@ describe('SEO Date Formatting & Schema.org JSON-LD', () => {
       expect(secondAnswer?.dateCreated).toBe('2026-08-28T16:00:00.000Z');
       expect(secondAnswer?.author?.name).toBe('Lead Prompt Architect');
       expect(secondAnswer?.author?.url).toBe('https://aifails.wtf');
+    });
+
+    it('renders BreadcrumbList and complete TechArticle metadata', async () => {
+      const res = await app.request(
+        'https://aifails.wtf/confessions/test-conf-sqlite-date',
+        {},
+        mockEnv
+      );
+      const html = await res.text();
+      const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      const jsonLd = JSON.parse(jsonLdMatch?.[1] ?? '{}') as { '@graph': Array<Record<string, unknown>> };
+
+      const breadcrumb = jsonLd['@graph']?.find((item) => item['@type'] === 'BreadcrumbList');
+      expect(breadcrumb).toBeDefined();
+      expect(breadcrumb?.itemListElement).toBeDefined();
+
+      const techArticle = jsonLd['@graph']?.find((item) => item['@type'] === 'TechArticle');
+      expect(techArticle?.dateModified).toBe('2026-08-28T14:30:00.000Z');
+      expect(techArticle?.mainEntityOfPage).toEqual({
+        '@type': 'WebPage',
+        '@id': 'https://aifails.wtf/confessions/test-conf-sqlite-date',
+      });
+      expect(Array.isArray(techArticle?.image)).toBe(true);
+  });
+    });
+
+  describe('Home Page JSON-LD Structured Data', () => {
+    it('renders WebSite with EntryPoint SearchAction and CollectionPage ItemList', async () => {
+      const res = await app.request('https://aifails.wtf/', {}, mockEnv);
+      expect(res.status).toBe(200);
+
+      const html = await res.text();
+      const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      const jsonLd = JSON.parse(jsonLdMatch?.[1] ?? '{}') as { '@graph': Array<Record<string, unknown>> };
+
+      const website = jsonLd['@graph']?.find((item) => item['@type'] === 'WebSite');
+      expect(website).toBeDefined();
+      expect(website?.name).toBe('Prompt Confessional');
+      expect(website?.alternateName).toContain('aifails.wtf');
+
+      const searchAction = website?.potentialAction as Record<string, unknown>;
+      expect(searchAction?.['@type']).toBe('SearchAction');
+      expect(searchAction?.target).toEqual({
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://aifails.wtf/?q={search_term_string}',
+      });
+
+      const collection = jsonLd['@graph']?.find((item) => item['@type'] === 'CollectionPage');
+      expect(collection).toBeDefined();
+    });
+  });
+
+  describe('Changelog & MCP Pages JSON-LD Structured Data', () => {
+    it('renders WebPage & Breadcrumbs on /changelog', async () => {
+      const res = await app.request('https://aifails.wtf/changelog', {}, mockEnv);
+      expect(res.status).toBe(200);
+
+      const html = await res.text();
+      const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      const jsonLd = JSON.parse(jsonLdMatch?.[1] ?? '{}') as { '@graph': Array<Record<string, unknown>> };
+
+      const webpage = jsonLd['@graph']?.find((item) => item['@type'] === 'WebPage');
+      expect(webpage).toBeDefined();
+    });
+
+    it('renders TechArticle & Breadcrumbs on /mcp', async () => {
+      const res = await app.request('https://aifails.wtf/mcp', {}, mockEnv);
+      expect(res.status).toBe(200);
+
+      const html = await res.text();
+      const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      const jsonLd = JSON.parse(jsonLdMatch?.[1] ?? '{}') as { '@graph': Array<Record<string, unknown>> };
+
+      const techArticle = jsonLd['@graph']?.find((item) => item['@type'] === 'TechArticle');
+      expect(techArticle).toBeDefined();
     });
   });
 

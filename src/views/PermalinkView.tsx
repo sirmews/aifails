@@ -111,8 +111,13 @@ export function PermalinkView({
         headline: ogTitle,
         description: ogDescription,
         datePublished: confessionDate,
+        dateModified: confessionDate,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': url,
+        },
         url,
-        image: ogImage,
+        image: [ogImage],
         about: {
           '@type': 'SoftwareApplication',
           name: modelName,
@@ -126,7 +131,29 @@ export function PermalinkView({
           '@type': 'Organization',
           name: 'Prompt Confessional',
           url: baseUrl,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${baseUrl}/og.png`,
+          },
         },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Prompt Confessional',
+            item: baseUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: promptSnippet,
+            item: url,
+          },
+        ],
       },
     ],
   };

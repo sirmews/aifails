@@ -3,13 +3,71 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { McpPanels } from './mcp-panels';
 
-export function McpView() {
+export function McpView({ baseUrl = 'https://aifails.wtf' }: { baseUrl?: string }) {
+  const url = `${baseUrl}/mcp`;
+  const jsonLdData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'TechArticle',
+        '@id': `${url}#techarticle`,
+        headline: 'Connect Agent Skills & MCP — aifails.wtf',
+        description: 'Connect real-world LLM anti-patterns, prompt guardrails, and failure modes directly to Claude Code, Pi, Cursor, Codex, OpenCode, and Claude Desktop via Agent Skills or Model Context Protocol.',
+        url,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': url,
+        },
+        author: {
+          '@type': 'Organization',
+          name: 'Prompt Confessional',
+          url: baseUrl,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Prompt Confessional',
+          url: baseUrl,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${baseUrl}/og.png`,
+          },
+        },
+        breadcrumb: {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Prompt Confessional',
+              item: baseUrl,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Agent Skills & MCP',
+              item: url,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  const headElements = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
+    />
+  );
+
   return (
     <Layout
       title="Connect Agent Skills & MCP — aifails.wtf"
       description="Connect real-world LLM anti-patterns, prompt guardrails, and failure modes directly to Claude Code, Pi, Cursor, Codex, OpenCode, and Claude Desktop via Agent Skills or Model Context Protocol."
       ogTitle="Agent Skills & MCP — aifails.wtf"
       ogDescription="Turn aifails.wtf into an active immune system for your coding agents (Claude, Cursor, Codex, Pi, OpenCode, Devin)."
+      ogUrl={url}
+      head={headElements}
     >
       <Header />
 

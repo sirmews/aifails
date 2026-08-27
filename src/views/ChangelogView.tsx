@@ -3,13 +3,53 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { RELEASES } from '../services/changelog';
 
-export function ChangelogView() {
+export function ChangelogView({ baseUrl = 'https://aifails.wtf' }: { baseUrl?: string }) {
+  const url = `${baseUrl}/changelog`;
+  const jsonLdData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        name: 'Product Changelog & Release Stream — aifails.wtf',
+        description: 'Track all new features, agent discovery standards, and API updates shipped to aifails.wtf (Prompt Confessional).',
+        url,
+        breadcrumb: {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Prompt Confessional',
+              item: baseUrl,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Changelog',
+              item: url,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  const headElements = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData).replace(/</g, '\\u003c') }}
+    />
+  );
+
   return (
     <Layout
       title="Product Changelog & Release Stream — aifails.wtf"
       description="Track all new features, agent discovery standards, and API updates shipped to aifails.wtf (Prompt Confessional)."
       ogTitle="Changelog — aifails.wtf"
       ogDescription="Product updates, agent skills, and feature releases for aifails.wtf."
+      ogUrl={url}
+      head={headElements}
     >
       <Header />
 

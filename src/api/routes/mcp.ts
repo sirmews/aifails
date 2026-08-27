@@ -18,7 +18,8 @@ mcpRouter.get('/mcp', async (c) => {
   c.header('Vary', 'Accept');
   c.header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
   c.header('Cache-Tag', 'mcp');
-  return c.html(McpView());
+  const baseUrl = new URL(c.req.url).origin;
+  return c.html(McpView({ baseUrl }));
 });
 
 mcpRouter.get('/skills', (c) => c.redirect('/mcp'));

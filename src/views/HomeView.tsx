@@ -41,12 +41,25 @@ export function HomeView({
       {
         '@type': 'WebSite',
         '@id': `${baseUrl}#website`,
-        name: 'Prompt Confessional • aifails.wtf',
+        name: 'Prompt Confessional',
+        alternateName: ['aifails.wtf', 'Prompt Confessional • aifails.wtf'],
         url: baseUrl,
         description: 'Anonymous, community-driven database of LLM failures, prompt hallucinations, and developer solidarity.',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Prompt Confessional',
+          url: baseUrl,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${baseUrl}/og.png`,
+          },
+        },
         potentialAction: {
           '@type': 'SearchAction',
-          target: `${baseUrl}/?q={search_term_string}`,
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${baseUrl}/?q={search_term_string}`,
+          },
           'query-input': 'required name=search_term_string',
         },
       },
