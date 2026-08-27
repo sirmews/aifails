@@ -58,6 +58,7 @@ export function PermalinkView({
           author: {
             '@type': 'Person',
             name: 'Anonymous Developer',
+            url: baseUrl,
           },
           suggestedAnswer: [
             {
@@ -65,9 +66,11 @@ export function PermalinkView({
               text: `AI Output / Failure (${modelName}):\n${confession.what_it_did_instead}`,
               dateCreated: confessionDate,
               upvoteCount: confession.solidarity_count,
+              url: `${url}#failure`,
               author: {
                 '@type': 'Organization',
                 name: modelName,
+                url: baseUrl,
               },
             },
           ],
@@ -77,9 +80,12 @@ export function PermalinkView({
                   '@type': 'Answer',
                   text: `Community "Ackchyually..." Prompt Fix:\n${suggestions[0].body}`,
                   dateCreated: toIso8601(suggestions[0].created_at),
+                  upvoteCount: 1,
+                  url: `${url}#suggestion-${suggestions[0].id}`,
                   author: {
                     '@type': 'Person',
                     name: 'Anonymous Prompt Engineer',
+                    url: baseUrl,
                   },
                 },
               }
@@ -101,6 +107,7 @@ export function PermalinkView({
         author: {
           '@type': 'Person',
           name: 'Anonymous Developer',
+          url: baseUrl,
         },
         publisher: {
           '@type': 'Organization',

@@ -13,6 +13,7 @@ type JsonLdNode = {
   author?: {
     '@type': string;
     name: string;
+    url?: string;
   };
   publisher?: {
     '@type': string;
@@ -25,6 +26,7 @@ type JsonLdNode = {
     author?: {
       '@type': string;
       name: string;
+      url?: string;
     };
     suggestedAnswer?: Array<{
       '@type': string;
@@ -32,6 +34,7 @@ type JsonLdNode = {
       author?: {
         '@type': string;
         name: string;
+        url?: string;
       };
     }>;
     acceptedAnswer?: {
@@ -40,6 +43,7 @@ type JsonLdNode = {
       author?: {
         '@type': string;
         name: string;
+        url?: string;
       };
     };
   };
@@ -152,24 +156,28 @@ describe('SEO Date Formatting & Schema.org JSON-LD', () => {
       expect(question?.dateCreated.endsWith('Z')).toBe(true);
 
       expect(question?.author?.['@type']).toBe('Person');
+      expect(question?.author?.url).toBe('https://aifails.wtf');
 
       const suggestedAnswer = question?.suggestedAnswer?.[0];
       expect(suggestedAnswer?.['@type']).toBe('Answer');
       expect(suggestedAnswer?.dateCreated).toBe('2026-08-28T14:30:00.000Z');
       expect(suggestedAnswer?.dateCreated.endsWith('Z')).toBe(true);
       expect(suggestedAnswer?.author?.['@type']).toBe('Organization');
+      expect(suggestedAnswer?.author?.url).toBe('https://aifails.wtf');
 
       const acceptedAnswer = question?.acceptedAnswer;
       expect(acceptedAnswer?.['@type']).toBe('Answer');
       expect(acceptedAnswer?.dateCreated).toBe('2026-08-28T15:00:00.000Z');
       expect(acceptedAnswer?.dateCreated.endsWith('Z')).toBe(true);
       expect(acceptedAnswer?.author?.['@type']).toBe('Person');
+      expect(acceptedAnswer?.author?.url).toBe('https://aifails.wtf');
 
       const techArticle = jsonLd['@graph']?.find((item) => item['@type'] === 'TechArticle');
       expect(techArticle).toBeDefined();
       expect(techArticle?.datePublished).toBe('2026-08-28T14:30:00.000Z');
       expect(techArticle?.datePublished?.endsWith('Z')).toBe(true);
       expect(techArticle?.author?.['@type']).toBe('Person');
+      expect(techArticle?.author?.url).toBe('https://aifails.wtf');
       expect(techArticle?.publisher?.['@type']).toBe('Organization');
     });
   });
