@@ -23,6 +23,7 @@ type JsonLdNode = {
   mainEntity?: {
     '@type': string;
     dateCreated: string;
+    answerCount?: number;
     author?: {
       '@type': string;
       name: string;
@@ -179,6 +180,45 @@ describe('SEO Date Formatting & Schema.org JSON-LD', () => {
       expect(techArticle?.author?.['@type']).toBe('Person');
       expect(techArticle?.author?.url).toBe('https://aifails.wtf');
       expect(techArticle?.publisher?.['@type']).toBe('Organization');
+    });
+
+    it('handles multiple suggestions with answerCount and full properties on all answers', async () => {
+      const multiD1 = createMockD1();
+      const multiConfession = { ...confessionWithSqliteDate, id: 'test-conf-multi' };
+      const sug1 = { ...suggestionWithSqliteDate, id: 'sug-1', confession_id: 'test-conf-multi' };
+      const sug2 = {
+        id: 'sug-2',
+        confession_id: 'test-conf-multi',
+        suggestion_type: 'prompt' as const,
+        body: 'Second prompt improvement suggestion',
+        author_name: 'Lead Prompt Architect',
+        created_at: '2026-08-28 16:00:00',
+      };
+
+      multiD1.confessions.push(multiConfession);
+      multiD1.suggestions.push(sug1, sug2);
+
+      const res = await app.request(
+        'https://aifails.wtf/confessions/test-conf-multi',
+        {},
+        { ...mockEnv, DB: multiD1 }
+      );
+      expect(res.status).toBe(200);
+
+      const html = await res.text();
+      const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      const jsonLd = JSON.parse(jsonLdMatch?.[1] ?? '{}') as { '@graph': JsonLdNode[] };
+      const qaPage = jsonLd['@graph']?.find((item) => item['@type'] === 'QAPage');
+      const question = qaPage?.mainEntity;
+
+      expect(question?.answerCount).toBe(3); // 1 AI failure + 2 suggestions
+      expect(question?.suggestedAnswer?.length).toBe(2); // AI failure + sug2
+      expect(question?.acceptedAnswer).toBeDefined(); // sug1
+
+      const secondAnswer = question?.suggestedAnswer?.[1];
+      expect(secondAnswer?.dateCreated).toBe('2026-08-28T16:00:00.000Z');
+      expect(secondAnswer?.author?.name).toBe('Lead Prompt Architect');
+      expect(secondAnswer?.author?.url).toBe('https://aifails.wtf');
     });
   });
 

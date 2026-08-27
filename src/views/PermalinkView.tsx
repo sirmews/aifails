@@ -42,6 +42,32 @@ export function PermalinkView({
   const ogImage = `${baseUrl}/confessions/${confession.id}/og.png`;
   const confessionDate = toIso8601(confession.created_at);
 
+  const aiAnswer = {
+    '@type': 'Answer',
+    text: `AI Output / Failure (${modelName}):\n${confession.what_it_did_instead}`,
+    dateCreated: confessionDate,
+    upvoteCount: confession.solidarity_count,
+    url: `${url}#failure`,
+    author: {
+      '@type': 'Organization',
+      name: modelName,
+      url: baseUrl,
+    },
+  };
+
+  const additionalAnswers = suggestions.slice(1).map((s) => ({
+    '@type': 'Answer',
+    text: `Community "Ackchyually..." Prompt Fix:\n${s.body}`,
+    dateCreated: toIso8601(s.created_at),
+    upvoteCount: 1,
+    url: `${url}#suggestion-${s.id}`,
+    author: {
+      '@type': 'Person',
+      name: s.author_name || 'Anonymous Prompt Engineer',
+      url: baseUrl,
+    },
+  }));
+
   const jsonLdData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -60,20 +86,7 @@ export function PermalinkView({
             name: 'Anonymous Developer',
             url: baseUrl,
           },
-          suggestedAnswer: [
-            {
-              '@type': 'Answer',
-              text: `AI Output / Failure (${modelName}):\n${confession.what_it_did_instead}`,
-              dateCreated: confessionDate,
-              upvoteCount: confession.solidarity_count,
-              url: `${url}#failure`,
-              author: {
-                '@type': 'Organization',
-                name: modelName,
-                url: baseUrl,
-              },
-            },
-          ],
+          suggestedAnswer: [aiAnswer, ...additionalAnswers],
           ...(suggestions.length > 0
             ? {
                 acceptedAnswer: {
