@@ -12,6 +12,18 @@ export function escapeXml(unsafe: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 }
+function toUtcIso(dateStr?: string | null): string {
+  if (!dateStr) return new Date().toISOString();
+  let normalized = dateStr.trim();
+  if (normalized.includes(' ') && !normalized.includes('T')) {
+    normalized = normalized.replace(' ', 'T') + 'Z';
+  } else if (!normalized.endsWith('Z') && !/[+-]\d{2}(:\d{2})?$/.test(normalized)) {
+    normalized = normalized + 'Z';
+  }
+  const d = new Date(normalized);
+  return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+}
+
 
 export function wrapSvgText(
   text: string,
@@ -58,7 +70,7 @@ export function generateRssFeed(confessions: Confession[], baseUrl: string): str
         `[${c.mood.toUpperCase()}] ${c.prompt_used.slice(0, 60)}${c.prompt_used.length > 60 ? '...' : ''}`
       );
       const link = escapeXml(`${baseUrl}/confessions/${c.id}`);
-      const pubDate = new Date(c.created_at).toUTCString();
+      const pubDate = new Date(toUtcIso(c.created_at)).toUTCString();
       const description = escapeXml(
         `Prompt: ${c.prompt_used}\n\nWhat it did instead:\n${c.what_it_did_instead}\n\nHow it made them feel:\n${c.how_it_made_them_feel}`
       );
@@ -91,7 +103,7 @@ export function generateSitemapXml(confessions: Confession[], baseUrl: string): 
   const urlsXml = confessions
     .map((c) => {
       const loc = escapeXml(`${baseUrl}/confessions/${c.id}`);
-      const lastmod = new Date(c.created_at).toISOString().split('T')[0];
+      const lastmod = toUtcIso(c.created_at).split('T')[0];
       return `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>

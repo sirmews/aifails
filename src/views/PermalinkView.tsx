@@ -7,7 +7,7 @@ import { SuggestionForm } from './SuggestionForm';
 import { Footer } from './Footer';
 import { Markdown } from './Markdown';
 import { ShareCardModal } from './ShareCardModal';
-import { timeAgo } from './utils';
+import { timeAgo, toIso8601 } from './utils';
 
 type PermalinkViewProps = {
   confession: Confession;
@@ -40,6 +40,7 @@ export function PermalinkView({
   const ogDescription = `What it did instead: "${failSnippet}" • Feeling: ${confession.how_it_made_them_feel}`;
   const url = `${baseUrl}/confessions/${confession.id}`;
   const ogImage = `${baseUrl}/confessions/${confession.id}/og.png`;
+  const confessionDate = toIso8601(confession.created_at);
 
   const jsonLdData = {
     '@context': 'https://schema.org',
@@ -53,7 +54,7 @@ export function PermalinkView({
           text: confession.prompt_used,
           answerCount: suggestions.length + 1,
           upvoteCount: confession.solidarity_count,
-          dateCreated: confession.created_at,
+          dateCreated: confessionDate,
           author: {
             '@type': 'Person',
             name: 'Anonymous Developer',
@@ -62,10 +63,10 @@ export function PermalinkView({
             {
               '@type': 'Answer',
               text: `AI Output / Failure (${modelName}):\n${confession.what_it_did_instead}`,
-              dateCreated: confession.created_at,
+              dateCreated: confessionDate,
               upvoteCount: confession.solidarity_count,
               author: {
-                '@type': 'SoftwareApplication',
+                '@type': 'Organization',
                 name: modelName,
               },
             },
@@ -75,7 +76,7 @@ export function PermalinkView({
                 acceptedAnswer: {
                   '@type': 'Answer',
                   text: `Community "Ackchyually..." Prompt Fix:\n${suggestions[0].body}`,
-                  dateCreated: suggestions[0].created_at,
+                  dateCreated: toIso8601(suggestions[0].created_at),
                   author: {
                     '@type': 'Person',
                     name: 'Anonymous Prompt Engineer',
@@ -90,7 +91,7 @@ export function PermalinkView({
         '@id': `${url}#article`,
         headline: ogTitle,
         description: ogDescription,
-        datePublished: confession.created_at,
+        datePublished: confessionDate,
         url,
         image: ogImage,
         about: {
