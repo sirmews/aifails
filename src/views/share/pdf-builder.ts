@@ -35,9 +35,9 @@ export const PDF_BUILDER_SCRIPT = `
     offsets[2] = currentOffset;
     writeStr("2 0 obj\\n<< /Type /Pages /Kids [" + pageRefs.join(" ") + "] /Count " + numPages + " >>\\nendobj\\n");
 
-    // Standard square presentation points (1080x1080 points)
+    // Standard 4:5 portrait presentation points (1080x1350 points)
     var pageWidth = 1080;
-    var pageHeight = 1080;
+    var pageHeight = 1350;
 
     for (var i = 0; i < numPages; i++) {
       var img = jpegImages[i];
@@ -46,7 +46,7 @@ export const PDF_BUILDER_SCRIPT = `
       var imageObjId = 5 + i * 3;
       var imgName = "Im" + (i + 1);
 
-      // Page Object (1080x1080 MediaBox)
+      // Page Object (1080x1350 MediaBox)
       offsets[pageObjId] = currentOffset;
       writeStr(pageObjId + " 0 obj\\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + pageWidth + " " + pageHeight + "] /Resources << /XObject << /" + imgName + " " + imageObjId + " 0 R >> >> /Contents " + contentsObjId + " 0 R >>\\nendobj\\n");
 
@@ -58,7 +58,7 @@ export const PDF_BUILDER_SCRIPT = `
       writeBytes(streamBytes);
       writeStr("\\nendstream\\nendobj\\n");
 
-      // Image XObject with full supersampled pixel dimensions (2160x2160)
+      // Image XObject with full supersampled pixel dimensions (2160x2700)
       offsets[imageObjId] = currentOffset;
       writeStr(imageObjId + " 0 obj\\n<< /Type /XObject /Subtype /Image /Width " + img.width + " /Height " + img.height + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + img.bytes.length + " >>\\nstream\\n");
       writeBytes(img.bytes);
@@ -90,9 +90,9 @@ export const PDF_BUILDER_SCRIPT = `
 
   function getSlideJpegBytes(slideNum) {
     var offCanvas = document.createElement('canvas');
-    // 2x Retina supersampling (2160x2160) for razor-sharp vector-grade text in PDF viewers
+    // 2x Retina supersampling (2160x2700) for razor-sharp vector-grade text in PDF viewers
     offCanvas.width = 2160;
-    offCanvas.height = 2160;
+    offCanvas.height = 2700;
     renderCarouselSlide(offCanvas, slideNum);
     return new Promise(function(resolve, reject) {
       offCanvas.toBlob(function(blob) {
@@ -102,10 +102,9 @@ export const PDF_BUILDER_SCRIPT = `
           resolve({
             bytes: new Uint8Array(reader.result),
             width: 2160,
-            height: 2160
+            height: 2700
           });
         };
-        reader.onerror = reject;
         reader.readAsArrayBuffer(blob);
       }, 'image/jpeg', 0.98);
     });

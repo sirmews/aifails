@@ -10,18 +10,18 @@ export const CANVAS_CAROUSEL_SCRIPT = `
     }
     ctx.imageSmoothingEnabled = true;
 
-    var S = 1080;
-    // 1. Canvas Background
+    var W = 1080;
+    var H = 1350;
+    // 1. Canvas Background (4:5 Portrait)
     ctx.fillStyle = '#152435';
-    ctx.fillRect(0, 0, S, S);
+    ctx.fillRect(0, 0, W, H);
 
     // 2. Card Container
     var pad = 44;
-    var cardW = S - pad * 2;
-    var cardH = S - pad * 2;
+    var cardW = W - pad * 2;
+    var cardH = H - pad * 2;
     var cardX = pad;
     var cardY = pad;
-
     // Drop Shadow
     ctx.fillStyle = '#0e1a26';
     roundRect(ctx, cardX + 10, cardY + 10, cardW, cardH, 24);
@@ -101,7 +101,7 @@ export const CANVAS_CAROUSEL_SCRIPT = `
     var contentX = cardX + 36;
     var contentY = headerY + 64;
     var contentW = cardW - 72;
-    var contentH = 680;
+    var contentH = 960;
 
     if (slideNum === 1) {
       // --- SLIDE 1: PROMPT ---
@@ -125,10 +125,10 @@ export const CANVAS_CAROUSEL_SCRIPT = `
 
       // Prompt Body
       ctx.fillStyle = '#ffffff';
-      ctx.font = '700 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      var pLines = wrapText(ctx, cardData.prompt, contentW - 72, 9);
+      ctx.font = '700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      var pLines = wrapText(ctx, cardData.prompt, contentW - 72, 14);
       for (var l = 0; l < pLines.length; l++) {
-        ctx.fillText(pLines[l], contentX + 36, contentY + 104 + l * 54);
+        ctx.fillText(pLines[l], contentX + 36, contentY + 104 + l * 52);
       }
 
       // Swipe Cue
@@ -166,16 +166,16 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.fillStyle = '#f1f5f9';
 
       if (isCode) {
-        ctx.font = '600 30px ui-monospace, Menlo, Consolas, monospace';
-        var fLines = wrapText(ctx, cleanF, contentW - 72, 10);
+        ctx.font = '600 28px ui-monospace, Menlo, Consolas, monospace';
+        var fLines = wrapText(ctx, cleanF, contentW - 72, 18);
         for (var m = 0; m < fLines.length; m++) {
-          ctx.fillText(fLines[m], contentX + 36, contentY + 104 + m * 44);
+          ctx.fillText(fLines[m], contentX + 36, contentY + 104 + m * 42);
         }
       } else {
-        ctx.font = '600 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        var fLines = wrapText(ctx, cleanF, contentW - 72, 9);
+        ctx.font = '600 34px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        var fLines = wrapText(ctx, cleanF, contentW - 72, 14);
         for (var m = 0; m < fLines.length; m++) {
-          ctx.fillText(fLines[m], contentX + 36, contentY + 106 + m * 50);
+          ctx.fillText(fLines[m], contentX + 36, contentY + 106 + m * 48);
         }
       }
 
@@ -188,7 +188,7 @@ export const CANVAS_CAROUSEL_SCRIPT = `
 
     } else if (slideNum === 3) {
       // --- SLIDE 3: REACTION & CTA ---
-      var upperH = 400;
+      var upperH = 540;
       ctx.fillStyle = '#1e334a';
       roundRect(ctx, contentX, contentY, contentW, upperH, 16);
       ctx.fill();
@@ -209,10 +209,10 @@ export const CANVAS_CAROUSEL_SCRIPT = `
 
       // Feeling Quote
       ctx.fillStyle = '#fed41d';
-      ctx.font = '700 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      var feelL = wrapText(ctx, cardData.feeling, contentW - 72, 4);
+      ctx.font = '700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      var feelL = wrapText(ctx, cardData.feeling, contentW - 72, 6);
       for (var n = 0; n < feelL.length; n++) {
-        ctx.fillText(feelL[n], contentX + 36, contentY + 104 + n * 52);
+        ctx.fillText(feelL[n], contentX + 36, contentY + 104 + n * 50);
       }
 
       // Model Attribution
@@ -221,8 +221,8 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.fillText('Model: ' + cardData.model, contentX + 36, contentY + upperH - 32);
 
       // Lower CTA Box
-      var ctaY = contentY + upperH + 20;
-      var ctaH = contentH - upperH - 20;
+      var ctaY = contentY + upperH + 24;
+      var ctaH = contentH - upperH - 24;
       ctx.fillStyle = '#152435';
       roundRect(ctx, contentX, ctaY, contentW, ctaH, 16);
       ctx.fill();
@@ -232,17 +232,17 @@ export const CANVAS_CAROUSEL_SCRIPT = `
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffffff';
-      ctx.font = '900 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText('Have an AI fail of your own?', contentX + contentW / 2, ctaY + 64);
+      ctx.font = '900 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('Have an AI fail of your own?', contentX + contentW / 2, ctaY + 80);
 
       ctx.fillStyle = '#97bede';
       ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText('Confess anonymously or vote solidarity:', contentX + contentW / 2, ctaY + 110);
+      ctx.fillText('Confess anonymously or vote solidarity:', contentX + contentW / 2, ctaY + 134);
 
       // URL Highlight Box
       ctx.fillStyle = '#fed41d';
-      ctx.font = '900 32px ui-monospace, Menlo, monospace';
-      ctx.fillText('https://aifails.wtf', contentX + contentW / 2, ctaY + 172);
+      ctx.font = '900 34px ui-monospace, Menlo, monospace';
+      ctx.fillText('https://aifails.wtf', contentX + contentW / 2, ctaY + 210);
     }
 
     // 5. Footer Watermark Bar

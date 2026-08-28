@@ -74,7 +74,7 @@ export function getShareModalScript(cardData: ShareModalCardData): string {
       controlsCarousel.classList.remove('hidden');
       controlsCarousel.classList.add('flex');
       canvas.width = 1080;
-      canvas.height = 1080;
+      canvas.height = 1350;
       updateSlideUI();
       renderCarouselSlide(canvas, currentSlide);
     }
@@ -196,12 +196,12 @@ export function getShareModalScript(cardData: ShareModalCardData): string {
 
   if (downloadBtn) downloadBtn.addEventListener('click', downloadCardImage);
 
-  // Download Carousel Slide PNG (2x HiDPI 2160x2160)
+  // Download Carousel Slide PNG (2x HiDPI 2160x2700)
   if (downloadSlideBtn) {
     downloadSlideBtn.addEventListener('click', function() {
       var hiCanvas = document.createElement('canvas');
       hiCanvas.width = 2160;
-      hiCanvas.height = 2160;
+      hiCanvas.height = 2700;
       renderCarouselSlide(hiCanvas, currentSlide);
       var a = document.createElement('a');
       a.download = 'aifails-' + cardData.id + '-slide-' + currentSlide + '.png';
