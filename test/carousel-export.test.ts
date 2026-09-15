@@ -50,8 +50,14 @@ describe('LinkedIn Carousel PDF & 4:5 Portrait Export', () => {
     it('uses 1080x1350 canvas bounds and expanded content heights', () => {
       expect(CANVAS_CAROUSEL_SCRIPT).toContain('var W = 1080;');
       expect(CANVAS_CAROUSEL_SCRIPT).toContain('var H = 1350;');
-      expect(CANVAS_CAROUSEL_SCRIPT).toContain('var contentH = 960;');
-      expect(CANVAS_CAROUSEL_SCRIPT).toContain('var upperH = 540;');
+      expect(CANVAS_CAROUSEL_SCRIPT).toContain('var contentH = 1096;');
+      expect(CANVAS_CAROUSEL_SCRIPT).toContain('var upperH = 580;');
+    });
+
+    it('drops footer watermark and tagline chrome from every slide', () => {
+      expect(CANVAS_CAROUSEL_SCRIPT).not.toContain('Footer Watermark');
+      expect(CANVAS_CAROUSEL_SCRIPT).not.toContain('Anonymous AI Prompt Fails');
+      expect(CANVAS_CAROUSEL_SCRIPT).not.toContain('a safe space for AI frustration');
     });
   });
 

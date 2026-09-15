@@ -57,16 +57,12 @@ export const CANVAS_CAROUSEL_SCRIPT = `
     ctx.textBaseline = 'middle';
     ctx.fillText('(╯°□°)╯', cardX + 36 + 60, headerY + 4);
 
-    // Brand Title
+    // Brand Title (tagline removed to de-clutter the header)
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('Prompt Confessional', cardX + 172, headerY + 6);
-
-    ctx.fillStyle = '#97bede';
-    ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('a safe space for AI frustration', cardX + 172, headerY + 28);
+    ctx.fillText('Prompt Confessional', cardX + 172, headerY + 14);
 
     // Slide Badge (Top Right)
     var slideBadgeText = 'Slide ' + slideNum + ' / 3';
@@ -101,7 +97,8 @@ export const CANVAS_CAROUSEL_SCRIPT = `
     var contentX = cardX + 36;
     var contentY = headerY + 64;
     var contentW = cardW - 72;
-    var contentH = 960;
+    // Grown into the space freed by removing the footer watermark bar
+    var contentH = 1096;
 
     if (slideNum === 1) {
       // --- SLIDE 1: PROMPT ---
@@ -120,22 +117,22 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#97bede';
-      ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillText('WHAT I ASKED FOR', contentX + 36, contentY + 44);
 
       // Prompt Body
       ctx.fillStyle = '#ffffff';
-      ctx.font = '700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '700 46px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       var pLines = wrapText(ctx, cardData.prompt, contentW - 72, 14);
       for (var l = 0; l < pLines.length; l++) {
-        ctx.fillText(pLines[l], contentX + 36, contentY + 104 + l * 52);
+        ctx.fillText(pLines[l], contentX + 36, contentY + 104 + l * 62);
       }
 
       // Swipe Cue
       var swipeY = contentY + contentH - 40;
       ctx.textAlign = 'right';
       ctx.fillStyle = '#60a5fa';
-      ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillText('Swipe to see what happened ➔', contentX + contentW - 36, swipeY);
     } else if (slideNum === 2) {
       // --- SLIDE 2: THE FAILURE ---
@@ -154,7 +151,7 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#f87171';
-      ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillText('WHAT IT DID INSTEAD', contentX + 36, contentY + 44);
 
       // Terminal Dots
@@ -166,16 +163,16 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.fillStyle = '#f1f5f9';
 
       if (isCode) {
-        ctx.font = '600 28px ui-monospace, Menlo, Consolas, monospace';
+        ctx.font = '600 32px ui-monospace, Menlo, Consolas, monospace';
         var fLines = wrapText(ctx, cleanF, contentW - 72, 18);
         for (var m = 0; m < fLines.length; m++) {
-          ctx.fillText(fLines[m], contentX + 36, contentY + 104 + m * 42);
+          ctx.fillText(fLines[m], contentX + 36, contentY + 104 + m * 50);
         }
       } else {
-        ctx.font = '600 34px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.font = '600 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         var fLines = wrapText(ctx, cleanF, contentW - 72, 14);
         for (var m = 0; m < fLines.length; m++) {
-          ctx.fillText(fLines[m], contentX + 36, contentY + 106 + m * 48);
+          ctx.fillText(fLines[m], contentX + 36, contentY + 106 + m * 58);
         }
       }
 
@@ -183,12 +180,12 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       var swipeY = contentY + contentH - 40;
       ctx.textAlign = 'right';
       ctx.fillStyle = '#f87171';
-      ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillText('Swipe for the reaction ➔', contentX + contentW - 36, swipeY);
 
     } else if (slideNum === 3) {
       // --- SLIDE 3: REACTION & CTA ---
-      var upperH = 540;
+      var upperH = 580;
       ctx.fillStyle = '#1e334a';
       roundRect(ctx, contentX, contentY, contentW, upperH, 16);
       ctx.fill();
@@ -204,19 +201,19 @@ export const CANVAS_CAROUSEL_SCRIPT = `
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#fed41d';
-      ctx.font = '900 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillText('HOW IT MADE ME FEEL  ' + cardData.mood, contentX + 36, contentY + 44);
 
       // Feeling Quote
       ctx.fillStyle = '#fed41d';
-      ctx.font = '700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '700 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       var feelL = wrapText(ctx, cardData.feeling, contentW - 72, 6);
       for (var n = 0; n < feelL.length; n++) {
-        ctx.fillText(feelL[n], contentX + 36, contentY + 104 + n * 50);
+        ctx.fillText(feelL[n], contentX + 36, contentY + 104 + n * 58);
       }
 
       // Model Attribution
-      ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = '#97bede';
       ctx.fillText('Model: ' + cardData.model, contentX + 36, contentY + upperH - 32);
 
@@ -232,38 +229,19 @@ export const CANVAS_CAROUSEL_SCRIPT = `
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffffff';
-      ctx.font = '900 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText('Have an AI fail of your own?', contentX + contentW / 2, ctaY + 80);
+      ctx.font = '900 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('Have an AI fail of your own?', contentX + contentW / 2, ctaY + 180);
 
       ctx.fillStyle = '#97bede';
-      ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText('Confess anonymously or vote solidarity:', contentX + contentW / 2, ctaY + 134);
+      ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('Confess anonymously or vote solidarity:', contentX + contentW / 2, ctaY + 244);
 
       // URL Highlight Box
       ctx.fillStyle = '#fed41d';
-      ctx.font = '900 34px ui-monospace, Menlo, monospace';
-      ctx.fillText('https://aifails.wtf', contentX + contentW / 2, ctaY + 210);
+      ctx.font = '900 40px ui-monospace, Menlo, monospace';
+      ctx.fillText('https://aifails.wtf', contentX + contentW / 2, ctaY + 334);
     }
 
-    // 5. Footer Watermark Bar
-    var footY = cardY + cardH - 28;
-    ctx.strokeStyle = '#0e1a26';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(cardX + 36, footY - 24);
-    ctx.lineTo(cardX + cardW - 36, footY - 24);
-    ctx.stroke();
-
-    ctx.fillStyle = '#97bede';
-    ctx.font = '700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Anonymous AI Prompt Fails • aifails.wtf', cardX + 36, footY);
-
-    ctx.fillStyle = '#fed41d';
-    ctx.font = '900 18px ui-monospace, Menlo, monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText('Confession #' + cardData.id.slice(0, 8), cardX + cardW - 36, footY);
     ctx.restore();
   }
 `;
